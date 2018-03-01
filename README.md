@@ -1,5 +1,5 @@
 # pure-rand
-## Pure random number generator written in TypeScript
+#### Pure random number generator written in TypeScript
 
 [![Build Status](https://travis-ci.org/dubzzz/pure-rand.svg?branch=master)](https://travis-ci.org/dubzzz/pure-rand)
 [![npm version](https://badge.fury.io/js/pure-rand.svg)](https://badge.fury.io/js/pure-rand)
