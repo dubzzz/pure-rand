@@ -1,17 +1,13 @@
 import * as assert from 'power-assert';
 import * as fc from 'fast-check';
 
-import MersenneTwister from '../../src/generator/MersenneTwister';
+import mersenne from '../../src/generator/MersenneTwister';
 import RandomGenerator from '../../src/generator/RandomGenerator';
 import * as p from './RandomGenerator.properties';
 
-function rng_for(seed: number): RandomGenerator {
-    return MersenneTwister.from(seed);
-}
-
 describe("MersenneTwister", () => {
     it('Should produce the right sequence for seed=42', () => {
-        let g = rng_for(42);
+        let g = mersenne(42);
         let data = [];
         for (let idx = 0 ; idx !== 1000 ; ++idx) {
             const [v, nextG] = g.next();
@@ -354,7 +350,7 @@ describe("MersenneTwister", () => {
             4184993832, 1116476131, 4235742911, 
             1946654618]);
     });
-    it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(rng_for)));
-    it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(rng_for)));
-    it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(rng_for)));
+    it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
+    it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
+    it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(mersenne)));
 });

@@ -21,7 +21,7 @@ function rshiftInUint32(a: number, shift: number) {
         : ((a - 0x80000000) >> shift) + (1 << (31 - shift));
 }
 
-export default class MersenneTwister implements RandomGenerator {
+class MersenneTwister implements RandomGenerator {
     static readonly min: number = 0;
     static readonly max: number = 0xffffffff;
 
@@ -106,3 +106,7 @@ export default class MersenneTwister implements RandomGenerator {
         return [y, new MersenneTwister(this.states, this.index +1)];
     }
 }
+
+export default function(seed: number): RandomGenerator {
+    return MersenneTwister.from(seed);
+};
