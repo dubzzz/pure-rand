@@ -1,17 +1,13 @@
 import * as assert from 'power-assert';
 import * as fc from 'fast-check';
 
-import LinearCongruential from '../../src/generator/LinearCongruential';
+import congruential from '../../src/generator/LinearCongruential';
 import RandomGenerator from '../../src/generator/RandomGenerator';
 import * as p from './RandomGenerator.properties';
 
-function rng_for(seed: number): RandomGenerator {
-    return new LinearCongruential(seed);
-}
-
 describe('LinearCongruential', () => {
     it('Should produce the right sequence for seed=42', () => {
-        let g = rng_for(42);
+        let g = congruential(42);
         let data = [];
         for (let idx = 0 ; idx !== 10 ; ++idx) {
             const [v, nextG] = g.next();
@@ -26,7 +22,7 @@ describe('LinearCongruential', () => {
             8016, 7644, 15809,
             1769]);
     });
-    it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(rng_for)));
-    it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(rng_for)));
-    it('Should generate values between 0 and 2**15 -1', () => fc.assert(p.valuesInRange(rng_for)));
+    it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(congruential)));
+    it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential)));
+    it('Should generate values between 0 and 2**15 -1', () => fc.assert(p.valuesInRange(congruential)));
 });

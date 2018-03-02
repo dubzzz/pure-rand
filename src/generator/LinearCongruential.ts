@@ -8,7 +8,7 @@ const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
 const MASK_2: number = (1 << 31) -1;
 
-export default class LinearCongruential implements RandomGenerator {
+class LinearCongruential implements RandomGenerator {
     // Should produce exactly the same values
     // as the following C++ code compiled with Visual Studio:
     //  * constructor = srand(seed);
@@ -31,3 +31,7 @@ export default class LinearCongruential implements RandomGenerator {
         return [(nextseed & MASK_2) >> 16, new LinearCongruential(nextseed)]
     }
 }
+
+export default function(seed: number): RandomGenerator {
+    return new LinearCongruential(seed);
+};
