@@ -1,7 +1,7 @@
 import * as assert from 'power-assert';
 import * as fc from 'fast-check';
 
-import UniformDistribution from '../../src/distribution/UniformDistribution';
+import { uniformIntDistribution } from '../../src/distribution/UniformDistribution';
 import RandomGenerator from '../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
@@ -23,11 +23,11 @@ class NatGenerator implements RandomGenerator {
 
 const MAX_RANGE: number = 1000;
 
-describe('UniformDistribution', () => {
+describe('uniformIntDistribution', () => {
     it('Should always generate values within the range', () => fc.assert(
         fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE),
             (offset, from, length) => {
-                const [v, nrng] = UniformDistribution.inRange(from, from + length)(new NatGenerator(offset));
+                const [v, nrng] = uniformIntDistribution(from, from + length)(new NatGenerator(offset));
                 return v >= from && v <= from + length;
             }
         )
@@ -38,7 +38,7 @@ describe('UniformDistribution', () => {
                 const target = from + (targetOffset) % (length +1);
                 let rng: RandomGenerator = new NatGenerator(offset);
                 for (let numTries = 0 ; numTries < 2*length +1 ; ++numTries) {
-                    const [v, nrng] = UniformDistribution.inRange(from, from + length)(rng);
+                    const [v, nrng] = uniformIntDistribution(from, from + length)(rng);
                     rng = nrng;
                     if (v === target) {
                         return true;
@@ -54,7 +54,7 @@ describe('UniformDistribution', () => {
                 let buckets = [...Array(length+1)].map(() => 0);
                 let rng: RandomGenerator = new NatGenerator(offset);
                 for (let numTries = 0 ; numTries < num * (length +1) ; ++numTries) {
-                    const [v, nrng] = UniformDistribution.inRange(from, from + length)(rng);
+                    const [v, nrng] = uniformIntDistribution(from, from + length)(rng);
                     rng = nrng;
                     buckets[v -from] += 1;
                 }
