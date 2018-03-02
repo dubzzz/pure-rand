@@ -1,7 +1,8 @@
-import { RandomGenerator } from '../generator/RandomGenerator'
+import Distribution from './Distribution';
+import RandomGenerator from '../generator/RandomGenerator';
 
 export default class UniformDistribution {
-    static inRange(from: number, to: number): (rng: RandomGenerator) => [number, RandomGenerator] {
+    static inRange(from: number, to: number): Distribution<number> {
         const diff = to - from +1;
         function helper(rng: RandomGenerator): [number, RandomGenerator] {
             const MIN_RNG = rng.min();
