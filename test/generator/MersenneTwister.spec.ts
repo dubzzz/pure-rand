@@ -2,10 +2,9 @@ import * as assert from 'power-assert';
 import * as fc from 'fast-check';
 
 import mersenne from '../../src/generator/MersenneTwister';
-import RandomGenerator from '../../src/generator/RandomGenerator';
 import * as p from './RandomGenerator.properties';
 
-describe("MersenneTwister", () => {
+describe("mersenne", () => {
     it('Should produce the right sequence for seed=42', () => {
         let g = mersenne(42);
         let data = [];

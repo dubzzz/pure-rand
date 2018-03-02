@@ -2,10 +2,9 @@ import * as assert from 'power-assert';
 import * as fc from 'fast-check';
 
 import congruential from '../../src/generator/LinearCongruential';
-import RandomGenerator from '../../src/generator/RandomGenerator';
 import * as p from './RandomGenerator.properties';
 
-describe('LinearCongruential', () => {
+describe('congruential', () => {
     it('Should produce the right sequence for seed=42', () => {
         let g = congruential(42);
         let data = [];
