@@ -1,15 +1,7 @@
-import { RandomGenerator, generate_n, skip_n } from './generator/RandomGenerator';
-import congruential from './generator/LinearCongruential';
-import mersenne from './generator/MersenneTwister';
+import * as prand from './pure-rand-default';
+export default prand;
 
+export * from './pure-rand-default';
+import RandomGenerator from './generator/RandomGenerator';
 import Distribution from './distribution/Distribution';
-import { uniformIntDistribution } from './distribution/UniformDistribution';
-
-export {
-    // RandomGenerator
-    RandomGenerator, generate_n, skip_n,
-    congruential, mersenne,
-    // Distribution
-    Distribution,
-    uniformIntDistribution
-};
+export { RandomGenerator, Distribution };
