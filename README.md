@@ -59,3 +59,14 @@ import { mersenne } from 'pure-rand';
 const prand = require('pure-rand');
 const { mersenne } = require('pure-rand');
 ```
+
+## Documentation
+
+### Random number generators
+
+All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/) provided by `pure-rand` derive from the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/RandomGenerator.ts) and are pure and seeded as described above.
+
+The following generators are available:
+- `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
+- `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
+
