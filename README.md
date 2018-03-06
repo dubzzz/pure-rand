@@ -32,7 +32,7 @@ In order to use `pure-rand` from a web-page, you have to reference the web-aware
 You can also reference a precise version by setting the version you want in the url:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pure-rand@1.0.1/lib/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pure-rand@1.0.2/lib/bundle.js"></script>
 ```
 
 ## Usage
