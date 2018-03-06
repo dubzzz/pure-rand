@@ -72,7 +72,7 @@ The following generators are available:
 
 ### Distributions
 
-All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`.
+All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
 
 For the moment only one `Distribution` is available:
 - `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
