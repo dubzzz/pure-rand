@@ -12,12 +12,28 @@
 
 ## Getting started
 
+### In node
+
 Install the module with: `npm install pure-rand`
 
 Unlike classical random number generators, `pure-rand` comes with a set of *pure* and *seeded* generators (implementing the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/RandomGenerator.ts)).
 Each time a call to `.next()` method is done, the generator provides both the generated value and the next generator.
 
 As a consequence, a given generator will always produce the same value. It can be called as many times as required without impacting its state. This ability makes it easier to replay code section relying on random without having to re-seed a new generator and replay the whole path to be in the same state.
+
+### In a web-page
+
+In order to use `pure-rand` from a web-page, you have to reference the web-aware script as follow:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/pure-rand/lib/bundle.js"></script>
+```
+
+You can also reference a precise version by setting the version you want in the url:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/pure-rand@1.0.0/lib/bundle.js"></script>
+```
 
 ## Usage
 
