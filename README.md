@@ -86,7 +86,7 @@ The following generators are available:
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
 - `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
 
-Some helpers are also provided in order to ease the use of `RandomGenrator` instances:
+Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
 - `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
 - `prand.skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
 
