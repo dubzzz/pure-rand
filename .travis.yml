@@ -9,6 +9,7 @@ cache:
 script:
 - npm run build
 - npm run test
+- npm run webbuild
 after_success:
 - npm run coverage
 - npm run codeclimate
