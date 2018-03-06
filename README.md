@@ -86,6 +86,10 @@ The following generators are available:
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
 - `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
 
+Some helpers are also provided in order to ease the use of `RandomGenrator` instances:
+- `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
+- `prand.skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
+
 ### Distributions
 
 All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
