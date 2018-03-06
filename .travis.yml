@@ -1,17 +1,22 @@
 language: node_js
 node_js:
-  - '6'
-  - '7'
-  - '8'
-
+- '6'
+- '7'
+- '8'
 cache:
   directories:
   - node_modules
-
 script:
-  - npm run build
-  - npm run test
-
+- npm run build
+- npm run test
 after_success:
-  - npm run coverage
-  - npm run codeclimate
+- npm run coverage
+- npm run codeclimate
+deploy:
+  provider: npm
+  email: npm@dubien.org
+  api_key:
+    secure: T2kCVwA3vV+13ZfCj+FaeT9sk5pAV8Qwdrn8IQL3/phXjJOnt7LjkJ72FIO+wHaPlQ2ildTpPVF/k8KefgKhWO5tLbjipKzuMnchzP30tqla956mYrI6Vs2vw0skSL+y1YN/SskAl8X/HUdiVZbsYRcru4G6ZykQcTeKgwwTLQ2k5kPxrCyFFm6fCgcWD+jXQ4Ol/af6exbcf07l3qVtHLsLVi/D5LRE0dpI0/pAwkm/7bwkXjbGhlcwqOrSebM75VeuSCMcRppyPuv4tlMXu4pY2vHQyW7TljdWVTHTQCk8UN9XOfwSuSfEz1sQxGIRcpfdoTYeA6EDvPdLn6kYFnjpJBdL16PQ7zwXtuNMAe2cgRt0VX0R1CkaTf1ndQi4P/DxnTrRTdFWc9r9sTXyUXNDXYk3+rUANbN2scTcif8GzV0mraR4AVM4ZS3hWnL+ITHZjpeTf92skxp8YtuAu0xKAYN2WxJP4+a43mhKTSOxQsUpAOuQTG3aI6fUAL9ps+cwXVpf2FM1CDb3VgzwFFIQx0tByPnwC0jdPrkCtUMkisIsN+CTsdVE9NXtjMi6x0S4DswZF4p4JBRnCUhCOKabhK9Rlna7qy14zrXmz+jXKK1SO9UaGn+JaiSJouXt1yiSbpPhx39IAPbXuVxse7OmGrvssGafwbkElC/la2E=
+  on:
+    tags: true
+    repo: dubzzz/pure-rand
