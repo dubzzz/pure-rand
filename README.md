@@ -70,3 +70,9 @@ The following generators are available:
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
 - `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
 
+### Distributions
+
+All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`.
+
+For the moment only one `Distribution` is available:
+- `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
