@@ -4,7 +4,7 @@ export default interface RandomGenerator {
     max(): number //inclusive
 }
 
-function generate_n(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
+function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
     let cur: RandomGenerator = rng;
     const out: number[] = [];
     for (let idx = 0 ; idx != num ; ++idx) {
@@ -15,8 +15,8 @@ function generate_n(rng: RandomGenerator, num: number): [number[], RandomGenerat
     return [out, cur];
 }
 
-function skip_n(rng: RandomGenerator, num: number): RandomGenerator {
-    return generate_n(rng, num)[1];
+function skipN(rng: RandomGenerator, num: number): RandomGenerator {
+    return generateN(rng, num)[1];
 }
 
-export { RandomGenerator, generate_n, skip_n };
+export { RandomGenerator, generateN, skipN };

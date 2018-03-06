@@ -1,4 +1,4 @@
-import { RandomGenerator, generate_n, skip_n } from './generator/RandomGenerator';
+import { RandomGenerator, generateN, skipN } from './generator/RandomGenerator';
 import congruential from './generator/LinearCongruential';
 import mersenne from './generator/MersenneTwister';
 
@@ -7,7 +7,7 @@ import { uniformIntDistribution } from './distribution/UniformDistribution';
 
 export {
     RandomGenerator,
-    generate_n, skip_n,
+    generateN, skipN,
     congruential, mersenne,
     Distribution,
     uniformIntDistribution
