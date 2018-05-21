@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import { uniformIntDistribution } from '../../src/distribution/UniformDistribution';
+import mersenne from '../../src/generator/MersenneTwister';
 import RandomGenerator from '../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
@@ -18,6 +19,22 @@ class NatGenerator implements RandomGenerator {
     }
     max(): number {
         return 0x7fffffff;
+    }
+}
+
+class ModNatGenerator implements RandomGenerator {
+    constructor(readonly current: RandomGenerator, readonly mod: number) {
+    }
+
+    next(): [number, RandomGenerator] {
+        const [v, nrng] = this.current.next();
+        return [Math.abs(v % this.mod), new ModNatGenerator(nrng, this.mod)];
+    }
+    min(): number {
+        return 0;
+    }
+    max(): number {
+        return this.mod -1;
     }
 }
 
@@ -61,5 +78,31 @@ describe('uniformIntDistribution', () => {
                 return buckets.every(n => n === num);
             }
         )
+    ));
+    it('Should be able to generate values larger than the RandomGenerator', () => fc.assert(
+        fc.property(fc.integer(), fc.integer(2, 0x7fffffff), (seed, mod) => {
+            let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
+            for (let numTries = 0 ; numTries < 100 ; ++numTries) {
+                const [v, nrng] = uniformIntDistribution(0, Number.MAX_SAFE_INTEGER)(rng);
+                rng = nrng;
+                if (v > rng.max()) {
+                    return true;
+                }
+            }
+            return false;
+        })
+    ));
+    it('Should be able to generate values outside bitwise operations', () => fc.assert(
+        fc.property(fc.integer(), fc.integer(2, 0x7fffffff), (seed, mod) => {
+            let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
+            for (let numTries = 0 ; numTries < 100 ; ++numTries) {
+                const [v, nrng] = uniformIntDistribution(0, Number.MAX_SAFE_INTEGER)(rng);
+                rng = nrng;
+                if (v > 0xffffffff) {
+                    return true;
+                }
+            }
+            return false;
+        })
     ));
 });
