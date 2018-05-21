@@ -8,6 +8,7 @@
     "build": "tsc",
     "webbuild": "browserify lib/pure-rand.js --s prand -o lib/bundle.js",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
+    "perfs": "ts-node perfs/main",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "codeclimate": "nyc report --reporter=text-lcov | codeclimate-test-reporter"
   },
