@@ -1,4 +1,4 @@
-import * as assert from 'power-assert';
+import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import mersenne from '../../src/generator/MersenneTwister';
