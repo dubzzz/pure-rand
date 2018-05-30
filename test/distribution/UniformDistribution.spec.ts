@@ -83,7 +83,7 @@ describe('uniformIntDistribution', () => {
         fc.property(fc.integer(), fc.integer(2, 0x7fffffff), (seed, mod) => {
             let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
             for (let numTries = 0 ; numTries < 100 ; ++numTries) {
-                const [v, nrng] = uniformIntDistribution(0, Number.MAX_SAFE_INTEGER)(rng);
+                const [v, nrng] = uniformIntDistribution(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)(rng);
                 rng = nrng;
                 if (v > rng.max()) {
                     return true;
@@ -96,7 +96,7 @@ describe('uniformIntDistribution', () => {
         fc.property(fc.integer(), fc.integer(2, 0x7fffffff), (seed, mod) => {
             let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
             for (let numTries = 0 ; numTries < 100 ; ++numTries) {
-                const [v, nrng] = uniformIntDistribution(0, Number.MAX_SAFE_INTEGER)(rng);
+                const [v, nrng] = uniformIntDistribution(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)(rng);
                 rng = nrng;
                 if (v > 0xffffffff) {
                     return true;
