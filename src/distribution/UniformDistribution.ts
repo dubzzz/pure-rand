@@ -16,7 +16,9 @@ const uniformIntDistribution = (from: number, to: number): Distribution<number> 
                 const [v, tmpRng] = nrng.next();
                 const deltaV = v - MIN_RNG;
                 nrng = tmpRng;
-                return [deltaV % diff + from, nrng]
+                if (deltaV < MAX_ALLOWED) {
+                    return [deltaV % diff + from, nrng];
+                }
             }
         }
         
