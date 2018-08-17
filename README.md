@@ -25,13 +25,19 @@ As a consequence, a given generator will always produce the same value. It can b
 In order to use `pure-rand` from a web-page, you have to reference the web-aware script as follow:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pure-rand/lib/bundle.js"></script>
+<script type="module">
+   import * as prand from "https://unpkg.com/pure-rand/lib/esm/pure-rand.js";
+   // prand is now available
+</script>
 ```
 
 You can also reference a precise version by setting the version you want in the url:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pure-rand@1.0.2/lib/bundle.js"></script>
+<script type="module">
+   import * as prand from "https://unpkg.com/pure-rand@1.2.0/lib/esm/pure-rand.js";
+   // prand is now available
+</script>
 ```
 
 ## Usage
