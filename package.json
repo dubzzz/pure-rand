@@ -3,9 +3,11 @@
   "version": "1.1.1",
   "description": " Pure random number generator written in TypeScript",
   "main": "lib/pure-rand.js",
+  "module": "lib/esm/pure-rand.js",
   "types": "lib/pure-rand.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:esm": "tsc --module es2015 --outDir lib/esm --declaration false",
     "webbuild": "browserify lib/pure-rand.js --s prand -o lib/bundle.js",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
     "perfs": "ts-node perfs/main",

@@ -9,6 +9,7 @@ cache:
   - node_modules
 script:
 - npm run build
+- npm run build:esm
 - npm run test
 - npm run webbuild
 after_success:
