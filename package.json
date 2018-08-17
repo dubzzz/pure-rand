@@ -11,8 +11,7 @@
     "webbuild": "browserify lib/pure-rand.js --s prand -o lib/bundle.js",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
     "perfs": "ts-node perfs/main",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "codeclimate": "nyc report --reporter=text-lcov | codeclimate-test-reporter"
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -29,7 +28,6 @@
     "@types/mocha": "^5.2.0",
     "@types/node": "^10.7.1",
     "browserify": "^16.2.2",
-    "codeclimate-test-reporter": "^0.5.0",
     "coveralls": "^3.0.0",
     "fast-check": "^1.4.0",
     "mocha": "^5.2.0",

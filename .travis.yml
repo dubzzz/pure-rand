@@ -14,7 +14,6 @@ script:
 - npm run webbuild
 after_success:
 - npm run coverage
-- npm run codeclimate
 deploy:
   provider: npm
   email: npm@dubien.org
