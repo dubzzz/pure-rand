@@ -7,7 +7,7 @@
   "types": "lib/pure-rand.d.ts",
   "scripts": {
     "build": "tsc",
-    "build:esm": "tsc --module es2015 --outDir lib/esm --declaration false",
+    "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "webbuild": "browserify lib/pure-rand.js --s prand -o lib/bundle.js",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
     "perfs": "ts-node perfs/main",
