@@ -8,6 +8,13 @@ const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
 const MASK_2: number = (1 << 31) -1;
 
+const computeNextSeed = function(seed: number) {
+    return (seed * MULTIPLIER + INCREMENT) & MASK;
+}
+const computeValueFromNextSeed = function(nextseed: number) {
+    return (nextseed & MASK_2) >> 16;
+}
+
 class LinearCongruential implements RandomGenerator {
     // Should produce exactly the same values
     // as the following C++ code compiled with Visual Studio:
@@ -27,8 +34,8 @@ class LinearCongruential implements RandomGenerator {
     }
 
     next(): [number, LinearCongruential] {
-        const nextseed = (this.seed * MULTIPLIER + INCREMENT) & MASK;
-        return [(nextseed & MASK_2) >> 16, new LinearCongruential(nextseed)]
+        const nextseed = computeNextSeed(this.seed);
+        return [computeValueFromNextSeed(nextseed), new LinearCongruential(nextseed)]
     }
 }
 
@@ -48,11 +55,13 @@ class LinearCongruential32 implements RandomGenerator {
     }
 
     next(): [number, RandomGenerator] {
-        const c0 = new LinearCongruential(this.seed);
-        const [v1, c1] = c0.next();
-        const [v2, c2] = c1.next();
-        const [v3, c3] = c2.next();
-        return [v3 + LinearCongruential32.offset * (v2 + LinearCongruential32.offset * (v1 % 4)), new LinearCongruential32(c3.seed)];
+        const s1 = computeNextSeed(this.seed);
+        const v1 = computeValueFromNextSeed(s1);
+        const s2 = computeNextSeed(s1);
+        const v2 = computeValueFromNextSeed(s2);
+        const s3 = computeNextSeed(s2);
+        const v3 = computeValueFromNextSeed(s3);
+        return [v3 + LinearCongruential32.offset * (v2 + LinearCongruential32.offset * (v1 % 4)), new LinearCongruential32(s3)];
     }
 }
 
