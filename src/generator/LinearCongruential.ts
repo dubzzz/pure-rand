@@ -26,12 +26,39 @@ class LinearCongruential implements RandomGenerator {
         return LinearCongruential.max;
     }
 
-    next(): [number, RandomGenerator] {
+    next(): [number, LinearCongruential] {
         const nextseed = (this.seed * MULTIPLIER + INCREMENT) & MASK;
         return [(nextseed & MASK_2) >> 16, new LinearCongruential(nextseed)]
     }
 }
 
-export default function(seed: number): RandomGenerator {
+class LinearCongruential32 implements RandomGenerator {
+    static readonly offset: number = 2**15;
+    static readonly min: number = 0;
+    static readonly max: number = 0xffffffff;
+
+    constructor(readonly seed: number) {}
+    
+    min(): number {
+        return LinearCongruential32.min;
+    }
+    
+    max(): number {
+        return LinearCongruential32.max;
+    }
+
+    next(): [number, RandomGenerator] {
+        const c0 = new LinearCongruential(this.seed);
+        const [v1, c1] = c0.next();
+        const [v2, c2] = c1.next();
+        const [v3, c3] = c2.next();
+        return [v3 + LinearCongruential32.offset * (v2 + LinearCongruential32.offset * (v1 % 4)), new LinearCongruential32(c3.seed)];
+    }
+}
+
+export const congruential = function(seed: number): RandomGenerator {
     return new LinearCongruential(seed);
+};
+export const congruential32 = function(seed: number): RandomGenerator {
+    return new LinearCongruential32(seed);
 };

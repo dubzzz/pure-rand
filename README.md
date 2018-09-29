@@ -90,6 +90,7 @@ All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/ge
 The following generators are available:
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
 - `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
+- `prand.congruential32(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0xffffffff
 
 Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
 - `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
