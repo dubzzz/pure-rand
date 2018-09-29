@@ -40,7 +40,6 @@ class LinearCongruential implements RandomGenerator {
 }
 
 class LinearCongruential32 implements RandomGenerator {
-    static readonly offset: number = 2**15;
     static readonly min: number = 0;
     static readonly max: number = 0xffffffff;
 
@@ -61,7 +60,11 @@ class LinearCongruential32 implements RandomGenerator {
         const v2 = computeValueFromNextSeed(s2);
         const s3 = computeNextSeed(s2);
         const v3 = computeValueFromNextSeed(s3);
-        return [v3 + LinearCongruential32.offset * (v2 + LinearCongruential32.offset * (v1 % 4)), new LinearCongruential32(s3)];
+        const vext = (v2 + ((v1 % 4) << 15)) << 15;
+        if (vext < 0) {
+            return [v3 + vext + 0xffffffff +1, new LinearCongruential32(s3)];
+        }
+        return [v3 + vext, new LinearCongruential32(s3)];
     }
 }
 
