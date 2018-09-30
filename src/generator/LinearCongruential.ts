@@ -60,7 +60,7 @@ class LinearCongruential32 implements RandomGenerator {
         const v2 = computeValueFromNextSeed(s2);
         const s3 = computeNextSeed(s2);
         const v3 = computeValueFromNextSeed(s3);
-        const vext = (v2 + ((v1 % 4) << 15)) << 15;
+        const vext = (v2 + ((v1 & 3) << 15)) << 15;
         if (vext < 0) {
             return [v3 + vext + 0xffffffff +1, new LinearCongruential32(s3)];
         }
