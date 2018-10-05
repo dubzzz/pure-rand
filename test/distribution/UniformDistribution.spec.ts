@@ -105,4 +105,13 @@ describe('uniformIntDistribution', () => {
             return false;
         })
     ));
+    it('Should be equivalent to call the 2-parameter and 3-parameter', () => fc.assert(
+        fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE),
+            (offset, from, length) => {
+                const [v1, nrng1] = uniformIntDistribution(from, from + length)(new NatGenerator(offset));
+                const [v2, nrng2] = uniformIntDistribution(from, from + length, new NatGenerator(offset));
+                return v1 === v2;
+            }
+        )
+    ));
 });

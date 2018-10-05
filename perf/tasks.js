@@ -1,10 +1,9 @@
 // @ts-check
 
-// Build a new distribution for each run
-exports.testGenerateWithNewDistribution = (lib, g, NUM_TESTS) => {
+// Avoid the construction of an intermediate distribution
+exports.testGenerateWithSkipDistribution = (lib, g, NUM_TESTS) => {
     for (let idx = 0 ; idx !== NUM_TESTS ; ++idx) {
-        const dist = lib.uniformIntDistribution(0, 0xffffffff);
-        g = dist(g)[1];
+        g = lib.uniformIntDistribution(0, 0xffffffff, g)[1];
     }
     return g;
 };

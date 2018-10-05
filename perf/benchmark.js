@@ -5,7 +5,7 @@
 // $:  tsc --target es6 --outDir "lib-new/"
 // $:  node perf/benchmark.js
 const { genFor } = require('./helpers');
-const { testGenerateWithSameDistribution, testGenerateWithNewDistribution } = require('./tasks');
+const { testGenerateWithSameDistribution, testGenerateWithSkipDistribution } = require('./tasks');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
@@ -19,14 +19,14 @@ console.log(`Generator....: ${PROF_GEN}\n`);
 (new Benchmark.Suite())
     .add('Reference', () => {
         const g = genFor(prandRef, PROF_GEN);
-        testGenerateWithNewDistribution(prandRef, g, NUM_TESTS);
+        testGenerateWithSkipDistribution(prandRef, g, NUM_TESTS);
     })
     .add('Test', () => {
         const g = genFor(prandTest, PROF_GEN);
-        testGenerateWithNewDistribution(prandTest, g, NUM_TESTS);
+        testGenerateWithSkipDistribution(prandTest, g, NUM_TESTS);
     })
     .on('cycle', (event) => console.log(String(event.target)))
-    .on('complete', function() { console.log(`With new distribution: ${this.filter('fastest').map('name')}\n`); })
+    .on('complete', function() { console.log(`With skip distribution: ${this.filter('fastest').map('name')}\n`); })
     .run({ initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES });
 
 (new Benchmark.Suite())
