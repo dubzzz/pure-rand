@@ -5,13 +5,13 @@
 // $:  tsc --target es6 --outDir "lib-new/"
 // $:  node perf/benchmark.js
 const { genFor } = require('./helpers');
-const { testGenerateWithSameDistribution, testGenerateWithSkipDistributionSingle } = require('./tasks');
+const { testGenerateWithSameDistribution, testGenerateWithSkipDistributionSingle, testGenerateWithSkipDistribution } = require('./tasks');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
 
-const WARMUP_SAMPLES = 100;
-const MIN_SAMPLES = 1000;
+const WARMUP_SAMPLES = 50;
+const MIN_SAMPLES = 250;
 const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
 const NUM_TESTS = 100;
@@ -21,16 +21,22 @@ console.log(`Generator....: ${PROF_GEN}\n`);
 const buildBenchmarks = (type, lib) => {
     return [
         new Benchmark(
-            `skip@${type}`,
+            `distribution/no@${type}`,
             () => {
                 const g = genFor(lib, PROF_GEN);
-                testGenerateWithSkipDistributionSingle(prandRef, g);
+                testGenerateWithSkipDistribution(prandRef, g, NUM_TESTS);
             }, benchConf),
         new Benchmark(
-            `same@${type}`,
+            `distribution/re-use@${type}`,
             () => {
                 const g = genFor(lib, PROF_GEN);
                 testGenerateWithSameDistribution(prandRef, g, NUM_TESTS);
+            }, benchConf),
+        new Benchmark(
+            `generator/new@${type}`,
+            () => {
+                const g = genFor(lib, PROF_GEN);
+                testGenerateWithSkipDistributionSingle(prandRef, g);
             }, benchConf)
     ];
 };
@@ -38,7 +44,9 @@ const buildBenchmarks = (type, lib) => {
 Benchmark.invoke(
     [
         ...buildBenchmarks('Reference', prandRef),
-        ...buildBenchmarks('Test', prandTest)
+        ...buildBenchmarks('Test', prandTest),
+        ...buildBenchmarks('Reference', prandRef),
+        ...buildBenchmarks('Test', prandTest),
     ], {
         name: 'run',
         queued: true,

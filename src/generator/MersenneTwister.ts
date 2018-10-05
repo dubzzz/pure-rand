@@ -55,8 +55,12 @@ class MersenneTwister implements RandomGenerator {
     }
     
     private static seeded(seed: number): number[] {//OK
-        const out = [...Array(MersenneTwister.N)].map(() => 0);
+        const out = Array(MersenneTwister.N);
+        for (let idx = 1 ; idx !== MersenneTwister.N ; ++idx) {
+            out[idx] = 0;
+        }
         out[0] = seed;
+        
         for (let idx = 1 ; idx !== MersenneTwister.N ; ++idx) {
             if (toInt32(out[idx - 1]) < 0) { //simulate unsigned computation
                 const rescaled = toInt32(out[idx - 1]) + 0x80000000;
