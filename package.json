@@ -9,7 +9,6 @@
     "build": "tsc",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
-    "perfs": "ts-node perfs/main",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {

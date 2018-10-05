@@ -2,3 +2,5 @@ coverage/
 lib/
 node_modules/
 .nyc_output/
+v8.log
+v8.out
