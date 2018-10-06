@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import mersenne from '../../src/generator/MersenneTwister';
+import mersenne from '../../../src/generator/MersenneTwister';
 import * as p from './RandomGenerator.properties';
 
 describe("mersenne", () => {

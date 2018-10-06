@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { RandomGenerator, skipN, generateN } from '../../src/generator/RandomGenerator';
+import { RandomGenerator, skipN, generateN } from '../../../src/generator/RandomGenerator';
 
 const MAX_SIZE: number = 2048;
 

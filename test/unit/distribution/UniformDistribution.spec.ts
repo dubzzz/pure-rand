@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { uniformIntDistribution } from '../../src/distribution/UniformDistribution';
-import mersenne from '../../src/generator/MersenneTwister';
-import RandomGenerator from '../../src/generator/RandomGenerator';
+import { uniformIntDistribution } from '../../../src/distribution/UniformDistribution';
+import mersenne from '../../../src/generator/MersenneTwister';
+import RandomGenerator from '../../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
     readonly current: number;
