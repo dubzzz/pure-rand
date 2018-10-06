@@ -74,7 +74,7 @@ const [nRange, gen3] = prand.uniformIntDistribution(0, 9)(gen1);
 // Whenever you want to use the distribution only once you can directly call
 // prand.uniformIntDistribution(from, to, rng) which is totally equivalent to prand.uniformIntDistribution(from, to)(rng)
 // In terms of performances, the 3 parameters version is faster
-const [nNoDistributionInstance, gen4] = prand.uniformIntDistribution(0, 9)(gen3);
+const [nNoDistributionInstance, gen4] = prand.uniformIntDistribution(0, 9, gen3);
 ```
 
 Module import can also be done using one of the following syntaxes:
