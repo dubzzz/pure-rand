@@ -8,9 +8,9 @@ function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerato
     let cur: RandomGenerator = rng;
     const out: number[] = [];
     for (let idx = 0 ; idx != num ; ++idx) {
-        const [value, next] = cur.next();
-        out.push(value);
-        cur = next;
+        const nextOut = cur.next();
+        out.push(nextOut[0]);
+        cur = nextOut[1];
     }
     return [out, cur];
 }
