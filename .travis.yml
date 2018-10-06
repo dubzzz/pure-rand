@@ -1,23 +1,39 @@
 language: node_js
 node_js:
-- '6'
-- '8'
-- '10'
+  - '6'
+  - '8'
+  - '10'
 cache:
   directories:
-  - node_modules
+    - node_modules
 script:
-- npm run build
-- npm run build:esm
-- npm run test
+  - npm run build
+  - npm run build:esm
+  - npm run test
 after_success:
-- npm run coverage
-deploy:
-  provider: npm
-  email: npm@dubien.org
-  skip_cleanup: true
-  api_key:
-    secure: NeeKvEhDgCMXqd3all5PSnMsOR/kQ69DC7KLRdSP3s1MLt2BkdDTuoINzhvITIgw2TRbIL+I0yJ8fSuO36S3EMYHtih/pD++c9ujwyhvUBJOMB6nBSRm8caaaFv44VPf2uqi+G43XG6298tuY3j7yoDZEfJbfLv10RQQjXSYQPLQSwT6bxg5/wrxz9QRbwE1NkCX2c2/Z+ePTwDmf7+1tfjiue1EyQ1UU4ckFzc0zTaFk7KAxtWG4S5o6oaJsuqVHXj2k4hEEX3O4IS8ZsOOaZTC0AvFU6czQZ82WXFUNRH1CIumRLgcilo9RdVrEROREOy90i/A/cJvVOLm35UwygxBjIhp2KCdQ6ZQm30LavhUV9OPyUhgQQr1j7FK7J54y2yYwfao69QssiMuC1Ri93F8lNeH3Kea+6okX4AwPbSTXK9YAL7Xjl1meiRwNrbLO9WCxvPEZ2Wlb9E3Ck51XQMoScpnHnICnw1RrDtN9ifsCJLJfLXams6MPUN4UppwOtVag1mH2zVKdLAcAfRNsN1jBW7mVOwMptRaD2KS1PrY85bE3dJl+Dc07a5DlI9MKOdZJaEbUOUvDup3gVK9NwqgEsHUlz2mFVAFzXTJ3o2bbfx8By4dubuxdgF8STBVMSuY4t/i2hof62ZhymFqCY9wzvVOzRHLi0KpQk/fOGI=
-  on:
-    tags: true
-    repo: dubzzz/pure-rand
+  - npm run coverage
+stages:
+  - test
+  - deploy
+jobs:
+  include:
+    - stage: test
+      env: STEP=LEGACY
+      script:
+        - npm run build
+        - nvm install 0.12
+        - node test/legacy/main.js
+    - stage: deploy
+      if: tag =~ ^v\d+\.
+      script:
+        - npm run build
+        - npm run build:esm
+      deploy:
+        provider: npm
+        email: npm@dubien.org
+        skip_cleanup: true
+        api_key:
+          secure: NeeKvEhDgCMXqd3all5PSnMsOR/kQ69DC7KLRdSP3s1MLt2BkdDTuoINzhvITIgw2TRbIL+I0yJ8fSuO36S3EMYHtih/pD++c9ujwyhvUBJOMB6nBSRm8caaaFv44VPf2uqi+G43XG6298tuY3j7yoDZEfJbfLv10RQQjXSYQPLQSwT6bxg5/wrxz9QRbwE1NkCX2c2/Z+ePTwDmf7+1tfjiue1EyQ1UU4ckFzc0zTaFk7KAxtWG4S5o6oaJsuqVHXj2k4hEEX3O4IS8ZsOOaZTC0AvFU6czQZ82WXFUNRH1CIumRLgcilo9RdVrEROREOy90i/A/cJvVOLm35UwygxBjIhp2KCdQ6ZQm30LavhUV9OPyUhgQQr1j7FK7J54y2yYwfao69QssiMuC1Ri93F8lNeH3Kea+6okX4AwPbSTXK9YAL7Xjl1meiRwNrbLO9WCxvPEZ2Wlb9E3Ck51XQMoScpnHnICnw1RrDtN9ifsCJLJfLXams6MPUN4UppwOtVag1mH2zVKdLAcAfRNsN1jBW7mVOwMptRaD2KS1PrY85bE3dJl+Dc07a5DlI9MKOdZJaEbUOUvDup3gVK9NwqgEsHUlz2mFVAFzXTJ3o2bbfx8By4dubuxdgF8STBVMSuY4t/i2hof62ZhymFqCY9wzvVOzRHLi0KpQk/fOGI=
+        on:
+          tags: true
+      repo: dubzzz/pure-rand
