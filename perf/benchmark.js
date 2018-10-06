@@ -24,19 +24,19 @@ const buildBenchmarks = (type, lib) => {
             `distribution/no@${type}`,
             () => {
                 const g = genFor(lib, PROF_GEN);
-                testGenerateWithSkipDistribution(prandRef, g, NUM_TESTS);
+                testGenerateWithSkipDistribution(lib, g, NUM_TESTS);
             }, benchConf),
         new Benchmark(
             `distribution/re-use@${type}`,
             () => {
                 const g = genFor(lib, PROF_GEN);
-                testGenerateWithSameDistribution(prandRef, g, NUM_TESTS);
+                testGenerateWithSameDistribution(lib, g, NUM_TESTS);
             }, benchConf),
         new Benchmark(
             `generator/new@${type}`,
             () => {
                 const g = genFor(lib, PROF_GEN);
-                testGenerateWithSkipDistributionSingle(prandRef, g);
+                testGenerateWithSkipDistributionSingle(lib, g);
             }, benchConf)
     ];
 };
