@@ -3,7 +3,7 @@ import { RandomGenerator } from './RandomGenerator'
 function toUint32(num: number): number {
     return (num | 0) >= 0 ? (num | 0) : (num | 0) + 4294967296;
 }
-function productInUint32(a: number, b: number) {
+function product32bits(a: number, b: number) {
     const alo = a & 0xffff;
     const ahi = (a >>> 16) & 0xffff;
     const blo = b & 0xffff;
@@ -37,7 +37,7 @@ class MersenneTwister implements RandomGenerator {
             if (x & 1) {
               xA ^= MersenneTwister.A;
             }
-            mt[idx] = toUint32(mt[(idx+MersenneTwister.M) % MersenneTwister.N] ^ xA);
+            mt[idx] = mt[(idx+MersenneTwister.M) % MersenneTwister.N] ^ xA;
         }
         return mt;
     }
@@ -47,13 +47,13 @@ class MersenneTwister implements RandomGenerator {
         out[0] = seed;
         for (let idx = 1 ; idx !== MersenneTwister.N ; ++idx) {
             const xored = (out[idx - 1] ^ (out[idx - 1] >>> 30));
-            out[idx] = toUint32(productInUint32(MersenneTwister.F, xored) + idx);
+            out[idx] = (product32bits(MersenneTwister.F, xored) + idx) | 0;
         }
         return out;
     }
 
     readonly index: number;
-    readonly states: number[];
+    readonly states: number[]; // between -0x80000000 and 0x7fffffff
 
     private constructor(states: number[], index: number) {
         if (index >= MersenneTwister.N) {
