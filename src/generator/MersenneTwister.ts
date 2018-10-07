@@ -3,9 +3,6 @@ import { RandomGenerator } from './RandomGenerator'
 function toUint32(num: number): number {
     return (num | 0) >= 0 ? (num | 0) : (num | 0) + 4294967296;
 }
-function toInt32(num: number): number {
-    return num | 0;
-}
 function productInUint32(a: number, b: number) {
     const alo = a & 0xffff;
     const ahi = (a >>> 16) & 0xffff;
@@ -47,23 +44,12 @@ class MersenneTwister implements RandomGenerator {
         return mt;
     }
     
-    private static seeded(seed: number): number[] {//OK
+    private static seeded(seed: number): number[] {
         const out = Array(MersenneTwister.N);
-        for (let idx = 1 ; idx !== MersenneTwister.N ; ++idx) {
-            out[idx] = 0;
-        }
         out[0] = seed;
-        
         for (let idx = 1 ; idx !== MersenneTwister.N ; ++idx) {
-            if (toInt32(out[idx - 1]) < 0) { //simulate unsigned computation
-                const rescaled = toInt32(out[idx - 1]) + 0x80000000;
-                const xored = (rescaled ^ ((rescaled >> 30) + 2)) + 0x80000000;
-                out[idx] = toUint32(productInUint32(MersenneTwister.F, xored) + idx);
-            }
-            else {
-                const xored = (out[idx - 1] ^ (out[idx - 1] >> 30));
-                out[idx] = toUint32(productInUint32(MersenneTwister.F, xored) + idx);
-            }
+            const xored = (out[idx - 1] ^ (out[idx - 1] >>> 30));
+            out[idx] = toUint32(productInUint32(MersenneTwister.F, xored) + idx);
         }
         return out;
     }
