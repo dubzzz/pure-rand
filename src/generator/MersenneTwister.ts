@@ -32,9 +32,7 @@ class MersenneTwister implements RandomGenerator {
     private static twist(prev: number[]): number[] {
         const mt = prev.slice();
         for (let idx = 0 ; idx !== MersenneTwister.N ; ++idx) {
-            const x = toUint32(
-                    toUint32(mt[idx] & MersenneTwister.MASK_UPPER) +
-                    toUint32(mt[(idx + 1) % MersenneTwister.N] & MersenneTwister.MASK_LOWER));
+            const x = (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[(idx + 1) % MersenneTwister.N] & MersenneTwister.MASK_LOWER);
             let xA = x >>> 1;
             if (x & 1) {
               xA ^= MersenneTwister.A;
