@@ -7,18 +7,11 @@ function toInt32(num: number): number {
     return num | 0;
 }
 function productInUint32(a: number, b: number) {
-    const a32 = toUint32(a);
-    const alo = a32 & 0xffff;
-    const ahi = (a32 >> 16) & 0xffff;
-    const b32 = toUint32(b);
-    const blo = b32 & 0xffff;
-    const bhi = (b32 >> 16) & 0xffff;
-    return toUint32(alo*blo + (alo*bhi + ahi*blo) * 0x10000);
-}
-function rshiftInUint32(a: number, shift: number) {
-    return a < 0x80000000
-        ? a >> shift
-        : ((a - 0x80000000) >> shift) + (1 << (31 - shift));
+    const alo = a & 0xffff;
+    const ahi = (a >>> 16) & 0xffff;
+    const blo = b & 0xffff;
+    const bhi = (b >>> 16) & 0xffff;
+    return alo*blo + ((alo*bhi + ahi*blo) << 16);
 }
 
 class MersenneTwister implements RandomGenerator {
@@ -39,15 +32,15 @@ class MersenneTwister implements RandomGenerator {
     static readonly MASK_LOWER = (2** MersenneTwister.R) - 1;
     static readonly MASK_UPPER = (2** MersenneTwister.R);
 
-    private static twist(prev: number[]): number[] {//OK
+    private static twist(prev: number[]): number[] {
         const mt = prev.slice();
         for (let idx = 0 ; idx !== MersenneTwister.N ; ++idx) {
             const x = toUint32(
                     toUint32(mt[idx] & MersenneTwister.MASK_UPPER) +
                     toUint32(mt[(idx + 1) % MersenneTwister.N] & MersenneTwister.MASK_LOWER));
-            let xA = rshiftInUint32(x, 1);
+            let xA = x >>> 1;
             if (x & 1) {
-              xA = toUint32(xA ^ MersenneTwister.A);
+              xA ^= MersenneTwister.A;
             }
             mt[idx] = toUint32(mt[(idx+MersenneTwister.M) % MersenneTwister.N] ^ xA);
         }
@@ -103,11 +96,11 @@ class MersenneTwister implements RandomGenerator {
 
     next(): [number, RandomGenerator] {
         let y = this.states[this.index]
-        y = toUint32(y ^ rshiftInUint32(this.states[this.index], MersenneTwister.U));
-        y = toUint32(y ^ ((y << MersenneTwister.S) & MersenneTwister.B));
-        y = toUint32(y ^ ((y << MersenneTwister.T) & MersenneTwister.C));
-        y = toUint32(y ^ rshiftInUint32(y, MersenneTwister.L));
-        return [y, new MersenneTwister(this.states, this.index +1)];
+        y ^= this.states[this.index] >>> MersenneTwister.U;
+        y ^= (y << MersenneTwister.S) & MersenneTwister.B;
+        y ^= (y << MersenneTwister.T) & MersenneTwister.C;
+        y ^= y >>> MersenneTwister.L;
+        return [toUint32(y), new MersenneTwister(this.states, this.index +1)];
     }
 }
 
