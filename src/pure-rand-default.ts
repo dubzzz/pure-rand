@@ -7,9 +7,12 @@ import Distribution from './distribution/Distribution';
 import { uniformIntDistribution } from './distribution/UniformDistribution';
 
 export {
-    RandomGenerator,
-    generateN, skipN,
-    congruential, congruential32, mersenne,
-    Distribution,
-    uniformIntDistribution
+  RandomGenerator,
+  generateN,
+  skipN,
+  congruential,
+  congruential32,
+  mersenne,
+  Distribution,
+  uniformIntDistribution
 };

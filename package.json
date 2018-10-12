@@ -6,6 +6,8 @@
   "module": "lib/esm/pure-rand.js",
   "types": "lib/pure-rand.d.ts",
   "scripts": {
+    "format:check": "prettier --list-different \"**/*.{js,ts}\"",
+    "format:fix": "prettier --write \"**/*.{js,ts}\"",
     "build": "tsc",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
@@ -30,6 +32,7 @@
     "fast-check": "^1.6.2",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",
+    "prettier": "1.14.3",
     "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.3"

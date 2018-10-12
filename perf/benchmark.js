@@ -5,7 +5,11 @@
 // $:  tsc --target es6 --outDir "lib-new/"
 // $:  node perf/benchmark.js
 const { genFor } = require('./helpers');
-const { testGenerateWithSameDistribution, testGenerateWithSkipDistributionSingle, testGenerateWithSkipDistribution } = require('./tasks');
+const {
+  testGenerateWithSameDistribution,
+  testGenerateWithSkipDistributionSingle,
+  testGenerateWithSkipDistribution
+} = require('./tasks');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
@@ -19,37 +23,44 @@ const PROF_GEN = process.env.PROF_GEN || 'congruential32';
 console.log(`Generator....: ${PROF_GEN}\n`);
 
 const buildBenchmarks = (type, lib) => {
-    return [
-        new Benchmark(
-            `distribution/no@${type}`,
-            () => {
-                const g = genFor(lib, PROF_GEN);
-                testGenerateWithSkipDistribution(lib, g, NUM_TESTS);
-            }, benchConf),
-        new Benchmark(
-            `distribution/re-use@${type}`,
-            () => {
-                const g = genFor(lib, PROF_GEN);
-                testGenerateWithSameDistribution(lib, g, NUM_TESTS);
-            }, benchConf),
-        new Benchmark(
-            `generator/new@${type}`,
-            () => {
-                const g = genFor(lib, PROF_GEN);
-                testGenerateWithSkipDistributionSingle(lib, g);
-            }, benchConf)
-    ];
+  return [
+    new Benchmark(
+      `distribution/no@${type}`,
+      () => {
+        const g = genFor(lib, PROF_GEN);
+        testGenerateWithSkipDistribution(lib, g, NUM_TESTS);
+      },
+      benchConf
+    ),
+    new Benchmark(
+      `distribution/re-use@${type}`,
+      () => {
+        const g = genFor(lib, PROF_GEN);
+        testGenerateWithSameDistribution(lib, g, NUM_TESTS);
+      },
+      benchConf
+    ),
+    new Benchmark(
+      `generator/new@${type}`,
+      () => {
+        const g = genFor(lib, PROF_GEN);
+        testGenerateWithSkipDistributionSingle(lib, g);
+      },
+      benchConf
+    )
+  ];
 };
 
 Benchmark.invoke(
-    [
-        ...buildBenchmarks('Reference', prandRef),
-        ...buildBenchmarks('Test', prandTest),
-        ...buildBenchmarks('Reference', prandRef),
-        ...buildBenchmarks('Test', prandTest),
-    ], {
-        name: 'run',
-        queued: true,
-        onCycle: (event) => console.log(String(event.target)),
-    }
+  [
+    ...buildBenchmarks('Reference', prandRef),
+    ...buildBenchmarks('Test', prandTest),
+    ...buildBenchmarks('Reference', prandRef),
+    ...buildBenchmarks('Test', prandTest)
+  ],
+  {
+    name: 'run',
+    queued: true,
+    onCycle: event => console.log(String(event.target))
+  }
 );

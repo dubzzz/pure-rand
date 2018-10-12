@@ -16,6 +16,10 @@ console.log(`Generator....: ${PROF_GEN}`);
 
 const g = genFor(prand, PROF_GEN);
 switch (PROF_TYPE) {
-    case 'same': testGenerateWithSameDistribution(prand, g, NUM_TESTS); break;
-    case 'skip': testGenerateWithSkipDistribution(prand, g, NUM_TESTS); break;
+  case 'same':
+    testGenerateWithSameDistribution(prand, g, NUM_TESTS);
+    break;
+  case 'skip':
+    testGenerateWithSkipDistribution(prand, g, NUM_TESTS);
+    break;
 }

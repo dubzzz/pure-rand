@@ -7,6 +7,7 @@ cache:
   directories:
     - node_modules
 script:
+  - npm run format:check
   - npm run build
   - npm run build:esm
   - npm run test
