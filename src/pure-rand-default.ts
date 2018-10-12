@@ -13,6 +13,7 @@ export {
   congruential,
   congruential32,
   mersenne,
+  xorshift128plus,
   Distribution,
   uniformIntDistribution
 };
