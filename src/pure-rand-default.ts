@@ -4,6 +4,7 @@ import mersenne from './generator/MersenneTwister';
 import { xorshift128plus } from './generator/XorShift';
 
 import Distribution from './distribution/Distribution';
+import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';
 
 export {
@@ -15,5 +16,6 @@ export {
   mersenne,
   xorshift128plus,
   Distribution,
+  uniformBigIntDistribution,
   uniformIntDistribution
 };
