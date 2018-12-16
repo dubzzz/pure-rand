@@ -1,7 +1,6 @@
-import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { uniformIntDistribution } from '../../../src/distribution/UniformDistribution';
+import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
 import mersenne from '../../../src/generator/MersenneTwister';
 import RandomGenerator from '../../../src/generator/RandomGenerator';
 

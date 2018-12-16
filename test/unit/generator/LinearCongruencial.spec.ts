@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import { congruential, congruential32 } from '../../../src/generator/LinearCongruential';
-import { uniformIntDistribution } from '../../../src/distribution/UniformDistribution';
+import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
 import * as p from './RandomGenerator.properties';
 
 describe('congruential', () => {

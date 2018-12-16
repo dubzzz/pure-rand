@@ -2,42 +2,43 @@ import Distribution from './Distribution';
 import RandomGenerator from '../generator/RandomGenerator';
 
 function uniformIntInternal(from: number, diff: number, rng: RandomGenerator): [number, RandomGenerator] {
-  let nrng = rng;
-  const MIN_RNG = rng.min();
-  const NUM_VALUES = rng.max() - rng.min() + 1;
+  const MinRng = rng.min();
+  const NumValues = rng.max() - rng.min() + 1;
 
   // Range provided by the RandomGenerator is large enough
-
-  if (diff <= NUM_VALUES) {
-    const MAX_ALLOWED = NUM_VALUES - (NUM_VALUES % diff);
+  if (diff <= NumValues) {
+    let nrng = rng;
+    const MaxAllowed = NumValues - (NumValues % diff);
     while (true) {
       const out = nrng.next();
-      const deltaV = out[0] - MIN_RNG;
+      const deltaV = out[0] - MinRng;
       nrng = out[1];
-      if (deltaV < MAX_ALLOWED) {
+      if (deltaV < MaxAllowed) {
         return [(deltaV % diff) + from, nrng];
       }
     }
   }
 
-  // Range provided by the RandomGenerator is too small
-
-  let maxRandomValue = 1;
-  let numIterationsRequired = 0;
-  while (maxRandomValue < diff) {
-    maxRandomValue *= NUM_VALUES;
-    ++numIterationsRequired;
+  // Compute number of iterations required to have enough random
+  // to build uniform entries in the asked range
+  let FinalNumValues = 1;
+  let NumIterations = 0;
+  while (FinalNumValues < diff) {
+    FinalNumValues *= NumValues;
+    ++NumIterations;
   }
-  const maxAllowedRandom = diff * Math.floor((1 * maxRandomValue) / diff);
+  const MaxAcceptedRandom = diff * Math.floor((1 * FinalNumValues) / diff);
 
+  let nrng = rng;
   while (true) {
+    // Aggregate mutiple calls to next() into a single random value
     let value = 0;
-    for (let num = 0; num !== numIterationsRequired; ++num) {
+    for (let num = 0; num !== NumIterations; ++num) {
       const out = nrng.next();
-      value = NUM_VALUES * value + (out[0] - MIN_RNG);
+      value = NumValues * value + (out[0] - MinRng);
       nrng = out[1];
     }
-    if (value < maxAllowedRandom) {
+    if (value < MaxAcceptedRandom) {
       const inDiff = value - diff * Math.floor((1 * value) / diff);
       return [inDiff + from, nrng];
     }
