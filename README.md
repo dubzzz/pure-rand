@@ -106,5 +106,8 @@ Some helpers are also provided in order to ease the use of `RandomGenerator` ins
 
 All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
 
-For the moment only one `Distribution` is available:
+For the moment, available `Distribution` are:
 - `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
+- `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`*
+
+\*Requires your JavaScript interpreter to support bigint
