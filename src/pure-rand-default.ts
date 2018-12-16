@@ -4,7 +4,7 @@ import mersenne from './generator/MersenneTwister';
 import { xorshift128plus } from './generator/XorShift';
 
 import Distribution from './distribution/Distribution';
-import { uniformIntDistribution } from './distribution/UniformDistribution';
+import { uniformIntDistribution } from './distribution/UniformIntDistribution';
 
 export {
   RandomGenerator,
