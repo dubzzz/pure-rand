@@ -111,3 +111,16 @@ For the moment, available `Distribution` are:
 - `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`*
 
 \*Requires your JavaScript interpreter to support bigint
+
+## TypeScript compatibility
+
+### Cannot find name 'bigint'
+
+There are 4 different ways to get rid of this compiler error:
+- Move to TypeScript >=3.2
+- Skip lib checks by adding `"skipLibCheck": true` in your `tsconfig.json`
+- Import a polyfill for type bigint: see https://www.npmjs.com/package/bigint-as-any-ts
+- Add the `declare global { type bigint = any; }` before importing pure-rand
+
+More details: https://github.com/dubzzz/fast-check/issues/277
+
