@@ -4,3 +4,4 @@ example/
 perfs/
 src/
 test/
+buildTypes.js
