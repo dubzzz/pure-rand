@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "declaration": true,
+        "declaration": false,
         "sourceMap": false,
         "alwaysStrict": true,
         "noImplicitAny": true,
@@ -9,6 +9,7 @@
         "preserveConstEnums": true,
         "strictNullChecks": true,
         "downlevelIteration": true,
+        "moduleResolution": "node",
         "module": "commonjs",
         "target": "es3",
         "lib": [

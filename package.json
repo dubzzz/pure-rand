@@ -4,11 +4,14 @@
   "description": " Pure random number generator written in TypeScript",
   "main": "lib/pure-rand.js",
   "module": "lib/esm/pure-rand.js",
-  "types": "lib/pure-rand.d.ts",
+  "types": "lib/types/pure-rand.d.ts",
+  "typesVersions": {
+    ">=3.2": { "*": ["lib/ts3.2/pure-rand.d.ts"] }
+  },
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
-    "build": "tsc",
+    "build": "tsc && tsc -p ./tsconfig.declaration.json && sh build-types.sh",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
