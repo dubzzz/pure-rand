@@ -1,12 +1,16 @@
 {
   "name": "pure-rand",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": " Pure random number generator written in TypeScript",
   "main": "lib/pure-rand.js",
   "module": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
   "typesVersions": {
-    ">=3.2": { "*": ["lib/ts3.2/pure-rand.d.ts"] }
+    ">=3.2": {
+      "*": [
+        "lib/ts3.2/pure-rand.d.ts"
+      ]
+    }
   },
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
