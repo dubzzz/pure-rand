@@ -18,7 +18,10 @@
     "build": "tsc && tsc -p ./tsconfig.declaration.json && node ./buildTypes.js",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "test": "nyc mocha \"test/**/*.spec.ts\"",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "build:bench:old": "tsc --target es6",
+    "build:bench:new": "tsc --target es6 --outDir lib-new/",
+    "auto:bench": "git stash && npm run build:bench:old && git stash pop && npm run build:bench:new && node perf/benchmark.js"
   },
   "repository": {
     "type": "git",

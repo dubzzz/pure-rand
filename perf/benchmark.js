@@ -1,9 +1,13 @@
 // @ts-check
 // This file is a sample snippet to run benchmark accross versions
 // Run it:
-// $:  tsc --target es6
-// $:  tsc --target es6 --outDir "lib-new/"
+// $:  npm run build:bench:old
+// $:  npm run build:bench:new
 // $:  node perf/benchmark.js
+//
+// Or against another generator:
+// $:  PROF_GEN="mersenne" node perf/benchmark.js
+
 const { genFor } = require('./helpers');
 const {
   testGenerateWithSameDistribution,
