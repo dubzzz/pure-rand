@@ -1,40 +1,40 @@
 language: node_js
 node_js:
-  - '10'
-  - '8'
-  - '6'
+- '10'
+- '8'
+- '6'
 cache:
   directories:
-    - node_modules
+  - node_modules
 script:
-  - npm run format:check
-  - npm run build
-  - npm run build:esm
-  - npm run test
+- npm run format:check
+- npm run build
+- npm run build:esm
+- npm run test
 after_success:
-  - npm run coverage
+- npm run coverage
 stages:
-  - test
-  - deploy
+- test
+- deploy
 jobs:
   include:
-    - stage: test
-      env: STEP=LEGACY
-      script:
-        - npm run build
-        - nvm install 0.12
-        - node test/legacy/main.js
-    - stage: deploy
-      if: tag =~ ^v\d+\.
-      script:
-        - npm run build
-        - npm run build:esm
-      deploy:
-        provider: npm
-        email: npm@dubien.org
-        skip_cleanup: true
-        api_key:
-          secure: NeeKvEhDgCMXqd3all5PSnMsOR/kQ69DC7KLRdSP3s1MLt2BkdDTuoINzhvITIgw2TRbIL+I0yJ8fSuO36S3EMYHtih/pD++c9ujwyhvUBJOMB6nBSRm8caaaFv44VPf2uqi+G43XG6298tuY3j7yoDZEfJbfLv10RQQjXSYQPLQSwT6bxg5/wrxz9QRbwE1NkCX2c2/Z+ePTwDmf7+1tfjiue1EyQ1UU4ckFzc0zTaFk7KAxtWG4S5o6oaJsuqVHXj2k4hEEX3O4IS8ZsOOaZTC0AvFU6czQZ82WXFUNRH1CIumRLgcilo9RdVrEROREOy90i/A/cJvVOLm35UwygxBjIhp2KCdQ6ZQm30LavhUV9OPyUhgQQr1j7FK7J54y2yYwfao69QssiMuC1Ri93F8lNeH3Kea+6okX4AwPbSTXK9YAL7Xjl1meiRwNrbLO9WCxvPEZ2Wlb9E3Ck51XQMoScpnHnICnw1RrDtN9ifsCJLJfLXams6MPUN4UppwOtVag1mH2zVKdLAcAfRNsN1jBW7mVOwMptRaD2KS1PrY85bE3dJl+Dc07a5DlI9MKOdZJaEbUOUvDup3gVK9NwqgEsHUlz2mFVAFzXTJ3o2bbfx8By4dubuxdgF8STBVMSuY4t/i2hof62ZhymFqCY9wzvVOzRHLi0KpQk/fOGI=
-        on:
-          tags: true
-      repo: dubzzz/pure-rand
+  - stage: test
+    env: STEP=LEGACY
+    script:
+    - npm run build
+    - nvm install 0.12
+    - node test/legacy/main.js
+  - stage: deploy
+    if: tag =~ ^v\d+\.
+    script:
+    - npm run build
+    - npm run build:esm
+    deploy:
+      provider: npm
+      email: npm@dubien.org
+      skip_cleanup: true
+      api_key:
+        secure: lHunqDdos1umal6SvUE6SdOf8DC9BCI4qhumxwf3RXt1E0OqKh2tIfdfBMb+JdTjceb1sRswPg+M0phmU6fRYI81ZjPA7/qzW4V8zy3E/TGbH6TT0Tx2AhPUDgNE1kt2mW3L5T9uHX+CVPsrqNmauQDAtzf4HXJCroQ+QWGwUzVjvEVc/KSeb5MFer1tQoTcjj0bHeFta5e/W0IK2rx6dHI817ctOL8VYoNqZ0iiasPqQo4AeBVouX0WRSXEAti3FN+l5oZ3dLOHbztQqWj0u86j3tH4QJ6ypjx3vd8JTb2ePzSg2OVdP3/MkRHlpehyoCAr+Cwme7FeKJVI748/BmshiFFAYbMZrnUj9sbmJZM/2tkpZh+uDL/FkADv3QIo/O++l30C8fMFScMkujGJuCECJBe/mZYDRJFjcl0BCgsJbk0F9MY2cxfHWssUpa31E3WoPEJa+1/oy6HYlN3wq9KjxrTmbJ87PBexnfSgmzB2QVw0irEjGETBkZvUeDP4LuHx7vHml1TqRvlcFZMrV9tT9CT7ngTB/6J/yey8WOaU4u8uJoBY23xJipgxGnqHk7PmYqV0Laa+Bn+aoSITgzvBYvY0imZCa3+YD3G1/2eBuJ6ztBALjQRWM4uGix0UXaRLzcdVlLlCxSTOD6TW8ZneQX8Ng5fVcv/ZkOdmIV0=
+      on:
+        tags: true
+    repo: dubzzz/pure-rand
