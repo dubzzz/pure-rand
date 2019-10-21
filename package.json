@@ -12,6 +12,7 @@
       ]
     }
   },
+  "sideEffects": false,
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
