@@ -94,6 +94,7 @@ All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/ge
 
 The following generators are available:
 - `prand.xorshift128plus(seed: number)`: xorshift128+ generator whose values are within the range -0x80000000 to 0x7fffffff
+- `prand.xoroshiro128plus(seed: number)`: xoroshiro128+ generator whose values are within the range -0x80000000 to 0x7fffffff
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
 - `prand.congruential(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0x7fff
 - `prand.congruential32(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0xffffffff
