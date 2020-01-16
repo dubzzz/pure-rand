@@ -1,5 +1,9 @@
 import { RandomGenerator } from './RandomGenerator';
 
+// XorShift128+ with a=23, b=17, c=26,
+// Algorithm and parameters used by V8 for Math.random()
+// - http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf
+// - https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
 class XorShift128Plus implements RandomGenerator {
   constructor(readonly s01: number, readonly s00: number, readonly s11: number, readonly s10: number) {}
   min(): number {
