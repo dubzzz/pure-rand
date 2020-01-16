@@ -1,5 +1,6 @@
 export default interface RandomGenerator {
   next(): [number, RandomGenerator];
+  jump?(): RandomGenerator;
   min(): number; //inclusive
   max(): number; //inclusive
 }
