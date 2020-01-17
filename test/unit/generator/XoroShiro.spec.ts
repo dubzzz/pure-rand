@@ -18,7 +18,7 @@ describe('xoroshiro128plus', () => {
     // uint64_t rotl(const uint64_t x, int k) {
     //   return (x << k) | (x >> (64 - k));
     // }
-    // uint64_t xoroshiro128plus() {
+    // uint64_t next() {
     //   const uint64_t s0 = s[0];
     //   uint64_t s1 = s[1];
     //   const uint64_t result = s0 + s1;
@@ -133,7 +133,139 @@ describe('xoroshiro128plus', () => {
       ].map(v => v | 0)
     );
   });
+  it('Should produce the right sequence after jump for seed=42', () => {
+    let g = xoroshiro128plus(42).jump!();
+    let data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const [v, nextG] = g.next();
+      data.push(v);
+      g = nextG;
+    }
+    // should be equivalent to the following C code (+previous):
+    // void jump() {
+    //   static const uint64_t JUMP[] = { 0xdf900294d8f554a5, 0x170865df4b3201fc };
+    //   uint64_t s0 = 0;
+    //   uint64_t s1 = 0;
+    //   for(int i = 0; i < sizeof JUMP / sizeof *JUMP; i++) {
+    //     for(int b = 0; b < 64; b++) {
+    //       if (JUMP[i] & UINT64_C(1) << b) {
+    //         s0 ^= s[0];
+    //         s1 ^= s[1];
+    //       }
+    //       next();
+    //     }
+    //   }
+    //   s[0] = s0;
+    //   s[1] = s1;
+    // }
+    assert.deepEqual(
+      data,
+      [
+        1900530380,
+        2341274553,
+        4162717490,
+        2793985206,
+        3278912033,
+        1720265279,
+        1825471876,
+        3286742441,
+        1587050712,
+        3950106747,
+        540536355,
+        991034460,
+        2981829782,
+        4159175603,
+        2930607761,
+        2509744087,
+        137421383,
+        4073225526,
+        1650357769,
+        3278907225,
+        1023629082,
+        1415062380,
+        1032291476,
+        630729539,
+        1062523753,
+        2745179945,
+        1492748476,
+        2700841735,
+        540597325,
+        3257104696,
+        2538947884,
+        3763735773,
+        3752663556,
+        75786448,
+        959579757,
+        794851477,
+        2028874214,
+        802763541,
+        501515614,
+        3011491499,
+        3209732194,
+        2106362488,
+        573325014,
+        692069843,
+        2018337928,
+        1079162215,
+        4086381254,
+        4010906511,
+        2073612605,
+        1843940750,
+        2647345033,
+        3519462589,
+        834294388,
+        1754260385,
+        3973457473,
+        4129446855,
+        2052775225,
+        2106507442,
+        4178200040,
+        1507482091,
+        831962939,
+        4036397176,
+        3450323052,
+        810857617,
+        1009339640,
+        544755776,
+        2015019841,
+        1590786875,
+        2300047967,
+        1153713139,
+        3461511701,
+        2255374235,
+        3041282447,
+        3874500660,
+        2365439220,
+        3476174909,
+        2804287165,
+        3529576764,
+        2482037719,
+        3758708190,
+        2041488362,
+        3953105597,
+        2604691846,
+        4241700961,
+        3231746381,
+        2481435019,
+        2100261339,
+        1442114730,
+        756514823,
+        316144959,
+        3160143158,
+        2910044562,
+        4048037725,
+        1229183044,
+        2685549593,
+        173816268,
+        3565373219,
+        4220080560,
+        3252249431,
+        2240144151
+      ].map(v => v | 0)
+    );
+  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xoroshiro128plus)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xoroshiro128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xoroshiro128plus)));
+  it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xoroshiro128plus)));
 });

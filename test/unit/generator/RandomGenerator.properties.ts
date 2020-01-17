@@ -31,4 +31,15 @@ function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export { sameSeedSameSequences, sameSequencesIfCallTwice, valuesInRange };
+function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
+  return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
+    const rng = rng_for(seed);
+    // rngNextFirst = rng.next.next..(offset times)..next.jump
+    const rngNextFirst = skipN(rng, offset).jump!();
+    // rngJumpFirst = rng.jump.next.next..(offset times)..next
+    const rngJumpFirst = skipN(rng.jump!(), offset);
+    expect(rngNextFirst.next()[0]).toBe(rngJumpFirst.next()[0]);
+  });
+}
+
+export { sameSeedSameSequences, sameSequencesIfCallTwice, valuesInRange, noOrderNextJump };
