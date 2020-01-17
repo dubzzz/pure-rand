@@ -26,10 +26,7 @@ class XoroShiro128Plus implements RandomGenerator {
   jump(): XoroShiro128Plus {
     // equivalent to 2^64 calls to next()
     // can be used to generate 2^64 non-overlapping subsequences
-    let ts01 = this.s01;
-    let ts00 = this.s00;
-    let ts11 = this.s11;
-    let ts10 = this.s10;
+    let rngRunner: XoroShiro128Plus = this;
     let ns01 = 0;
     let ns00 = 0;
     let ns11 = 0;
@@ -38,29 +35,21 @@ class XoroShiro128Plus implements RandomGenerator {
     for (let i = 0; i !== 2; ++i) {
       for (let b = 0; b !== 32; ++b) {
         if (jump[2 * i + 1] & (0x1 << b)) {
-          ns01 ^= ts01;
-          ns00 ^= ts00;
-          ns11 ^= ts11;
-          ns10 ^= ts10;
+          ns01 ^= rngRunner.s01;
+          ns00 ^= rngRunner.s00;
+          ns11 ^= rngRunner.s11;
+          ns10 ^= rngRunner.s10;
         }
-        const prng = new XoroShiro128Plus(ts01, ts00, ts11, ts10).next()[1];
-        ts01 = prng.s01;
-        ts00 = prng.s00;
-        ts11 = prng.s11;
-        ts10 = prng.s10;
+        rngRunner = rngRunner.next()[1];
       }
       for (let b = 0; b !== 32; ++b) {
         if (jump[2 * i] & (0x1 << b)) {
-          ns01 ^= ts01;
-          ns00 ^= ts00;
-          ns11 ^= ts11;
-          ns10 ^= ts10;
+          ns01 ^= rngRunner.s01;
+          ns00 ^= rngRunner.s00;
+          ns11 ^= rngRunner.s11;
+          ns10 ^= rngRunner.s10;
         }
-        const prng = new XoroShiro128Plus(ts01, ts00, ts11, ts10).next()[1];
-        ts01 = prng.s01;
-        ts00 = prng.s00;
-        ts11 = prng.s11;
-        ts10 = prng.s10;
+        rngRunner = rngRunner.next()[1];
       }
     }
     return new XoroShiro128Plus(ns01, ns00, ns11, ns10);
