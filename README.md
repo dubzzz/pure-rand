@@ -75,6 +75,14 @@ const [nRange, gen3] = prand.uniformIntDistribution(0, 9)(gen1);
 // prand.uniformIntDistribution(from, to, rng) which is totally equivalent to prand.uniformIntDistribution(from, to)(rng)
 // In terms of performances, the 3 parameters version is faster
 const [nNoDistributionInstance, gen4] = prand.uniformIntDistribution(0, 9, gen3);
+
+// Some generators come with built-in jump
+// jump provides the ability to skip a very large number of intermediate values
+// Calling jump is recommended whenever you want to build non-overlapping subsequences
+const gen4 = prand.xoroshiro128plus(seed);
+const offsetGen4 = gen4.jump();
+// In the case of xoroshiro128plus,
+// jump is equivalent to 2^64 calls to next
 ```
 
 Module import can also be done using one of the following syntaxes:
