@@ -1,5 +1,5 @@
 // @ts-check
-// This file is a sample snippet to run benchmark accross versions
+// This file is a sample snippet to run benchmark across versions
 // Run it:
 // $:  npm run build:bench:old
 // $:  npm run build:bench:new
