@@ -18,6 +18,12 @@ const bigIntArbitrary = fc
   });
 
 describe('uniformBigIntDistribution', () => {
+  if (typeof BigInt === 'undefined') {
+    it('no test', () => {
+      expect(true).toBe(true);
+    });
+    return;
+  }
   if (typeof BigInt !== 'undefined') {
     it('Should always generate values within the range', () =>
       fc.assert(
