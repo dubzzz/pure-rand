@@ -24,6 +24,9 @@ describe('xorshift128plus', () => {
     //   s[1] = s1 ^ s0 ^ (s1 >> 18) ^ (s0 >> 5); // b, c
     //   return result & 0xffffffff;
     // }
+    // int main() {
+    //   for (int i = 0 ; i != 100 ; ++i) { std::cout << next() << ","; }
+    // }
     assert.deepEqual(
       data,
       [
@@ -130,7 +133,143 @@ describe('xorshift128plus', () => {
       ].map(v => v | 0)
     );
   });
+  it('Should produce the right sequence after jump for seed=42', () => {
+    let g = xorshift128plus(42).jump!();
+    let data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const [v, nextG] = g.next();
+      data.push(v);
+      g = nextG;
+    }
+    // should be equivalent to the following C++ code (+previous):
+    // void jump() {
+    //   static const uint64_t JUMP[] = { 0x8a5cd789635d2dff, 0x121fd2155c472f96 };
+    //   uint64_t s0 = 0;
+    //   uint64_t s1 = 0;
+    //   for(int i = 0; i < sizeof JUMP / sizeof *JUMP; i++) {
+    //     for(int b = 0; b < 64; b++) {
+    //       if (JUMP[i] & UINT64_C(1) << b) {
+    //         s0 ^= s[0];
+    //         s1 ^= s[1];
+    //       }
+    //       next();
+    //     }
+    //   }
+    //   s[0] = s0;
+    //   s[1] = s1;
+    // }
+    // int main() {
+    //   jump();
+    //   for (int i = 0 ; i != 100 ; ++i) { std::cout << next() << ","; }
+    // }
+    assert.deepEqual(
+      data,
+      [
+        2971276074,
+        3466165198,
+        456875496,
+        2879848137,
+        4162428146,
+        2513269982,
+        2277233661,
+        2163024882,
+        3082356668,
+        1459960119,
+        3225207140,
+        418458707,
+        465389025,
+        33345291,
+        9975393,
+        1398264340,
+        2941704490,
+        4219353700,
+        1050887263,
+        3537623901,
+        1011298813,
+        2886999094,
+        2095512742,
+        719748796,
+        2031575611,
+        246165700,
+        306697934,
+        932458853,
+        3811330946,
+        2780216938,
+        3008525324,
+        1217535119,
+        3060075487,
+        3829564179,
+        1862997734,
+        3188200581,
+        3652713690,
+        1950714292,
+        2865049298,
+        1937705104,
+        1297917374,
+        1333060788,
+        4089226157,
+        205959794,
+        2227024661,
+        3714058862,
+        3728103989,
+        3728972300,
+        659396325,
+        3185943613,
+        1039549819,
+        2822001969,
+        406983436,
+        2343603502,
+        299506842,
+        383551218,
+        698423599,
+        3611096673,
+        3762219019,
+        2293131106,
+        373955997,
+        2445208504,
+        3057049169,
+        1255899189,
+        4215756297,
+        957357335,
+        3456668141,
+        1989928862,
+        3510600746,
+        3806106322,
+        2542824253,
+        3920739152,
+        2851853721,
+        4208037803,
+        1276020689,
+        3735104409,
+        3925674077,
+        3708482212,
+        4262192769,
+        2607567703,
+        531897672,
+        3317376658,
+        1903132291,
+        353686572,
+        509303103,
+        3991810724,
+        1786729004,
+        1709580489,
+        550755974,
+        1081340778,
+        1040041085,
+        2723398036,
+        3276389190,
+        506083384,
+        2810025290,
+        3110824839,
+        3094567277,
+        2333614204,
+        3869414189,
+        678984428
+      ].map(v => v | 0)
+    );
+  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xorshift128plus)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xorshift128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xorshift128plus)));
+  it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xorshift128plus)));
 });

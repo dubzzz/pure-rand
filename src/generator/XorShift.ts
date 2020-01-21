@@ -22,6 +22,37 @@ class XorShift128Plus implements RandomGenerator {
     const b1 = a1 ^ this.s11 ^ (a1 >>> 18) ^ (this.s11 >>> 5);
     return [(this.s00 + this.s10) | 0, new XorShift128Plus(this.s11, this.s10, b1, b0)];
   }
+  jump(): XorShift128Plus {
+    // equivalent to 2^64 calls to next()
+    // can be used to generate 2^64 non-overlapping subsequences
+    let rngRunner: XorShift128Plus = this;
+    let ns01 = 0;
+    let ns00 = 0;
+    let ns11 = 0;
+    let ns10 = 0;
+    const jump = [0x8a5cd789, 0x635d2dff, 0x121fd215, 0x5c472f96];
+    for (let i = 0; i !== 2; ++i) {
+      for (let b = 0; b !== 32; ++b) {
+        if (jump[2 * i + 1] & (0x1 << b)) {
+          ns01 ^= rngRunner.s01;
+          ns00 ^= rngRunner.s00;
+          ns11 ^= rngRunner.s11;
+          ns10 ^= rngRunner.s10;
+        }
+        rngRunner = rngRunner.next()[1];
+      }
+      for (let b = 0; b !== 32; ++b) {
+        if (jump[2 * i] & (0x1 << b)) {
+          ns01 ^= rngRunner.s01;
+          ns00 ^= rngRunner.s00;
+          ns11 ^= rngRunner.s11;
+          ns10 ^= rngRunner.s10;
+        }
+        rngRunner = rngRunner.next()[1];
+      }
+    }
+    return new XorShift128Plus(ns01, ns00, ns11, ns10);
+  }
 }
 
 export const xorshift128plus = function(seed: number): RandomGenerator {
