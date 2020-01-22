@@ -7,12 +7,17 @@ import * as p from './RandomGenerator.properties';
 describe('mersenne', () => {
   it('Should produce the right sequence for seed=42', () => {
     let g = mersenne(42);
-    let data = [];
+    const data = [];
     for (let idx = 0; idx !== 1000; ++idx) {
       const [v, nextG] = g.next();
       data.push(v);
       g = nextG;
     }
+    // should be equivalent to the following Python code:
+    // from numpy.random import MT19937
+    // rng = MT19937(42)
+    // rng._legacy_seeding(42)
+    // print([(rng.random_raw() & 0xffffffff) for v in range(1000)])
     assert.deepEqual(data, [
       1608637542,
       3421126067,

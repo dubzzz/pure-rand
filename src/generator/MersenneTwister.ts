@@ -79,7 +79,7 @@ class MersenneTwister implements RandomGenerator {
     return MersenneTwister.max;
   }
 
-  next(): [number, RandomGenerator] {
+  next(): [number, MersenneTwister] {
     let y = this.states[this.index];
     y ^= this.states[this.index] >>> MersenneTwister.U;
     y ^= (y << MersenneTwister.S) & MersenneTwister.B;
