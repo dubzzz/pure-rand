@@ -28,7 +28,6 @@ class MersenneTwister implements RandomGenerator {
   static readonly L = 18;
   static readonly MASK_LOWER = 2 ** MersenneTwister.R - 1;
   static readonly MASK_UPPER = 2 ** MersenneTwister.R;
-  static readonly MEXP = 19937;
 
   private static twist(prev: number[]): number[] {
     const mt = prev.slice();
@@ -149,53 +148,45 @@ class MersenneTwister implements RandomGenerator {
   }
 
   private addState(other: MersenneTwister): MersenneTwister {
-    let i = 0;
-    let pt1 = this.index;
-    let pt2 = other.index;
+    const idx = this.index;
+    const otherIdx = other.index;
     const states = this.states.slice(0);
 
-    if (pt2 - pt1 >= 0) {
-      for (i = 0; i !== MersenneTwister.N - pt2; ++i) {
-        states[i + pt1] ^= other.states[i + pt2];
-      }
-      for (; i !== MersenneTwister.N - pt1; ++i) {
-        states[i + pt1] ^= other.states[i + pt2 - MersenneTwister.N];
-      }
-      for (; i !== MersenneTwister.N; ++i) {
-        states[i + pt1 - MersenneTwister.N] ^= other.states[i + pt2 - MersenneTwister.N];
-      }
-    } else {
-      for (i = 0; i !== MersenneTwister.N - pt1; ++i) {
-        states[i + pt1] ^= other.states[i + pt2];
-      }
-      for (; i !== MersenneTwister.N - pt2; ++i) {
-        states[i + pt1 - MersenneTwister.N] ^= other.states[i + pt2];
-      }
-      for (; i !== MersenneTwister.N; ++i) {
-        states[i + pt1 - MersenneTwister.N] ^= other.states[i + pt2 - MersenneTwister.N];
-      }
+    const endLoop1 = otherIdx >= idx ? MersenneTwister.N - otherIdx : MersenneTwister.N - idx;
+    for (let i = 0; i !== endLoop1; ++i) {
+      states[i + idx] ^= other.states[i + otherIdx];
     }
 
-    return new MersenneTwister(states.map(v => toUint32(v)), this.index);
+    const endLoop2 = otherIdx >= idx ? MersenneTwister.N - idx : MersenneTwister.N - otherIdx;
+    const offsetStates = otherIdx >= idx ? 0 : MersenneTwister.N;
+    const offsetOtherStates = otherIdx >= idx ? MersenneTwister.N : 0;
+    for (let i = endLoop1; i !== endLoop2; ++i) {
+      states[i + idx - offsetStates] ^= other.states[i + otherIdx - offsetOtherStates];
+    }
+
+    for (let i = endLoop2; i !== MersenneTwister.N; ++i) {
+      states[i + idx - MersenneTwister.N] ^= other.states[i + otherIdx - MersenneTwister.N];
+    }
+
+    return new MersenneTwister(states, idx);
   }
 
   private nextForJump(): MersenneTwister {
     const states = this.states.slice(0);
     const idx = this.index;
-    const mag02 = [0, MersenneTwister.A];
 
     if (idx < MersenneTwister.N - MersenneTwister.M) {
       const y = (states[idx] & MersenneTwister.MASK_UPPER) | (states[idx + 1] & MersenneTwister.MASK_LOWER);
-      states[idx] = states[idx + MersenneTwister.M] ^ (y >>> 1) ^ mag02[y & 1];
+      states[idx] = states[idx + MersenneTwister.M] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
     } else if (idx < MersenneTwister.N - 1) {
       const y = (states[idx] & MersenneTwister.MASK_UPPER) | (states[idx + 1] & MersenneTwister.MASK_LOWER);
-      states[idx] = states[idx + MersenneTwister.M - MersenneTwister.N] ^ (y >>> 1) ^ mag02[y & 1];
+      states[idx] = states[idx + MersenneTwister.M - MersenneTwister.N] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
     } else {
       const y = (states[idx] & MersenneTwister.MASK_UPPER) | (states[0] & MersenneTwister.MASK_LOWER);
-      states[idx] = states[MersenneTwister.M - 1] ^ (y >>> 1) ^ mag02[y & 1];
+      states[idx] = states[MersenneTwister.M - 1] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
     }
 
-    return new MersenneTwister(states.map(v => toUint32(v)), (idx + 1) % MersenneTwister.N);
+    return new MersenneTwister(states, idx < MersenneTwister.N - 1 ? idx + 1 : 0);
   }
 }
 
