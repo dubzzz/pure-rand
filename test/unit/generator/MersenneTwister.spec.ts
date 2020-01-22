@@ -1144,5 +1144,5 @@ describe('mersenne', () => {
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(mersenne)));
-  //it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(mersenne)));
+  it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(mersenne)));
 });
