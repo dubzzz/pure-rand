@@ -30,19 +30,11 @@ class XorShift128Plus implements RandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    const jump = [0x8a5cd789, 0x635d2dff, 0x121fd215, 0x5c472f96];
-    for (let i = 0; i !== 2; ++i) {
-      for (let b = 0; b !== 32; ++b) {
-        if (jump[2 * i + 1] & (0x1 << b)) {
-          ns01 ^= rngRunner.s01;
-          ns00 ^= rngRunner.s00;
-          ns11 ^= rngRunner.s11;
-          ns10 ^= rngRunner.s10;
-        }
-        rngRunner = rngRunner.next()[1];
-      }
-      for (let b = 0; b !== 32; ++b) {
-        if (jump[2 * i] & (0x1 << b)) {
+    const jump = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
+    for (let i = 0; i !== 4; ++i) {
+      for (let mask = 1; mask; mask <<= 1) {
+        // Because: (1 << 31) << 1 === 0
+        if (jump[i] & mask) {
           ns01 ^= rngRunner.s01;
           ns00 ^= rngRunner.s00;
           ns11 ^= rngRunner.s11;
