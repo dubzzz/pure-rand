@@ -31,15 +31,16 @@ class MersenneTwister implements RandomGenerator {
 
   private static twist(prev: number[]): number[] {
     const mt = prev.slice();
-    for (let idx = 0; idx !== MersenneTwister.N; ++idx) {
-      const x =
-        (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[(idx + 1) % MersenneTwister.N] & MersenneTwister.MASK_LOWER);
-      let xA = x >>> 1;
-      if (x & 1) {
-        xA ^= MersenneTwister.A;
+    for (let idx = 0; idx !== MersenneTwister.N - MersenneTwister.M; ++idx) {
+      const y = (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[idx + 1] & MersenneTwister.MASK_LOWER);
+      mt[idx] = mt[idx + MersenneTwister.M] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
       }
-      mt[idx] = mt[(idx + MersenneTwister.M) % MersenneTwister.N] ^ xA;
+    for (let idx = MersenneTwister.N - MersenneTwister.M; idx !== MersenneTwister.N - 1; ++idx) {
+      const y = (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[idx + 1] & MersenneTwister.MASK_LOWER);
+      mt[idx] = mt[idx + MersenneTwister.M - MersenneTwister.N] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
     }
+    const y = (mt[MersenneTwister.N - 1] & MersenneTwister.MASK_UPPER) + (mt[0] & MersenneTwister.MASK_LOWER);
+    mt[MersenneTwister.N - 1] = mt[MersenneTwister.M - 1] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
     return mt;
   }
 
