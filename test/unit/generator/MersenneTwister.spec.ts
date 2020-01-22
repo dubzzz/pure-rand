@@ -1021,7 +1021,128 @@ describe('mersenne', () => {
       1946654618
     ]);
   });
+  it('Should produce the right sequence after jump for seed=42', () => {
+    let g = mersenne(42).next()[1].jump!();
+    // Rq: we need to call next because of the implementation of jump in numpy when pos = 624 (only on init)
+    //     the jump of numpy changes pos = 624 to pos = 0 without calling twist internally
+    const data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const [v, nextG] = g.next();
+      data.push(v);
+      g = nextG;
+    }
+    // should be equivalent to the following Python code:
+    // from numpy.random import MT19937
+    // rng = MT19937(42)
+    // rng._legacy_seeding(42)
+    // rng.random_raw()
+    // rng = rng.jumped()
+    // print([(rng.random_raw() & 0xffffffff) for v in range(100)])
+    assert.deepEqual(data, [
+      2190714745,
+      1965188959,
+      1379052680,
+      2569057680,
+      2171871210,
+      715823197,
+      4026304847,
+      2259651108,
+      2419187232,
+      1923956594,
+      3655311217,
+      2541866021,
+      2240511419,
+      625816597,
+      2964577298,
+      235153513,
+      815068659,
+      1814042141,
+      4011344880,
+      271866001,
+      1965086380,
+      3792988528,
+      2862492037,
+      3464261288,
+      2105530489,
+      1012576120,
+      3761346895,
+      1639091384,
+      1946011725,
+      2121544112,
+      3146057330,
+      1756119346,
+      460666020,
+      2865668159,
+      2449335533,
+      2332317467,
+      3866586593,
+      535119307,
+      2923200310,
+      898427909,
+      2331085497,
+      4061300517,
+      1552337375,
+      1189840997,
+      1253999136,
+      2242247813,
+      4086995192,
+      3788405149,
+      1953016786,
+      4135057873,
+      2474386951,
+      3586229419,
+      3338188000,
+      2494906733,
+      3025757707,
+      142656410,
+      745422182,
+      1856292042,
+      3746446133,
+      1410491637,
+      3524942760,
+      1646558119,
+      2298348655,
+      1164600291,
+      2760579333,
+      1548490531,
+      3580334992,
+      4191722908,
+      2477911605,
+      1547755351,
+      2039485683,
+      488973334,
+      1155277815,
+      817026190,
+      332248454,
+      3620544670,
+      740131568,
+      1679278317,
+      3541849760,
+      1634910275,
+      3605855604,
+      270904239,
+      1541805683,
+      200741180,
+      2972798669,
+      3268786060,
+      3568515476,
+      3878146283,
+      3052638204,
+      3222451558,
+      1111730458,
+      3722514900,
+      14932961,
+      394170035,
+      3035438954,
+      3861987402,
+      1294639046,
+      3723933157,
+      2321085285,
+      1329898955
+    ]);
+  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(mersenne)));
+  //it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(mersenne)));
 });
