@@ -81,8 +81,9 @@ const [nNoDistributionInstance, gen4] = prand.uniformIntDistribution(0, 9, gen3)
 // Calling jump is recommended whenever you want to build non-overlapping subsequences
 const gen4 = prand.xoroshiro128plus(seed);
 const offsetGen4 = gen4.jump();
-// In the case of xoroshiro128plus,
-// jump is equivalent to 2^64 calls to next
+// In the case of:
+// - xoroshiro128plus - jump is equivalent to 2^64 calls to next
+// - xorshift128plus  - jump is equivalent to 2^64 calls to next
 ```
 
 Module import can also be done using one of the following syntaxes:
