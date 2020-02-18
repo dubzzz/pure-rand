@@ -1,13 +1,5 @@
 import { RandomGenerator } from './RandomGenerator';
 
-function product32bits(a: number, b: number) {
-  const alo = a & 0xffff;
-  const ahi = (a >>> 16) & 0xffff;
-  const blo = b & 0xffff;
-  const bhi = (b >>> 16) & 0xffff;
-  return alo * blo + ((alo * bhi + ahi * blo) << 16);
-}
-
 class MersenneTwister implements RandomGenerator {
   static readonly min: number = 0;
   static readonly max: number = 0xffffffff;
@@ -46,7 +38,7 @@ class MersenneTwister implements RandomGenerator {
     out[0] = seed;
     for (let idx = 1; idx !== MersenneTwister.N; ++idx) {
       const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-      out[idx] = (product32bits(MersenneTwister.F, xored) + idx) | 0;
+      out[idx] = (Math.imul(MersenneTwister.F, xored) + idx) | 0;
     }
     return out;
   }
