@@ -1,8 +1,5 @@
 import { RandomGenerator } from './RandomGenerator';
 
-function toUint32(num: number): number {
-  return (num | 0) >= 0 ? num | 0 : (num | 0) + 4294967296;
-}
 function product32bits(a: number, b: number) {
   const alo = a & 0xffff;
   const ahi = (a >>> 16) & 0xffff;
@@ -85,7 +82,7 @@ class MersenneTwister implements RandomGenerator {
     y ^= (y << MersenneTwister.S) & MersenneTwister.B;
     y ^= (y << MersenneTwister.T) & MersenneTwister.C;
     y ^= y >>> MersenneTwister.L;
-    return [toUint32(y), new MersenneTwister(this.states, this.index + 1)];
+    return [y >>> 0, new MersenneTwister(this.states, this.index + 1)];
   }
 }
 
