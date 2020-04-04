@@ -22,6 +22,24 @@ jobs:
         - npm run build:prod
         - nvm install 0.12
         - node test/legacy/main.js
+    - stage: test
+      env: STEP=COMMONJS_ESM
+      script:
+        - npm run build:prod
+        - npm link
+        - cd test/esm
+        # Node 8 does not understand ES modules
+        - nvm install 8
+        - node --version
+        - sh run.sh
+        # Node 12 requires a flag to support ES modules but can understand them
+        - nvm install 12
+        - node --version
+        - sh run.sh
+        # Node >=13.2.0 enables support for ES modules by default
+        - nvm install 13
+        - node --version
+        - sh run.sh
     - stage: deploy
       if: tag =~ ^v\d+\.
       script:

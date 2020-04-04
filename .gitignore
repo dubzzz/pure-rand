@@ -3,5 +3,6 @@ lib/
 lib-*/
 node_modules/
 .nyc_output/
+out.txt
 v8.log
 v8.out
