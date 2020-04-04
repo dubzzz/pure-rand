@@ -28,18 +28,26 @@ jobs:
     - stage: test
       env: STEP=COMMONJS_ESM
       script:
+        - PROJECT_ROOT_PATH="$(pwd)"
         - yarn build:prod
-        - yarn link
-        - cd test/esm
         # Node 8 does not understand ES modules
+        - cd PROJECT_ROOT_PATH
+        - npm link # `npm link` has to be done for each version of node
+        - cd test/esm
         - nvm install 8
         - node --version
         - sh run.sh
         # Node 12 requires a flag to support ES modules but can understand them
+        - cd PROJECT_ROOT_PATH
+        - npm link
+        - cd test/esm
         - nvm install 12
         - node --version
         - sh run.sh
         # Node >=13.2.0 enables support for ES modules by default
+        - cd PROJECT_ROOT_PATH
+        - npm link
+        - cd test/esm
         - nvm install 13
         - node --version
         - sh run.sh
