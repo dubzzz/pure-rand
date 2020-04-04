@@ -11,7 +11,7 @@
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
-    "test": "jest --config jest.config.js --coverage",
+    "test": "jest --config jest.config.cjs --coverage",
     "coverage": "cat ./coverage/lcov.info | coveralls",
     "build:bench:old": "tsc --target es6",
     "build:bench:new": "tsc --target es6 --outDir lib-new/",
@@ -35,11 +35,10 @@
     "coveralls": "^3.0.9",
     "fast-check": "^1.21.0",
     "glob": "^7.1.6",
-    "jest": "^24.9.0",
+    "jest": "^25.2.7",
     "prettier": "1.16.4",
     "source-map-support": "^0.5.16",
-    "ts-jest": "^24.3.0",
-    "ts-node": "^8.6.2",
+    "ts-jest": "^25.3.1",
     "typescript": "^3.7.5"
   },
   "keywords": [
