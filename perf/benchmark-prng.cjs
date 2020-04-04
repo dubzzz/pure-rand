@@ -3,10 +3,10 @@
 // Run it:
 // $:  yarn build:bench:old
 // $:  yarn build:bench:new
-// $:  node perf/benchmark-prng.js
+// $:  node perf/benchmark-prng.cjs
 
 const Benchmark = require('benchmark');
-const { genFor } = require('./helpers');
+const { genFor } = require('./helpers.cjs');
 
 const WARMUP_SAMPLES = 100;
 const MIN_SAMPLES = 500;

@@ -2,10 +2,10 @@
 // This file is a sample snippet to run a profiler on
 // Run it:
 // $:  tsc --target es6
-// $:  node --prof --no-logfile-per-isolate perf/profiler.js
+// $:  node --prof --no-logfile-per-isolate perf/profiler.cjs
 // $:  node --prof-process v8.log > v8.out
-const { genFor } = require('./helpers');
-const { testGenerateWithSameDistribution, testGenerateWithSkipDistribution } = require('./tasks');
+const { genFor } = require('./helpers.cjs');
+const { testGenerateWithSameDistribution, testGenerateWithSkipDistribution } = require('./tasks.cjs');
 const prand = require('../lib/pure-rand');
 
 const NUM_TESTS = 10000000;
