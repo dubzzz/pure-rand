@@ -3,17 +3,17 @@
 // Run it:
 // $:  npm run build:bench:old
 // $:  npm run build:bench:new
-// $:  node perf/benchmark.js
+// $:  node perf/benchmark.cjs
 //
 // Or against another generator:
-// $:  PROF_GEN="mersenne" node perf/benchmark.js
+// $:  PROF_GEN="mersenne" node perf/benchmark.cjs
 
-const { genFor } = require('./helpers');
+const { genFor } = require('./helpers.cjs');
 const {
   testGenerateWithSameDistribution,
   testGenerateWithSkipDistributionSingle,
   testGenerateWithSkipDistribution
-} = require('./tasks');
+} = require('./tasks.cjs');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
