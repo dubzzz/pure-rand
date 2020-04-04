@@ -9,8 +9,7 @@ cache:
 if: branch = master OR branch =~ ^next- OR branch =~ ^fix-v\d+\. OR tag =~ ^v\d+\.
 script:
   - yarn format:check
-  - yarn build
-  - yarn build:esm
+  - yarn build:prod
   - yarn test
 after_success:
   - yarn coverage
@@ -22,14 +21,13 @@ jobs:
     - stage: test
       env: STEP=LEGACY
       script:
-        - yarn build
+        - yarn build:prod
         - nvm install 0.12
         - node test/legacy/main.js
     - stage: deploy
       if: tag =~ ^v\d+\.
       script:
-        - yarn build
-        - yarn build:esm
+        - yarn build:prod
       deploy:
         provider: npm
         email: npm@dubien.org
