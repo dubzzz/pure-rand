@@ -7,8 +7,7 @@ cache:
     - node_modules
 script:
   - npm run format:check
-  - npm run build
-  - npm run build:esm
+  - npm run build:prod
   - npm run test
 after_success:
   - npm run coverage
@@ -20,14 +19,13 @@ jobs:
     - stage: test
       env: STEP=LEGACY
       script:
-        - npm run build
+        - npm run build:prod
         - nvm install 0.12
         - node test/legacy/main.js
     - stage: deploy
       if: tag =~ ^v\d+\.
       script:
-        - npm run build
-        - npm run build:esm
+        - npm run build:prod
       deploy:
         provider: npm
         email: npm@dubien.org
