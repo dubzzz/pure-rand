@@ -11,7 +11,6 @@
     }
   },
   "module": "lib/esm/pure-rand.js",
-  "browser": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
   "sideEffects": false,
   "scripts": {
