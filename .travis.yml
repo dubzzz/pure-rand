@@ -6,6 +6,7 @@ node_js:
 cache:
   directories:
   - node_modules
+if: branch = master OR branch =~ ^next- OR branch =~ ^fix-v\d+\. OR tag =~ ^v\d+\.
 script:
 - npm run format:check
 - npm run build
