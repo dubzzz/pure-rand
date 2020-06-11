@@ -43,7 +43,7 @@
     "fast-check": "^1.21.0",
     "glob": "^7.1.6",
     "jest": "^24.9.0",
-    "prettier": "1.16.4",
+    "prettier": "2.0.5",
     "source-map-support": "^0.5.16",
     "ts-jest": "^24.3.0",
     "ts-node": "^8.6.2",
