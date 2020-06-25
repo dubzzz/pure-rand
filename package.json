@@ -36,7 +36,7 @@
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^24.9.0",
+    "@types/jest": "^26.0.3",
     "@types/node": "^14.0.13",
     "benchmark": "^2.1.4",
     "coveralls": "^3.0.9",
