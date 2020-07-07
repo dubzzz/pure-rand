@@ -1,8 +1,8 @@
 // @ts-check
 // This file is a sample snippet to run benchmark across versions and generators
 // Run it:
-// $:  npm run build:bench:old
-// $:  npm run build:bench:new
+// $:  yarn build:bench:old
+// $:  yarn build:bench:new
 // $:  node perf/benchmark-prng.js
 
 const Benchmark = require('benchmark');
