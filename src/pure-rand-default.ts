@@ -19,5 +19,5 @@ export {
   xoroshiro128plus,
   Distribution,
   uniformBigIntDistribution,
-  uniformIntDistribution
+  uniformIntDistribution,
 };

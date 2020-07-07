@@ -129,8 +129,8 @@ describe('xoroshiro128plus', () => {
         1345130922,
         1379428837,
         1687164873,
-        325336063
-      ].map(v => v | 0)
+        325336063,
+      ].map((v) => v | 0)
     );
   });
   it('Should produce the right sequence after jump for seed=42', () => {
@@ -260,8 +260,8 @@ describe('xoroshiro128plus', () => {
         3565373219,
         4220080560,
         3252249431,
-        2240144151
-      ].map(v => v | 0)
+        2240144151,
+      ].map((v) => v | 0)
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xoroshiro128plus)));

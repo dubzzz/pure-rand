@@ -129,8 +129,8 @@ describe('xorshift128plus', () => {
         1358457066,
         1504768706,
         2433376141,
-        4069088729
-      ].map(v => v | 0)
+        4069088729,
+      ].map((v) => v | 0)
     );
   });
   it('Should produce the right sequence after jump for seed=42', () => {
@@ -264,8 +264,8 @@ describe('xorshift128plus', () => {
         3094567277,
         2333614204,
         3869414189,
-        678984428
-      ].map(v => v | 0)
+        678984428,
+      ].map((v) => v | 0)
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xorshift128plus)));

@@ -8,10 +8,10 @@ const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
 const MASK_2: number = (1 << 31) - 1;
 
-const computeNextSeed = function(seed: number) {
+const computeNextSeed = function (seed: number) {
   return (seed * MULTIPLIER + INCREMENT) & MASK;
 };
-const computeValueFromNextSeed = function(nextseed: number) {
+const computeValueFromNextSeed = function (nextseed: number) {
   return (nextseed & MASK_2) >> 16;
 };
 
@@ -70,9 +70,9 @@ class LinearCongruential32 implements RandomGenerator {
   }
 }
 
-export const congruential = function(seed: number): RandomGenerator {
+export const congruential = function (seed: number): RandomGenerator {
   return new LinearCongruential(seed);
 };
-export const congruential32 = function(seed: number): RandomGenerator {
+export const congruential32 = function (seed: number): RandomGenerator {
   return new LinearCongruential32(seed);
 };

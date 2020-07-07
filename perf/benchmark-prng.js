@@ -48,19 +48,19 @@ const PRNGs = [...availablePRNGs];
 
 const prandLibs = [
   // require('../lib-new/pure-rand'),
-  require('../lib/pure-rand')
+  require('../lib/pure-rand'),
 ];
 
 Benchmark.invoke(
   [
-    ...prandLibs.flatMap(prand => [
-      ...PRNGs.map(name => buildPrngNextBenchmark(prand, name)),
-      ...PRNGs.map(name => buildPrngJumpBenchmark(prand, name)).filter(Boolean)
-    ])
+    ...prandLibs.flatMap((prand) => [
+      ...PRNGs.map((name) => buildPrngNextBenchmark(prand, name)),
+      ...PRNGs.map((name) => buildPrngJumpBenchmark(prand, name)).filter(Boolean),
+    ]),
   ],
   {
     name: 'run',
     queued: true,
-    onCycle: event => console.log(String(event.target))
+    onCycle: (event) => console.log(String(event.target)),
   }
 );
