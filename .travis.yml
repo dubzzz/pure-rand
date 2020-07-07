@@ -8,12 +8,12 @@ cache:
     - node_modules
 if: branch = master OR branch =~ ^next- OR branch =~ ^fix-v\d+\. OR tag =~ ^v\d+\.
 script:
-  - npm run format:check
-  - npm run build
-  - npm run build:esm
-  - npm run test
+  - yarn format:check
+  - yarn build
+  - yarn build:esm
+  - yarn test
 after_success:
-  - npm run coverage
+  - yarn coverage
 stages:
   - test
   - deploy
@@ -22,14 +22,14 @@ jobs:
     - stage: test
       env: STEP=LEGACY
       script:
-        - npm run build
+        - yarn build
         - nvm install 0.12
         - node test/legacy/main.js
     - stage: deploy
       if: tag =~ ^v\d+\.
       script:
-        - npm run build
-        - npm run build:esm
+        - yarn build
+        - yarn build:esm
       deploy:
         provider: npm
         email: npm@dubien.org

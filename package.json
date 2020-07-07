@@ -22,7 +22,7 @@
     "coverage": "cat ./coverage/lcov.info | coveralls",
     "build:bench:old": "tsc --target es6",
     "build:bench:new": "tsc --target es6 --outDir lib-new/",
-    "auto:bench": "git stash && npm run build:bench:old && git stash pop && npm run build:bench:new && node perf/benchmark.js"
+    "auto:bench": "git stash && yarn build:bench:old && git stash pop && yarn build:bench:new && node perf/benchmark.js"
   },
   "repository": {
     "type": "git",
