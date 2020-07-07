@@ -78,6 +78,6 @@ class MersenneTwister implements RandomGenerator {
   }
 }
 
-export default function(seed: number): RandomGenerator {
+export default function (seed: number): RandomGenerator {
   return MersenneTwister.from(seed);
 }

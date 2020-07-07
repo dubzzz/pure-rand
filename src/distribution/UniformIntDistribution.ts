@@ -52,7 +52,7 @@ function uniformIntDistribution(from: number, to: number, rng?: RandomGenerator)
   if (rng != null) {
     return uniformIntInternal(from, diff, rng);
   }
-  return function(rng: RandomGenerator) {
+  return function (rng: RandomGenerator) {
     return uniformIntInternal(from, diff, rng);
   };
 }

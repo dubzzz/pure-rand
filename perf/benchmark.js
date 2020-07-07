@@ -12,7 +12,7 @@ const { genFor } = require('./helpers');
 const {
   testGenerateWithSameDistribution,
   testGenerateWithSkipDistributionSingle,
-  testGenerateWithSkipDistribution
+  testGenerateWithSkipDistribution,
 } = require('./tasks');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
@@ -51,7 +51,7 @@ const buildBenchmarks = (type, lib) => {
         testGenerateWithSkipDistributionSingle(lib, g);
       },
       benchConf
-    )
+    ),
   ];
 };
 
@@ -60,11 +60,11 @@ Benchmark.invoke(
     ...buildBenchmarks('Reference', prandRef),
     ...buildBenchmarks('Test', prandTest),
     ...buildBenchmarks('Reference', prandRef),
-    ...buildBenchmarks('Test', prandTest)
+    ...buildBenchmarks('Test', prandTest),
   ],
   {
     name: 'run',
     queued: true,
-    onCycle: event => console.log(String(event.target))
+    onCycle: (event) => console.log(String(event.target)),
   }
 );

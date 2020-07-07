@@ -71,7 +71,7 @@ describe('uniformIntDistribution', () => {
           rng = nrng;
           buckets[v - from] += 1;
         }
-        return buckets.every(n => n === num);
+        return buckets.every((n) => n === num);
       })
     ));
   it('Should be able to generate values larger than the RandomGenerator', () =>

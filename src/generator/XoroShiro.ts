@@ -48,6 +48,6 @@ class XoroShiro128Plus implements RandomGenerator {
   }
 }
 
-export const xoroshiro128plus = function(seed: number): RandomGenerator {
+export const xoroshiro128plus = function (seed: number): RandomGenerator {
   return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
 };

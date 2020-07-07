@@ -1018,7 +1018,7 @@ describe('mersenne', () => {
       4184993832,
       1116476131,
       4235742911,
-      1946654618
+      1946654618,
     ]);
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));

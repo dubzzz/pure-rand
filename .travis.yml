@@ -1,41 +1,41 @@
 language: node_js
 node_js:
-- '12'
-- '10'
-- '8'
+  - "14"
+  - "12"
+  - "10"
 cache:
   directories:
-  - node_modules
+    - node_modules
 if: branch = master OR branch =~ ^next- OR branch =~ ^fix-v\d+\. OR tag =~ ^v\d+\.
 script:
-- npm run format:check
-- npm run build
-- npm run build:esm
-- npm run test
+  - npm run format:check
+  - npm run build
+  - npm run build:esm
+  - npm run test
 after_success:
-- npm run coverage
+  - npm run coverage
 stages:
-- test
-- deploy
+  - test
+  - deploy
 jobs:
   include:
-  - stage: test
-    env: STEP=LEGACY
-    script:
-    - npm run build
-    - nvm install 0.12
-    - node test/legacy/main.js
-  - stage: deploy
-    if: tag =~ ^v\d+\.
-    script:
-    - npm run build
-    - npm run build:esm
-    deploy:
-      provider: npm
-      email: npm@dubien.org
-      skip_cleanup: true
-      api_key:
-        secure: lHunqDdos1umal6SvUE6SdOf8DC9BCI4qhumxwf3RXt1E0OqKh2tIfdfBMb+JdTjceb1sRswPg+M0phmU6fRYI81ZjPA7/qzW4V8zy3E/TGbH6TT0Tx2AhPUDgNE1kt2mW3L5T9uHX+CVPsrqNmauQDAtzf4HXJCroQ+QWGwUzVjvEVc/KSeb5MFer1tQoTcjj0bHeFta5e/W0IK2rx6dHI817ctOL8VYoNqZ0iiasPqQo4AeBVouX0WRSXEAti3FN+l5oZ3dLOHbztQqWj0u86j3tH4QJ6ypjx3vd8JTb2ePzSg2OVdP3/MkRHlpehyoCAr+Cwme7FeKJVI748/BmshiFFAYbMZrnUj9sbmJZM/2tkpZh+uDL/FkADv3QIo/O++l30C8fMFScMkujGJuCECJBe/mZYDRJFjcl0BCgsJbk0F9MY2cxfHWssUpa31E3WoPEJa+1/oy6HYlN3wq9KjxrTmbJ87PBexnfSgmzB2QVw0irEjGETBkZvUeDP4LuHx7vHml1TqRvlcFZMrV9tT9CT7ngTB/6J/yey8WOaU4u8uJoBY23xJipgxGnqHk7PmYqV0Laa+Bn+aoSITgzvBYvY0imZCa3+YD3G1/2eBuJ6ztBALjQRWM4uGix0UXaRLzcdVlLlCxSTOD6TW8ZneQX8Ng5fVcv/ZkOdmIV0=
-      on:
-        tags: true
-    repo: dubzzz/pure-rand
+    - stage: test
+      env: STEP=LEGACY
+      script:
+        - npm run build
+        - nvm install 0.12
+        - node test/legacy/main.js
+    - stage: deploy
+      if: tag =~ ^v\d+\.
+      script:
+        - npm run build
+        - npm run build:esm
+      deploy:
+        provider: npm
+        email: npm@dubien.org
+        skip_cleanup: true
+        api_key:
+          secure: lHunqDdos1umal6SvUE6SdOf8DC9BCI4qhumxwf3RXt1E0OqKh2tIfdfBMb+JdTjceb1sRswPg+M0phmU6fRYI81ZjPA7/qzW4V8zy3E/TGbH6TT0Tx2AhPUDgNE1kt2mW3L5T9uHX+CVPsrqNmauQDAtzf4HXJCroQ+QWGwUzVjvEVc/KSeb5MFer1tQoTcjj0bHeFta5e/W0IK2rx6dHI817ctOL8VYoNqZ0iiasPqQo4AeBVouX0WRSXEAti3FN+l5oZ3dLOHbztQqWj0u86j3tH4QJ6ypjx3vd8JTb2ePzSg2OVdP3/MkRHlpehyoCAr+Cwme7FeKJVI748/BmshiFFAYbMZrnUj9sbmJZM/2tkpZh+uDL/FkADv3QIo/O++l30C8fMFScMkujGJuCECJBe/mZYDRJFjcl0BCgsJbk0F9MY2cxfHWssUpa31E3WoPEJa+1/oy6HYlN3wq9KjxrTmbJ87PBexnfSgmzB2QVw0irEjGETBkZvUeDP4LuHx7vHml1TqRvlcFZMrV9tT9CT7ngTB/6J/yey8WOaU4u8uJoBY23xJipgxGnqHk7PmYqV0Laa+Bn+aoSITgzvBYvY0imZCa3+YD3G1/2eBuJ6ztBALjQRWM4uGix0UXaRLzcdVlLlCxSTOD6TW8ZneQX8Ng5fVcv/ZkOdmIV0=
+        on:
+          tags: true
+      repo: dubzzz/pure-rand

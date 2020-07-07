@@ -38,7 +38,7 @@ function uniformBigIntDistribution(from: bigint, to: bigint, rng?: RandomGenerat
   if (rng != null) {
     return uniformBigIntInternal(from, diff, rng);
   }
-  return function(rng: RandomGenerator) {
+  return function (rng: RandomGenerator) {
     return uniformBigIntInternal(from, diff, rng);
   };
 }

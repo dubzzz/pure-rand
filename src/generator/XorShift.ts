@@ -47,6 +47,6 @@ class XorShift128Plus implements RandomGenerator {
   }
 }
 
-export const xorshift128plus = function(seed: number): RandomGenerator {
+export const xorshift128plus = function (seed: number): RandomGenerator {
   return new XorShift128Plus(-1, ~seed, seed | 0, 0);
 };
