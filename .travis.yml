@@ -24,6 +24,30 @@ jobs:
         - yarn build:prod
         - nvm install 0.12
         - node test/legacy/main.js
+    - stage: test
+      env: STEP=COMMONJS_ESM
+      script:
+        - PROJECT_ROOT_PATH="$(pwd)"
+        - yarn build:prod
+        - yarn link
+        # Node 8 does not understand ES modules
+        - nvm install 8
+        - cd ${PROJECT_ROOT_PATH}
+        - cd test/esm
+        - node --version
+        - sh run.sh
+        # Node 12 requires a flag to support ES modules but can understand them
+        - nvm install 12
+        - cd ${PROJECT_ROOT_PATH}
+        - cd test/esm
+        - node --version
+        - sh run.sh
+        # Node >=13.2.0 enables support for ES modules by default
+        - nvm install 13
+        - cd ${PROJECT_ROOT_PATH}
+        - cd test/esm
+        - node --version
+        - sh run.sh
     - stage: deploy
       if: tag =~ ^v\d+\.
       script:

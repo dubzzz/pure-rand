@@ -2,7 +2,14 @@
   "name": "pure-rand",
   "version": "2.0.0",
   "description": " Pure random number generator written in TypeScript",
+  "type": "commonjs",
   "main": "lib/pure-rand.js",
+  "exports": {
+    ".": {
+      "require": "./lib/pure-rand.js",
+      "default": "./lib/esm/pure-rand.js"
+    }
+  },
   "module": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
   "sideEffects": false,
@@ -10,7 +17,7 @@
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
-    "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
+    "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
     "test": "jest --config jest.config.js --coverage",
     "coverage": "cat ./coverage/lcov.info | coveralls",
