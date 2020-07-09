@@ -5,18 +5,11 @@
   "main": "lib/pure-rand.js",
   "module": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
-  "typesVersions": {
-    ">=3.2": {
-      "*": [
-        "lib/ts3.2/pure-rand.d.ts"
-      ]
-    }
-  },
   "sideEffects": false,
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
     "format:fix": "prettier --write \"**/*.{js,ts}\"",
-    "build": "tsc && tsc -p ./tsconfig.declaration.json && node ./buildTypes.js",
+    "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
     "test": "jest --config jest.config.js --coverage",
