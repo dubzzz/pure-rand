@@ -8,7 +8,13 @@ import Distribution from './distribution/Distribution';
 import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';
 
+// Explicit cast into string to avoid to have __type: "__PACKAGE_TYPE__"
+const __type = '__PACKAGE_TYPE__' as string;
+const __version = '__PACKAGE_VERSION__' as string;
+
 export {
+  __type,
+  __version,
   RandomGenerator,
   generateN,
   skipN,
