@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`uniformBigIntDistribution Should not change its output in range (-9007199254740991, 9007199254740991) except for major bumps 1`] = `
+Array [
+  8737460674931809n,
+  -2631724699627619n,
+  -4869445551762075n,
+  8293357854228373n,
+  5809860774060165n,
+  -1881172549903992n,
+  -7398457846580200n,
+  -5844702921965206n,
+  5236253499642215n,
+  2596198112838730n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 6) except for major bumps 1`] = `
+Array [
+  4n,
+  3n,
+  0n,
+  2n,
+  1n,
+  2n,
+  6n,
+  3n,
+  4n,
+  5n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 7) except for major bumps 1`] = `
+Array [
+  4n,
+  7n,
+  5n,
+  0n,
+  3n,
+  3n,
+  3n,
+  7n,
+  1n,
+  3n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 8) except for major bumps 1`] = `
+Array [
+  8n,
+  0n,
+  2n,
+  6n,
+  7n,
+  6n,
+  7n,
+  1n,
+  1n,
+  0n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 4294967294) except for major bumps 1`] = `
+Array [
+  2357136044n,
+  2546248239n,
+  3071714933n,
+  3626093760n,
+  2588848963n,
+  3684848379n,
+  2340255427n,
+  3638918503n,
+  1819583497n,
+  2678185683n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 4294967295) except for major bumps 1`] = `
+Array [
+  2357136044n,
+  2546248239n,
+  3071714933n,
+  3626093760n,
+  2588848963n,
+  3684848379n,
+  2340255427n,
+  3638918503n,
+  1819583497n,
+  2678185683n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 4294967296) except for major bumps 1`] = `
+Array [
+  189112195n,
+  554378827n,
+  1095999416n,
+  1298663076n,
+  858602186n,
+  3171780062n,
+  3693445940n,
+  708411795n,
+  1327117109n,
+  404687239n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 1099511627774) except for major bumps 1`] = `
+Array [
+  741289830713n,
+  506149266278n,
+  291457769902n,
+  841166682845n,
+  41339999095n,
+  91856056387n,
+  155904065550n,
+  300906252564n,
+  379144339494n,
+  251166092282n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 1099511627775) except for major bumps 1`] = `
+Array [
+  741280623151n,
+  506137267392n,
+  291447657211n,
+  841157541223n,
+  41332891347n,
+  91845220082n,
+  155896724055n,
+  300891291096n,
+  379128171916n,
+  251159659201n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (0, 1099511627776) except for major bumps 1`] = `
+Array [
+  741271415589n,
+  506125268506n,
+  291437544520n,
+  841148399601n,
+  41325783599n,
+  91834383777n,
+  155889382560n,
+  300876329628n,
+  379112004338n,
+  251153226120n,
+]
+`;
+
+exports[`uniformBigIntDistribution Should not change its output in range (48, 69) except for major bumps 1`] = `
+Array [
+  58n,
+  55n,
+  49n,
+  62n,
+  67n,
+  51n,
+  63n,
+  59n,
+  65n,
+  67n,
+]
+`;
