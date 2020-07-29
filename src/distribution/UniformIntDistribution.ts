@@ -21,8 +21,8 @@ function uniformIntInternal(from: number, diff: number, rng: RandomGenerator): [
 
   // Compute number of iterations required to have enough random
   // to build uniform entries in the asked range
-  let FinalNumValues = 1;
-  let NumIterations = 0;
+  let FinalNumValues = NumValues * NumValues;
+  let NumIterations = 2; // At least 2 (at this point in the code)
   while (FinalNumValues < diff) {
     FinalNumValues *= NumValues;
     ++NumIterations;
