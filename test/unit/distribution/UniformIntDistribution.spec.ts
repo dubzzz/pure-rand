@@ -4,6 +4,9 @@ import { uniformIntDistribution } from '../../../src/distribution/UniformIntDist
 import mersenne from '../../../src/generator/MersenneTwister';
 import RandomGenerator from '../../../src/generator/RandomGenerator';
 
+const MERSENNE_MIN = mersenne(0).min();
+const MERSENNE_MAX = mersenne(0).max();
+
 class NatGenerator implements RandomGenerator {
   readonly current: number;
   constructor(current: number) {
@@ -41,18 +44,18 @@ const MAX_RANGE: number = 1000;
 describe('uniformIntDistribution', () => {
   it('Should always generate values within the range', () =>
     fc.assert(
-      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), (offset, from, length) => {
-        const [v, nrng] = uniformIntDistribution(from, from + length)(new NatGenerator(offset));
-        return v >= from && v <= from + length;
+      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), (offset, from, gap) => {
+        const [v, nrng] = uniformIntDistribution(from, from + gap)(new NatGenerator(offset));
+        return v >= from && v <= from + gap;
       })
     ));
   it('Should be able to generate all values within the range', () =>
     fc.assert(
-      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), fc.nat(), (offset, from, length, targetOffset) => {
-        const target = from + (targetOffset % (length + 1));
+      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), fc.nat(), (offset, from, gap, targetOffset) => {
+        const target = from + (targetOffset % (gap + 1));
         let rng: RandomGenerator = new NatGenerator(offset);
-        for (let numTries = 0; numTries < 2 * length + 1; ++numTries) {
-          const [v, nrng] = uniformIntDistribution(from, from + length)(rng);
+        for (let numTries = 0; numTries < 2 * gap + 1; ++numTries) {
+          const [v, nrng] = uniformIntDistribution(from, from + gap)(rng);
           rng = nrng;
           if (v === target) {
             return true;
@@ -63,11 +66,11 @@ describe('uniformIntDistribution', () => {
     ));
   it('Should be evenly distributed over the range', () =>
     fc.assert(
-      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), fc.integer(1, 100), (offset, from, length, num) => {
-        let buckets = [...Array(length + 1)].map(() => 0);
+      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), fc.integer(1, 100), (offset, from, gap, num) => {
+        let buckets = [...Array(gap + 1)].map(() => 0);
         let rng: RandomGenerator = new NatGenerator(offset);
-        for (let numTries = 0; numTries < num * (length + 1); ++numTries) {
-          const [v, nrng] = uniformIntDistribution(from, from + length)(rng);
+        for (let numTries = 0; numTries < num * (gap + 1); ++numTries) {
+          const [v, nrng] = uniformIntDistribution(from, from + gap)(rng);
           rng = nrng;
           buckets[v - from] += 1;
         }
@@ -104,10 +107,42 @@ describe('uniformIntDistribution', () => {
     ));
   it('Should be equivalent to call the 2-parameter and 3-parameter', () =>
     fc.assert(
-      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), (offset, from, length) => {
-        const [v1, nrng1] = uniformIntDistribution(from, from + length)(new NatGenerator(offset));
-        const [v2, nrng2] = uniformIntDistribution(from, from + length, new NatGenerator(offset));
+      fc.property(fc.nat(), fc.integer(), fc.integer(0, MAX_RANGE), (offset, from, gap) => {
+        const [v1, nrng1] = uniformIntDistribution(from, from + gap)(new NatGenerator(offset));
+        const [v2, nrng2] = uniformIntDistribution(from, from + gap, new NatGenerator(offset));
         return v1 === v2;
       })
     ));
+  it.each`
+    from                       | to                         | topic
+    ${0}                       | ${2 ** 3 - 1}              | ${"range of size divisor of mersenne's one"}
+    ${0}                       | ${2 ** 3 - 2}              | ${"range of size divisor of mersenne's one minus one"}
+    ${0}                       | ${2 ** 3}                  | ${"range of size divisor of mersenne's one plus one"}
+    ${48}                      | ${69}                      | ${'random range'}
+    ${MERSENNE_MIN}            | ${MERSENNE_MAX}            | ${"mersenne's range"}
+    ${MERSENNE_MIN}            | ${MERSENNE_MAX - 1}        | ${"mersenne's range minus one"}
+    ${MERSENNE_MIN}            | ${MERSENNE_MAX + 1}        | ${"mersenne's range plus one"}
+    ${0}                       | ${2 ** 40 - 1}             | ${"range of size multiple of mersenne's one"}
+    ${0}                       | ${2 ** 40 - 2}             | ${"range of size multiple of mersenne's one minus one"}
+    ${0}                       | ${2 ** 40}                 | ${"range of size multiple of mersenne's one plus one"}
+    ${Number.MIN_SAFE_INTEGER} | ${Number.MAX_SAFE_INTEGER} | ${'full integer range'}
+  `('Should not change its output in range ($from, $to) except for major bumps', ({ from, to }) => {
+    // Remark:
+    // ========================
+    // This test is purely there to ensure that we do not introduce any regression
+    // during a commit without noticing it.
+    // The values we expect in the output are just a snapshot taken at a certain time
+    // in the past. They might be wrong values with bugs.
+
+    let rng = mersenne(0);
+    const distribution = uniformIntDistribution(from, to);
+
+    const values: number[] = [];
+    for (let idx = 0; idx !== 10; ++idx) {
+      const [v, nrng] = distribution(rng);
+      values.push(v);
+      rng = nrng;
+    }
+    expect(values).toMatchSnapshot();
+  });
 });
