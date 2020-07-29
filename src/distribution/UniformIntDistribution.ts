@@ -14,7 +14,7 @@ function uniformIntInternal(from: number, diff: number, rng: RandomGenerator): [
       const deltaV = out[0] - MinRng;
       nrng = out[1];
       if (deltaV < MaxAllowed) {
-        return [(deltaV % diff) + from, nrng];
+        return [(deltaV % diff) + from, nrng]; // Warning: we expect NumValues <= 2**32, so diff too
       }
     }
   }
@@ -35,7 +35,7 @@ function uniformIntInternal(from: number, diff: number, rng: RandomGenerator): [
     let value = 0;
     for (let num = 0; num !== NumIterations; ++num) {
       const out = nrng.next();
-      value = NumValues * value + (out[0] - MinRng);
+      value = NumValues * value + (out[0] - MinRng); // Warning: we overflow may when diff > max_safe (eg: =max_safe-min_safe+1)
       nrng = out[1];
     }
     if (value < MaxAcceptedRandom) {
