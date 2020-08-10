@@ -25,7 +25,7 @@ function uniformBigIntInternal(from: bigint, diff: bigint, rng: RandomGenerator)
       nrng = out[1];
     }
     if (value < MaxAcceptedRandom) {
-      const inDiff = value - diff * (value / diff);
+      const inDiff = value % diff;
       return [inDiff + from, nrng];
     }
   }
