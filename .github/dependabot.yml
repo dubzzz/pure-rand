@@ -11,4 +11,3 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "⬆️"
-    versioning-strategy: increase-if-necessary
