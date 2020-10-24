@@ -62,6 +62,11 @@ describe('uniformIntDistributionInternal', () => {
       })
     ));
   it('Should be evenly distributed over the range [0 ; rangeSize[', () =>
+    // NOTE:
+    // >  Actually this property is true for any rangeSize >= 1 such that
+    // >  there exists an N >= 1
+    // >    where RNG_RANGE_SIZE ** N >= rangeSize and RNG_RANGE_SIZE ** N <= Number.MAX_SAFE_INTEGER
+    // >    with RNG_RANGE_SIZE = rng.max() - rng.min() + 1
     fc.assert(
       fc.property(
         fc.nat(),
