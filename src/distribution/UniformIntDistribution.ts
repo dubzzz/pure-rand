@@ -1,11 +1,37 @@
 import Distribution from './Distribution';
 import RandomGenerator from '../generator/RandomGenerator';
 import { uniformIntDistributionInternal } from './internals/UniformIntDistributionInternal';
+import { fromNumberToArrayInt64, substractArrayInt64, toNumber } from './internals/ArrayInt';
+import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
 
-function uniformIntInternal(from: number, rangeSize: number, rng: RandomGenerator): [number, RandomGenerator] {
-  const g = uniformIntDistributionInternal(rangeSize, rng);
-  g[0] += from;
-  return g;
+function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
+  const rangeSize = to - from;
+  if (rangeSize <= 0xffffffff) {
+    // Calling uniformIntDistributionInternal can be considered safe
+    // up-to 2**32 values. Above this range it may miss values.
+    const g = uniformIntDistributionInternal(rangeSize + 1, rng);
+    g[0] += from;
+    return g;
+  }
+
+  const rangeSizeArrayIntValue =
+    rangeSize <= Number.MAX_SAFE_INTEGER
+      ? fromNumberToArrayInt64(rangeSize) // no possible overflow given rangeSize is in a safe range
+      : substractArrayInt64(fromNumberToArrayInt64(to), fromNumberToArrayInt64(from)); // rangeSize might be incorrect, we compute a safer range
+
+  // Adding 1 to the range
+  if (rangeSizeArrayIntValue.data[1] === 0xffffffff) {
+    // rangeSizeArrayIntValue.length === 2 by construct
+    // rangeSize >= 0x00000001_00000000 and rangeSize <= 0x003fffff_fffffffe
+    // with Number.MAX_SAFE_INTEGER - Number.MIN_SAFE_INTEGER = 0x003fffff_fffffffe
+    rangeSizeArrayIntValue.data[0] += 1;
+    rangeSizeArrayIntValue.data[1] = 0;
+  } else {
+    rangeSizeArrayIntValue.data[1] += 1;
+  }
+
+  const g = uniformArrayIntDistributionInternal(rangeSizeArrayIntValue.data, rng);
+  return [from + toNumber({ sign: 1, data: g[0] }), g[1]];
 }
 
 /**
@@ -28,12 +54,11 @@ function uniformIntDistribution(from: number, to: number): Distribution<number>;
  */
 function uniformIntDistribution(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator];
 function uniformIntDistribution(from: number, to: number, rng?: RandomGenerator) {
-  const rangeSize = to - from + 1;
   if (rng != null) {
-    return uniformIntInternal(from, rangeSize, rng);
+    return uniformIntInternal(from, to, rng);
   }
   return function (rng: RandomGenerator) {
-    return uniformIntInternal(from, rangeSize, rng);
+    return uniformIntInternal(from, to, rng);
   };
 }
 
