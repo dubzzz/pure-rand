@@ -11,6 +11,7 @@ function buildUniqueRng() {
   return {} as RandomGenerator;
 }
 function clean() {
+  jest.resetAllMocks();
   jest.clearAllMocks();
 }
 
