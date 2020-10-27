@@ -1,8 +1,13 @@
 import Distribution from './Distribution';
 import RandomGenerator from '../generator/RandomGenerator';
 import { uniformIntDistributionInternal } from './internals/UniformIntDistributionInternal';
-import { fromNumberToArrayInt64, substractArrayInt64, toNumber } from './internals/ArrayInt';
+import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64, toNumber } from './internals/ArrayInt';
 import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
+
+const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
+const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
+const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
+const sharedD: ArrayInt64 = { sign: 1, data: [0, 0] };
 
 function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
   const rangeSize = to - from;
@@ -16,8 +21,8 @@ function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [nu
 
   const rangeSizeArrayIntValue =
     rangeSize <= Number.MAX_SAFE_INTEGER
-      ? fromNumberToArrayInt64(rangeSize) // no possible overflow given rangeSize is in a safe range
-      : substractArrayInt64(fromNumberToArrayInt64(to), fromNumberToArrayInt64(from)); // rangeSize might be incorrect, we compute a safer range
+      ? fromNumberToArrayInt64(sharedC, rangeSize) // no possible overflow given rangeSize is in a safe range
+      : substractArrayInt64(sharedC, fromNumberToArrayInt64(sharedA, to), fromNumberToArrayInt64(sharedB, from)); // rangeSize might be incorrect, we compute a safer range
 
   // Adding 1 to the range
   if (rangeSizeArrayIntValue.data[1] === 0xffffffff) {
@@ -30,8 +35,9 @@ function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [nu
     rangeSizeArrayIntValue.data[1] += 1;
   }
 
-  const g = uniformArrayIntDistributionInternal(rangeSizeArrayIntValue.data, rng);
-  return [from + toNumber({ sign: 1, data: g[0] }), g[1]];
+  sharedD.sign = 1;
+  const g = uniformArrayIntDistributionInternal(sharedD.data, rangeSizeArrayIntValue.data, rng);
+  return [from + toNumber(sharedD), g[1]];
 }
 
 /**

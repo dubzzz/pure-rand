@@ -47,7 +47,7 @@ describe('uniformArrayIntDistributionInternal', () => {
     }
 
     // Act
-    const g = uniformArrayIntDistributionInternal(rangeSize, initialRng);
+    const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
 
     // Assert
     expect(g[0]).toEqual(resultingArrayInt);
@@ -89,7 +89,7 @@ describe('uniformArrayIntDistributionInternal', () => {
     }
 
     // Act
-    const g = uniformArrayIntDistributionInternal(rangeSize, initialRng);
+    const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
 
     // Assert
     expect(g[0]).toEqual(resultingArrayInt);
@@ -150,7 +150,7 @@ describe('uniformArrayIntDistributionInternal', () => {
             mockRejectNextCalls(ctx);
 
             // Act
-            const g = uniformArrayIntDistributionInternal(rangeSize, initialRng);
+            const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
 
             // Assert
             expect(g[0]).toEqual(validValue);
@@ -162,6 +162,10 @@ describe('uniformArrayIntDistributionInternal', () => {
 });
 
 // Helpers
+
+function arrayIntBuffer(size: number): ArrayInt {
+  return { sign: 1, data: Array(size).fill(0) };
+}
 
 function fromBigUintToArrayIntData(n: bigint): ArrayInt['data'] {
   const data: number[] = [];

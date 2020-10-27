@@ -67,7 +67,7 @@ describe('uniformIntDistribution', () => {
 
             // Assert
             expect(uniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
-            expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(expect.any(Array), rng);
+            expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(expect.any(Array), expect.any(Array), rng);
           })
           .beforeEach(clean)
       ));

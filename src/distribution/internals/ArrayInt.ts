@@ -42,13 +42,18 @@ export type ArrayInt64 = ArrayInt & { data: [number, number] };
  * We only accept safe integers here
  * @internal
  */
-export function fromNumberToArrayInt64(n: number): ArrayInt64 {
+export function fromNumberToArrayInt64(out: ArrayInt64, n: number): ArrayInt64 {
   if (n < 0) {
     const posN = -n;
-    return { sign: -1, data: [~~(posN / 0x100000000), posN >>> 0] };
+    out.sign = -1;
+    out.data[0] = ~~(posN / 0x100000000);
+    out.data[1] = posN >>> 0;
   } else {
-    return { sign: 1, data: [~~(n / 0x100000000), n >>> 0] };
+    out.sign = 1;
+    out.data[0] = ~~(n / 0x100000000);
+    out.data[1] = n >>> 0;
   }
+  return out;
 }
 
 /**
@@ -56,7 +61,7 @@ export function fromNumberToArrayInt64(n: number): ArrayInt64 {
  * With arrayIntA - arrayIntB >= 0
  * @internal
  */
-export function substractArrayInt64(arrayIntA: ArrayInt64, arrayIntB: ArrayInt64): ArrayInt64 {
+export function substractArrayInt64(out: ArrayInt64, arrayIntA: ArrayInt64, arrayIntB: ArrayInt64): ArrayInt64 {
   const lowA = arrayIntA.data[1];
   const highA = arrayIntA.data[0];
   const signA = arrayIntA.sign || 1;
@@ -64,11 +69,16 @@ export function substractArrayInt64(arrayIntA: ArrayInt64, arrayIntB: ArrayInt64
   const highB = arrayIntB.data[0];
   const signB = arrayIntB.sign || 1;
 
+  // Requirement: arrayIntA - arrayIntB >= 0
+  out.sign = 1;
+
   if (signA === 1 && signB === -1) {
     // Operation is a simple sum of arrayIntA + abs(arrayIntB)
     const low = lowA + lowB;
     const high = highA + highB + (low > 0xffffffff ? 1 : 0);
-    return { sign: 1, data: [high >>> 0, low >>> 0] };
+    out.data[0] = high >>> 0;
+    out.data[1] = low >>> 0;
+    return out;
   }
   // signA === -1 with signB === 1 is impossible given: arrayIntA - arrayIntB >= 0
 
@@ -93,5 +103,7 @@ export function substractArrayInt64(arrayIntA: ArrayInt64, arrayIntB: ArrayInt64
   if (high < 0) {
     high = high >>> 0;
   }
-  return { sign: 1, data: [high, low] };
+  out.data[0] = high;
+  out.data[1] = low;
+  return out;
 }

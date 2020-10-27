@@ -13,7 +13,7 @@ describe('ArrayInt', () => {
     it('Should be able to convert any 32 bits positive integer to an ArrayInt64', () =>
       fc.assert(
         fc.property(fc.integer({ min: 0, max: 0xffffffff }), (value) => {
-          const arrayInt = fromNumberToArrayInt64(value);
+          const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), value);
           expect(arrayInt).toEqual({ sign: 1, data: [0, value] });
         })
       ));
@@ -21,7 +21,7 @@ describe('ArrayInt', () => {
     it('Should be able to convert any 32 bits negative integer to an ArrayInt64', () =>
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 0xffffffff }), (value) => {
-          const arrayInt = fromNumberToArrayInt64(-value);
+          const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), -value);
           expect(arrayInt).toEqual({ sign: -1, data: [0, value] });
         })
       ));
@@ -29,7 +29,7 @@ describe('ArrayInt', () => {
     it('Should be able to convert any safe integer to an ArrayInt64', () =>
       fc.assert(
         fc.property(fc.maxSafeInteger(), (value) => {
-          const arrayInt = fromNumberToArrayInt64(value);
+          const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), value);
 
           expect(arrayInt.sign).toBe(value < 0 ? -1 : 1);
           expect(arrayInt.data).toHaveLength(2);
@@ -44,7 +44,7 @@ describe('ArrayInt', () => {
     it('Should be able to read back itself using toNumber', () =>
       fc.assert(
         fc.property(fc.maxSafeInteger(), (value) => {
-          const arrayInt = fromNumberToArrayInt64(value);
+          const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), value);
           expect(toNumber(arrayInt)).toBe(value);
         })
       ));
@@ -103,9 +103,15 @@ describe('ArrayInt', () => {
             const minArrayInt = fromBigIntToArrayInt64(min);
             const maxArrayInt = fromBigIntToArrayInt64(max);
             const resultArrayInt = fromBigIntToArrayInt64(result);
-            expect(substractArrayInt64(maxArrayInt, minArrayInt)).toEqual(resultArrayInt);
+            expect(substractArrayInt64(arrayInt64Buffer(), maxArrayInt, minArrayInt)).toEqual(resultArrayInt);
           })
         ));
     }
   });
 });
+
+// Helpers
+
+function arrayInt64Buffer(): ArrayInt64 {
+  return { sign: 1, data: [0, 0] };
+}

@@ -12,17 +12,11 @@ import { uniformIntDistributionInternal } from './UniformIntDistributionInternal
  * @internal
  */
 export function uniformArrayIntDistributionInternal(
+  out: ArrayInt['data'],
   rangeSize: ArrayInt['data'],
   rng: RandomGenerator
 ): [ArrayInt['data'], RandomGenerator] {
   const rangeLength = rangeSize.length;
-
-  // Initialize our arrayInt only once
-  // It might be re-used multiple times until we reach a valid value
-  const arrayInt = [];
-  for (let index = 0; index !== rangeLength; ++index) {
-    arrayInt.push(0);
-  }
   let nrng = rng;
 
   // We iterate until we find a valid value for arrayInt
@@ -31,16 +25,16 @@ export function uniformArrayIntDistributionInternal(
     for (let index = 0; index !== rangeLength; ++index) {
       const indexRangeSize = index === 0 ? rangeSize[0] + 1 : 0x100000000;
       const g = uniformIntDistributionInternal(indexRangeSize, nrng);
-      arrayInt[index] = g[0];
+      out[index] = g[0];
       nrng = g[1];
     }
 
     // If in the correct range we can return it
     for (let index = 0; index !== rangeLength; ++index) {
-      const current = arrayInt[index];
+      const current = out[index];
       const currentInRange = rangeSize[index];
       if (current < currentInRange) {
-        return [arrayInt, nrng]; // arrayInt < rangeSize
+        return [out, nrng]; // arrayInt < rangeSize
       } else if (current > currentInRange) {
         break; // arrayInt > rangeSize
       }
