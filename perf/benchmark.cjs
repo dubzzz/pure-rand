@@ -14,6 +14,7 @@ const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
 
+const PRERUN_SAMPLES = 100;
 const WARMUP_SAMPLES = 1000;
 const MIN_SAMPLES = 1000;
 const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
@@ -22,6 +23,7 @@ const NUM_TESTS = 1000;
 const PROF_GEN = process.env.PROF_GEN || 'xoroshiro128plus';
 console.log(`Generator: ${PROF_GEN}\n`);
 
+// Declare builder of benchmarks
 const buildBenchmarks = (type, lib) => {
   return [
     new Benchmark(
@@ -84,20 +86,29 @@ const buildBenchmarks = (type, lib) => {
   ];
 };
 
-Benchmark.invoke(
-  [
-    ...buildBenchmarks('Reference', prandRef),
-    ...buildBenchmarks('Test', prandTest),
-    ...buildBenchmarks('Reference', prandRef),
-    ...buildBenchmarks('Test', prandTest),
-    ...buildBenchmarks('Reference', prandRef),
-    ...buildBenchmarks('Test', prandTest),
-    ...buildBenchmarks('Reference', prandRef),
-    ...buildBenchmarks('Test', prandTest),
-  ],
-  {
-    name: 'run',
-    queued: true,
-    onCycle: (event) => console.log(String(event.target)),
+// Declare benchmarks
+const benchmarks = [...buildBenchmarks('Reference', prandRef), ...buildBenchmarks('Test', prandTest)];
+
+// Run all the code of all the benchmarks at least once before running them for measurements.
+// It ensures that non-optimized path will not be wrongly optimized. In the past we had reports like:
+//   test1 @reference - 400 ops/s
+//   test2 @reference - 200 ops/s
+//   test1 @reference - 200 ops/s
+//   test2 @reference - 200 ops/s
+// Because running test2 de-optimized the code that was optimized for test1 during first runs.
+for (const b of benchmarks) {
+  for (let idx = 0; idx !== PRERUN_SAMPLES; ++idx) {
+    if (typeof b.fn === 'function') {
+      b.fn();
+    } else {
+      eval(b.fn);
+    }
   }
-);
+}
+
+// Run benchmarks
+Benchmark.invoke(benchmarks, {
+  name: 'run',
+  queued: true,
+  onCycle: (event) => console.log(String(event.target)),
+});
