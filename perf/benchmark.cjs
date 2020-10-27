@@ -14,7 +14,7 @@ const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
 
-const PRERUN_SAMPLES = 100;
+const PRERUN_SAMPLES = 50;
 const WARMUP_SAMPLES = 1000;
 const MIN_SAMPLES = 1000;
 const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
@@ -96,17 +96,18 @@ const benchmarks = [...buildBenchmarks('Reference', prandRef), ...buildBenchmark
 //   test1 @reference - 200 ops/s
 //   test2 @reference - 200 ops/s
 // Because running test2 de-optimized the code that was optimized for test1 during first runs.
-for (const b of benchmarks) {
-  for (let idx = 0; idx !== PRERUN_SAMPLES; ++idx) {
-    if (typeof b.fn === 'function') {
-      b.fn();
-    } else {
-      eval(b.fn);
-    }
+console.log(`Warm-up phase...\n`);
+Benchmark.invoke(
+  benchmarks.map((b) => b.clone({ initCount: 1, minSamples: PRERUN_SAMPLES })),
+  {
+    name: 'run',
+    queued: true,
+    onCycle: (event) => console.log(String(event.target)),
   }
-}
+);
 
 // Run benchmarks
+console.log(`\nBenchmark phase...\n`);
 Benchmark.invoke(benchmarks, {
   name: 'run',
   queued: true,
