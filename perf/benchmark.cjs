@@ -9,46 +9,75 @@
 // $:  PROF_GEN="mersenne" node perf/benchmark.cjs
 
 const { genFor } = require('./helpers.cjs');
-const {
-  testGenerateWithSameDistribution,
-  testGenerateWithSkipDistributionSingle,
-  testGenerateWithSkipDistribution,
-} = require('./tasks.cjs');
+const { testDistribution } = require('./tasks.cjs');
 const Benchmark = require('benchmark');
 const prandRef = require('../lib/pure-rand');
 const prandTest = require('../lib-new/pure-rand');
 
-const WARMUP_SAMPLES = 50;
-const MIN_SAMPLES = 250;
+const WARMUP_SAMPLES = 1000;
+const MIN_SAMPLES = 1000;
 const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
-const NUM_TESTS = 100;
-const PROF_GEN = process.env.PROF_GEN || 'congruential32';
-console.log(`Generator....: ${PROF_GEN}\n`);
+const NUM_TESTS = 1000;
+const PROF_GEN = process.env.PROF_GEN || 'xoroshiro128plus';
+console.log(`Generator: ${PROF_GEN}\n`);
 
 const buildBenchmarks = (type, lib) => {
   return [
     new Benchmark(
-      `distribution/no@${type}`,
+      `uniformIntDistribution[0;96]...............................@${type}`,
       () => {
+        // Range size is prime
         const g = genFor(lib, PROF_GEN);
-        testGenerateWithSkipDistribution(lib, g, NUM_TESTS);
+        const distribution = lib.uniformIntDistribution;
+        const settings = { min: 0, max: 0xffff };
+        testDistribution(distribution, g, NUM_TESTS, settings);
       },
       benchConf
     ),
     new Benchmark(
-      `distribution/re-use@${type}`,
+      `uniformIntDistribution[0;0xffff]...........................@${type}`,
       () => {
+        // Range size is a small power of 2
         const g = genFor(lib, PROF_GEN);
-        testGenerateWithSameDistribution(lib, g, NUM_TESTS);
+        const distribution = lib.uniformIntDistribution;
+        const settings = { min: 0, max: 0xffff };
+        testDistribution(distribution, g, NUM_TESTS, settings);
       },
       benchConf
     ),
     new Benchmark(
-      `generator/new@${type}`,
+      `uniformIntDistribution[0;0xffffffff].......................@${type}`,
       () => {
+        // For range of size <=2**32 (ie to-from+1 <= 2**32)
+        // uniformIntDistribution uses another execution path
         const g = genFor(lib, PROF_GEN);
-        testGenerateWithSkipDistributionSingle(lib, g);
+        const distribution = lib.uniformIntDistribution;
+        const settings = { min: 0, max: 0xffffffff };
+        testDistribution(distribution, g, NUM_TESTS, settings);
+      },
+      benchConf
+    ),
+    new Benchmark(
+      `uniformIntDistribution[0;0xffffffff+1].....................@${type}`,
+      () => {
+        // Range size is just above threshold used by uniformIntDistribution
+        // to switch to another algorithm
+        const g = genFor(lib, PROF_GEN);
+        const distribution = lib.uniformIntDistribution;
+        const settings = { min: 0, max: 0xffffffff + 1 };
+        testDistribution(distribution, g, NUM_TESTS, settings);
+      },
+      benchConf
+    ),
+    new Benchmark(
+      `uniformIntDistribution[MIN_SAFE_INTEGER;MAX_SAFE_INTEGER]..@${type}`,
+      () => {
+        // Range size is the maximal one
+        const g = genFor(lib, PROF_GEN);
+        const distribution = lib.uniformIntDistribution;
+        const settings = { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER };
+        testDistribution(distribution, g, NUM_TESTS, settings);
       },
       benchConf
     ),
@@ -57,6 +86,10 @@ const buildBenchmarks = (type, lib) => {
 
 Benchmark.invoke(
   [
+    ...buildBenchmarks('Reference', prandRef),
+    ...buildBenchmarks('Test', prandTest),
+    ...buildBenchmarks('Reference', prandRef),
+    ...buildBenchmarks('Test', prandTest),
     ...buildBenchmarks('Reference', prandRef),
     ...buildBenchmarks('Test', prandTest),
     ...buildBenchmarks('Reference', prandRef),
