@@ -68,6 +68,9 @@ describe('uniformIntDistribution', () => {
             // Assert
             expect(uniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
             expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(expect.any(Array), expect.any(Array), rng);
+            const params = uniformArrayIntDistributionInternal.mock.calls[0];
+            const rangeSize = params[1];
+            expect(rangeSize[0] * 2 ** 32 + rangeSize[1]).toBe(to - from + 1);
           })
           .beforeEach(clean)
       ));
