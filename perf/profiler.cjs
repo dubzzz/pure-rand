@@ -9,8 +9,8 @@ const { testNext, testJump, testDistribution } = require('./tasks.cjs');
 const prand = require('../lib/pure-rand');
 
 const NUM_TESTS = 10000000;
-const PROF_TYPE = process.env.PROF_TYPE || 'skip';
-const PROF_GEN = process.env.PROF_GEN || 'congruential32';
+const PROF_TYPE = process.env.PROF_TYPE || 'distrib';
+const PROF_GEN = process.env.PROF_GEN || 'xoroshiro128plus';
 console.log(`Profiler type: ${PROF_TYPE}`);
 console.log(`Generator....: ${PROF_GEN}`);
 
@@ -22,7 +22,13 @@ switch (PROF_TYPE) {
   case 'jump':
     testJump(g, NUM_TESTS);
     break;
-  case 'skip':
+  case 'distrib':
     testDistribution(prand.uniformIntDistribution, g, NUM_TESTS);
+    break;
+  case 'distrib-large':
+    testDistribution(prand.uniformIntDistribution, g, NUM_TESTS, {
+      min: Number.MIN_SAFE_INTEGER,
+      max: Number.MAX_SAFE_INTEGER,
+    });
     break;
 }
