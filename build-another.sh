@@ -11,6 +11,7 @@ currentBranch="$(expr substr "${rawCurrentBranch}" 3 1000)"
 # Move to commit and build it
 commitId=$1
 if [ -z "$commitId" ]
+then
     echo "Please provide a commit id!"
     exit 1
 fi
