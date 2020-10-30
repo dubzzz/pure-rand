@@ -15,8 +15,8 @@ script:
   - yarn build:prod
   - yarn test
   - git fetch --unshallow
-  - yarn bench -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0 -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c c017f2be702dda219dc98df2ca2cc85f4795e469:basic -c 1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays
-  - yarn bench -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0
+  - yarn bench -v -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0 -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c c017f2be702dda219dc98df2ca2cc85f4795e469:basic -c 1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays
+  - yarn bench -v -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0
 after_success:
   - yarn coverage
 stages:
