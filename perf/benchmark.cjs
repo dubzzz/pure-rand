@@ -150,7 +150,12 @@ async function run() {
   console.info(`${chalk.cyan('INFO ')} Generator: ${PROF_GEN}\n`);
 
   // Declare configuration matrix
-  const configurations = commits.map((commit) => [prettyName(commit), require(`../${libName(commit)}/pure-rand`)]);
+  const configurations = commits.map((commit) => {
+    const name = prettyName(commit);
+    const libPath = `../${libName(commit)}/pure-rand`;
+    verboseLog(`name: ${name}, require: ${libPath}`);
+    return [name, require(libPath)];
+  });
 
   // Declare performance tests
   const performanceTests = [
