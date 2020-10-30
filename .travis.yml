@@ -15,7 +15,7 @@ script:
   - yarn build:prod
   - yarn test
   - git fetch --unshallow
-  - yarn bench -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0 -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c c017f2be702dda219dc98df2ca2cc85f4795e469:basic -c 1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0(2) -c 538c008283a10cfca78b20ae82765028a8a751f2:master(2) -c c017f2be702dda219dc98df2ca2cc85f4795e469:basic(2) -c 1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays(2)
+  - yarn bench -c 062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0 -c 538c008283a10cfca78b20ae82765028a8a751f2:master -c c017f2be702dda219dc98df2ca2cc85f4795e469:basic -c 1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays -c "062041a39eff50db57ad3dd3a3742a4f11e53cb9:v3.1.0(2)" -c "538c008283a10cfca78b20ae82765028a8a751f2:master(2)" -c "c017f2be702dda219dc98df2ca2cc85f4795e469:basic(2)" -c "1892e2944e907868fa4b62f500acd32f2ad8f67e:shared-arrays(2)"
 after_success:
   - yarn coverage
 stages:
