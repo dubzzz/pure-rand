@@ -58,14 +58,14 @@ const libName = ({ hash, target }) => {
 async function run() {
   // Check that there is no local changes
   const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
-  if (gitDiffErr.code) {
+  if (gitDiffErr && gitDiffErr.code) {
     console.error(`${chalk.red('ERROR')} Please commit or stash your local changes!`);
     return;
   }
 
   // Extract current branch
   const { err: gitBranchErr, stdout } = await execAsync('git branch');
-  if (gitBranchErr.code) {
+  if (gitBranchErr && gitBranchErr.code) {
     console.error(`${chalk.red('ERROR')} Failed to get the name of the current branch!`);
     return;
   }
@@ -85,7 +85,7 @@ async function run() {
     for (const commit of commits) {
       console.info(`${chalk.cyan('INFO')} Building bundle for ${prettyName(commit)}`);
       const { err: gitCheckoutErr } = await execFileAsync('git', ['checkout', commit.hash]);
-      if (gitCheckoutErr.code) {
+      if (gitCheckoutErr && gitCheckoutErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to checkout ${prettyName(commit)}`);
         return;
       }
@@ -93,7 +93,7 @@ async function run() {
         path.join(__dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc'),
         ['--target', commit.target, '--outDir', path.join(__dirname, '..', libName(commit))]
       );
-      if (buildErr.code) {
+      if (buildErr && buildErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to build ${prettyName(commit)}`);
         return;
       }
