@@ -11,6 +11,7 @@
 const Benchmark = require('benchmark');
 const chalk = require('chalk');
 const { exec, execFile } = require('child_process');
+const { Table } = require('console-table-printer');
 const path = require('path');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
@@ -208,9 +209,12 @@ async function run() {
   ];
 
   // Declare the benchmarks
-  const benchmarks = configurations.flatMap(([type, lib]) =>
+  let benchmarks = configurations.flatMap(([type, lib]) =>
     performanceTests.map((test) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
   );
+  const benchmarkStatsFor = (configurationIndex, testIndex) => {
+    return benchmarks[configurationIndex * performanceTests.length + testIndex].stats.mean;
+  };
 
   // Simple checks concerning number of calls to the underlying generators
   console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
@@ -242,11 +246,59 @@ async function run() {
 
   // Run benchmarks
   console.info(`\n${chalk.cyan('INFO ')} Benchmark phase...\n`);
-  Benchmark.invoke(benchmarks, {
+  benchmarks = Benchmark.invoke(benchmarks, {
     name: 'run',
     queued: true,
     onCycle: (event) => console.log(String(event.target)),
   });
+
+  // Print comparison tables
+  console.info(`\n${chalk.cyan('INFO ')} Reports\n`);
+  for (let testIndex = 0; testIndex !== performanceTests.length; ++testIndex) {
+    const testName = performanceTests[testIndex].name('').replace(/\.+@$/, '');
+    console.log(`Stats for ${testName}`);
+    // Create and fill the reporting table
+    const table = new Table({
+      columns: [
+        { name: 'Name', alignment: 'left' },
+        ...configurations.map(([configName]) => ({ name: configName, alignment: 'right' })),
+      ],
+    });
+    // Find the best and worst configurations
+    const [idxWorst, idxBest] = configurations.reduce(
+      ([idxWorst, idxBest], _, currentConfigIndex) => {
+        const worst = benchmarkStatsFor(idxWorst, testIndex);
+        const best = benchmarkStatsFor(idxBest, testIndex);
+        const current = benchmarkStatsFor(currentConfigIndex, testIndex);
+        return [current > worst ? currentConfigIndex : idxWorst, current < best ? currentConfigIndex : idxBest];
+      },
+      [0, 0]
+    );
+    // Add rows
+    for (let currentConfigIndex = 0; currentConfigIndex !== configurations.length; ++currentConfigIndex) {
+      const currentBenchMean = benchmarkStatsFor(currentConfigIndex, testIndex);
+      table.addRow(
+        {
+          Name: configurations[currentConfigIndex][0],
+          ...Object.fromEntries(
+            configurations.map((config, configIndex) => {
+              const otherBenchMean = benchmarkStatsFor(configIndex, testIndex);
+              const ratio = (100.0 * otherBenchMean) / currentBenchMean - 100.0;
+              return [config[0], `${ratio >= 0 ? '+' : ''}${ratio.toFixed(2)} %`];
+            })
+          ),
+        },
+        currentConfigIndex === idxBest
+          ? { color: 'green' }
+          : currentConfigIndex === idxWorst
+          ? { color: 'red' }
+          : undefined
+      );
+    }
+    // Print the table
+    table.printTable();
+    console.log(``);
+  }
 }
 
 run();
