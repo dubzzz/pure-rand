@@ -122,10 +122,13 @@ async function run() {
         console.error(`${chalk.red('ERROR')} Failed to checkout ${prettyName(commit)}`);
         return;
       }
-      const { err: buildErr } = await execFileAsync(
+      const { err: buildErr } = await execFileAsync('node', [
         path.join(__dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc'),
-        ['--target', commit.target, '--outDir', path.join(__dirname, '..', libName(commit))]
-      );
+        '--target',
+        commit.target,
+        '--outDir',
+        path.join(__dirname, '..', libName(commit)),
+      ]);
       if (buildErr && buildErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to build ${prettyName(commit)}`);
         return;
