@@ -35,15 +35,48 @@ const argv = yargs(hideBin(process.argv))
     type: 'string',
     description: 'Default compilation target (default: es6)',
   })
+  .option('verbose', {
+    alias: 'v',
+    type: 'boolean',
+    description: 'Enable verbose mode (default: false)',
+  })
   .demandOption(['commit']).argv;
 
+const verboseLog = (...args) => {
+  if (argv.verbose) {
+    console.log(`${chalk.greenBright('DEBUG')}`, ...args);
+  }
+};
+const cleanErr = (err) => {
+  if (!err) return err;
+  const { stack, ...others } = err;
+  return others;
+};
 const execAsync = (command, options) => {
-  return new Promise((resolve) => exec(command, options, (err, stdout, stderr) => resolve({ err, stdout, stderr })));
+  const prettyCmd = `exec(${JSON.stringify(command)}, ${JSON.stringify(options)}})`;
+  return new Promise((resolve) => {
+    verboseLog(`Call to ${prettyCmd}`);
+    exec(command, options, (err, stdout, stderr) => {
+      verboseLog(`Answer from ${prettyCmd}`);
+      verboseLog(`err:`, cleanErr(err));
+      verboseLog(`stdout:`, stdout.toString());
+      verboseLog(`stderr:`, stderr.toString());
+      resolve({ err, stdout, stderr });
+    });
+  });
 };
 const execFileAsync = (command, args, options) => {
-  return new Promise((resolve) =>
-    execFile(command, args, options, (err, stdout, stderr) => resolve({ err, stdout, stderr }))
-  );
+  const prettyCmd = `execFile(${JSON.stringify(command)}, ${JSON.stringify(args)}, ${JSON.stringify(options)}})`;
+  return new Promise((resolve) => {
+    verboseLog(`Call to ${prettyCmd}`);
+    execFile(command, args, options, (err, stdout, stderr) => {
+      verboseLog(`Answer from ${prettyCmd}`);
+      verboseLog(`err:`, cleanErr(err));
+      verboseLog(`stdout:`, stdout.toString());
+      verboseLog(`stderr:`, stderr.toString());
+      resolve({ err, stdout, stderr });
+    });
+  });
 };
 const prettyName = ({ hash, alias }) => {
   const isHash = /[0-9a-f]{40}/.test(hash);
@@ -83,19 +116,18 @@ async function run() {
   try {
     // Build one bundle per commit
     for (const commit of commits) {
-      console.info(`${chalk.cyan('INFO')} Building bundle for ${prettyName(commit)}`);
+      console.info(`${chalk.cyan('INFO ')} Building bundle for ${prettyName(commit)}`);
       const { err: gitCheckoutErr } = await execFileAsync('git', ['checkout', commit.hash]);
       if (gitCheckoutErr && gitCheckoutErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to checkout ${prettyName(commit)}`);
         return;
       }
-      const { err: buildErr, stderr } = await execFileAsync(
+      const { err: buildErr } = await execFileAsync(
         path.join(__dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc'),
         ['--target', commit.target, '--outDir', path.join(__dirname, '..', libName(commit))]
       );
       if (buildErr && buildErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to build ${prettyName(commit)}`);
-        console.error(stderr);
         return;
       }
     }
@@ -111,7 +143,7 @@ async function run() {
   const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
   const PROF_GEN = argv.generator || 'xoroshiro128plus';
-  console.info(`${chalk.cyan('INFO')} Generator: ${PROF_GEN}\n`);
+  console.info(`${chalk.cyan('INFO ')} Generator: ${PROF_GEN}\n`);
 
   // Declare configuration matrix
   const configurations = commits.map((commit) => [prettyName(commit), require(`../${libName(commit)}/pure-rand`)]);
@@ -178,7 +210,7 @@ async function run() {
   );
 
   // Simple checks concerning number of calls to the underlying generators
-  console.info(`${chalk.cyan('INFO')} Measuring number of calls to next...\n`);
+  console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
   for (const test of performanceTests) {
     for (const [type, lib] of configurations) {
       const [g, counter] = countCallsToNext(genFor(lib, PROF_GEN));
@@ -195,7 +227,7 @@ async function run() {
   //   test1 @reference - 200 ops/s
   //   test2 @reference - 200 ops/s
   // Because running test2 de-optimized the code that was optimized for test1 during first runs.
-  console.info(`${chalk.cyan('INFO')} Warm-up phase...\n`);
+  console.info(`${chalk.cyan('INFO ')} Warm-up phase...\n`);
   Benchmark.invoke(
     benchmarks.map((b) => b.clone({ initCount: 1, minSamples: PRERUN_SAMPLES })),
     {
@@ -206,7 +238,7 @@ async function run() {
   );
 
   // Run benchmarks
-  console.info(`\n${chalk.cyan('INFO')} Benchmark phase...\n`);
+  console.info(`\n${chalk.cyan('INFO ')} Benchmark phase...\n`);
   Benchmark.invoke(benchmarks, {
     name: 'run',
     queued: true,
