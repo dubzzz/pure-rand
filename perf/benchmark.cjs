@@ -282,6 +282,9 @@ async function run() {
           Name: configurations[currentConfigIndex][0],
           ...Object.fromEntries(
             configurations.map((config, configIndex) => {
+              if (configIndex === currentConfigIndex) {
+                return [config[0], '-'];
+              }
               const otherBenchMean = benchmarkStatsFor(configIndex, testIndex);
               const ratio = (100.0 * otherBenchMean) / currentBenchMean - 100.0;
               return [config[0], `${ratio >= 0 ? '+' : ''}${ratio.toFixed(2)} %`];
