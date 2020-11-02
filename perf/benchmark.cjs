@@ -144,9 +144,9 @@ async function run() {
   }
 
   const PRERUN_SAMPLES = 50;
-  const WARMUP_SAMPLES = 1000;
-  const MIN_SAMPLES = 1000;
-  const NUM_TESTS = 1000;
+  const WARMUP_SAMPLES = 500;
+  const MIN_SAMPLES = 500;
+  const NUM_TESTS = 500;
   const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
   const PROF_GEN = argv.generator || 'xoroshiro128plus';
