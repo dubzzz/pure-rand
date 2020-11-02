@@ -49,6 +49,11 @@ const argv = yargs(hideBin(process.argv))
     default: 500,
     description: 'Number of samples',
   })
+  .option('allowLocalChanges', {
+    type: 'boolean',
+    default: false,
+    description: 'Do not exit if local changes',
+  })
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
@@ -104,11 +109,13 @@ const libName = ({ hash, target }) => {
 };
 
 async function run() {
-  // Check that there is no local changes
-  const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
-  if (gitDiffErr && gitDiffErr.code) {
-    console.error(`${chalk.red('ERROR')} Please commit or stash your local changes!`);
-    return;
+  if (!argv.allowLocalChanges) {
+    // Check that there is no local changes
+    const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
+    if (gitDiffErr && gitDiffErr.code) {
+      console.error(`${chalk.red('ERROR')} Please commit or stash your local changes!`);
+      return;
+    }
   }
 
   // Extract current branch
