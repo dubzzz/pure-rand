@@ -131,7 +131,7 @@ async function run() {
         commit.target,
         '--outDir',
         path.join(__dirname, '..', libName(commit)),
-        ...(argv.verbose ? ['--extendedDiagnostics'] : []),
+        ...(argv.verbose ? ['--diagnostics', '--extendedDiagnostics', '--listEmittedFiles'] : []),
       ]);
       if (buildErr && buildErr.code) {
         console.error(`${chalk.red('ERROR')} Failed to build ${prettyName(commit)}`);
