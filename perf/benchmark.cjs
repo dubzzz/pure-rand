@@ -19,6 +19,8 @@ const { hideBin } = require('yargs/helpers');
 const { countCallsToNext, genFor } = require('./helpers.cjs');
 const { testDistribution } = require('./tasks.cjs');
 
+const DEFAULT_SAMPLES = 500;
+
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: yarn bench -c [commit_hash(:alias(:target))] -c [commit_hash(:alias(:target))]')
   .option('commit', {
@@ -35,6 +37,15 @@ const argv = yargs(hideBin(process.argv))
     alias: 't',
     type: 'string',
     description: 'Default compilation target (default: es6)',
+  })
+  .option('count', {
+    type: 'number',
+    description: 'Number of measurements per commit (default: 1)',
+  })
+  .option('samples', {
+    alias: 's',
+    type: 'number',
+    description: 'Number of samples (default: ' + DEFAULT_SAMPLES + ')',
   })
   .option('verbose', {
     alias: 'v',
@@ -143,22 +154,26 @@ async function run() {
     await execFileAsync('git', ['checkout', currentBranch]);
   }
 
-  const PRERUN_SAMPLES = 50;
-  const WARMUP_SAMPLES = 500;
-  const MIN_SAMPLES = 500;
+  const PRERUN_SAMPLES = Math.floor((argv.samples || DEFAULT_SAMPLES) / 10);
+  const WARMUP_SAMPLES = argv.samples || DEFAULT_SAMPLES;
+  const MIN_SAMPLES = argv.samples || DEFAULT_SAMPLES;
   const NUM_TESTS = 500;
   const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
   const PROF_GEN = argv.generator || 'xoroshiro128plus';
-  console.info(`${chalk.cyan('INFO ')} Generator: ${PROF_GEN}\n`);
+  console.info(`${chalk.cyan('INFO ')} Warm-up samples  : ${PRERUN_SAMPLES}`);
+  console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
+  console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
 
   // Declare configuration matrix
-  const configurations = commits.map((commit) => {
-    const name = prettyName(commit);
-    const libPath = `../${libName(commit)}/pure-rand`;
-    verboseLog(`name: ${name}, require: ${libPath}`);
-    return [name, require(libPath)];
-  });
+  const configurations = [...Array(argv.count || 1)].flatMap((_, index) =>
+    commits.map((commit) => {
+      const name = prettyName(commit);
+      const libPath = `../${libName(commit)}/pure-rand`;
+      verboseLog(`name: ${name}, require: ${libPath}`);
+      return [name + (index === 0 ? '' : `(${index + 1})`), require(libPath)];
+    })
+  );
 
   // Declare performance tests
   const performanceTests = [
