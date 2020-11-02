@@ -108,7 +108,9 @@ async function run() {
     console.error(`${chalk.red('ERROR')} Failed to get the name of the current branch, outside of a branch!`);
     return;
   }
-  const currentBranch = rawCurrentBranch.substring(2);
+  const detactedHeadRegex = /\* \(HEAD detached at ([a-f0-9]+)\)/;
+  const detactedHead = detactedHeadRegex.exec(rawCurrentBranch);
+  const currentBranch = detactedHead !== null ? detactedHead[1] : rawCurrentBranch.substring(2);
 
   const commits = (Array.isArray(argv.commit) ? argv.commit : [argv.commit]).map((commit) => {
     const [hash, alias, target] = commit.split(':', 3);
