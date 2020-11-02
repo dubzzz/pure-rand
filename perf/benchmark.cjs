@@ -217,11 +217,11 @@ async function run() {
   ];
 
   // Declare the benchmarks
-  let benchmarks = configurations.flatMap(([type, lib]) =>
-    performanceTests.map((test) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
+  let benchmarks = performanceTests.flatMap((test) =>
+    configurations.map(([type, lib]) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
   );
   const benchmarkStatsFor = (configurationIndex, testIndex) => {
-    return benchmarks[configurationIndex * performanceTests.length + testIndex].stats.mean;
+    return benchmarks[configurationIndex + testIndex * configurations.length].stats.mean;
   };
 
   // Simple checks concerning number of calls to the underlying generators
