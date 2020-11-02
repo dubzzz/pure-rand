@@ -19,8 +19,6 @@ const { hideBin } = require('yargs/helpers');
 const { countCallsToNext, genFor } = require('./helpers.cjs');
 const { testDistribution } = require('./tasks.cjs');
 
-const DEFAULT_SAMPLES = 500;
-
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: yarn bench -c [commit_hash(:alias(:target))] -c [commit_hash(:alias(:target))]')
   .option('commit', {
@@ -31,26 +29,31 @@ const argv = yargs(hideBin(process.argv))
   .option('generator', {
     alias: 'g',
     type: 'string',
-    description: 'Name of the generator (default: xoroshiro128plus)',
+    default: 'xoroshiro128plus',
+    description: 'Name of the generator',
   })
   .option('target', {
     alias: 't',
     type: 'string',
-    description: 'Default compilation target (default: es6)',
+    default: 'es6',
+    description: 'Default compilation target',
   })
   .option('count', {
     type: 'number',
-    description: 'Number of measurements per commit (default: 1)',
+    default: 1,
+    description: 'Number of measurements per commit',
   })
   .option('samples', {
     alias: 's',
     type: 'number',
-    description: 'Number of samples (default: ' + DEFAULT_SAMPLES + ')',
+    default: 500,
+    description: 'Number of samples',
   })
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
-    description: 'Enable verbose mode (default: false)',
+    default: false,
+    description: 'Enable verbose mode',
   })
   .demandOption(['commit']).argv;
 
@@ -125,7 +128,7 @@ async function run() {
 
   const commits = (Array.isArray(argv.commit) ? argv.commit : [argv.commit]).map((commit) => {
     const [hash, alias, target] = commit.split(':', 3);
-    return { hash, alias, target: target || argv.target || 'es6' };
+    return { hash, alias, target: target || argv.target };
   });
   try {
     // Build one bundle per commit
@@ -154,19 +157,19 @@ async function run() {
     await execFileAsync('git', ['checkout', currentBranch]);
   }
 
-  const PRERUN_SAMPLES = Math.floor((argv.samples || DEFAULT_SAMPLES) / 10);
-  const WARMUP_SAMPLES = argv.samples || DEFAULT_SAMPLES;
-  const MIN_SAMPLES = argv.samples || DEFAULT_SAMPLES;
+  const PRERUN_SAMPLES = Math.floor(argv.samples / 10);
+  const WARMUP_SAMPLES = argv.samples;
+  const MIN_SAMPLES = argv.samples;
   const NUM_TESTS = 500;
   const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
 
-  const PROF_GEN = argv.generator || 'xoroshiro128plus';
+  const PROF_GEN = argv.generator;
   console.info(`${chalk.cyan('INFO ')} Warm-up samples  : ${PRERUN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
 
   // Declare configuration matrix
-  const configurations = [...Array(argv.count || 1)].flatMap((_, index) =>
+  const configurations = [...Array(argv.count)].flatMap((_, index) =>
     commits.map((commit) => {
       const name = prettyName(commit);
       const libPath = `../${libName(commit)}/pure-rand`;
