@@ -3,8 +3,8 @@ node_js:
   - "14"
   - "12"
   - "10"
-
 cache:
+
   directories:
     - node_modules
 if: branch = master OR branch =~ ^next- OR branch =~ ^fix-v\d+\. OR tag =~ ^v\d+\.
