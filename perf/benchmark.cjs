@@ -348,7 +348,7 @@ async function run() {
           ...Object.fromEntries(
             configurations.map((config, configIndex) => {
               if (configIndex === currentConfigIndex) {
-                return [config[0], '-'];
+                return [config[0], '—'];
               }
               const otherBenchStats = benchmarkStatsFor(configIndex, testIndex);
               const otherBenchWorst = Math.max(Number.MIN_VALUE, otherBenchStats.mean - 2 * otherBenchStats.deviation);
