@@ -323,7 +323,7 @@ async function run() {
     const table = new Table({
       columns: [
         { name: 'Name', alignment: 'left' },
-        ...configurations.map(([configName]) => ({ name: configName, alignment: 'right' })),
+        ...configurations.map(([configName]) => ({ name: configName, alignment: 'center' })),
       ],
     });
     // Find the best and worst configurations
