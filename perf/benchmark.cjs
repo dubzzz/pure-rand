@@ -49,6 +49,11 @@ const argv = yargs(hideBin(process.argv))
     default: 500,
     description: 'Number of samples',
   })
+  .option('allow-local-changes', {
+    type: 'boolean',
+    default: false,
+    description: 'Do not check for local changes, your local changes might be lost if you toggle that option',
+  })
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
@@ -104,11 +109,17 @@ const libName = ({ hash, target }) => {
 };
 
 async function run() {
-  // Check that there is no local changes
-  const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
-  if (gitDiffErr && gitDiffErr.code) {
-    console.error(`${chalk.red('ERROR')} Please commit or stash your local changes!`);
-    return;
+  if (!argv['allow-local-changes']) {
+    // Check that there is no local changes
+    const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
+    if (gitDiffErr && gitDiffErr.code) {
+      console.error(`${chalk.red('ERROR')} Please commit or stash your local changes!`);
+      return;
+    }
+  } else {
+    // Stash local changes
+    console.info(`${chalk.cyan('INFO ')} Stashing local changes if any`);
+    await execAsync('git stash');
   }
 
   // Extract current branch
@@ -155,6 +166,12 @@ async function run() {
   } finally {
     // Go back to the original branch
     await execFileAsync('git', ['checkout', currentBranch]);
+
+    if (argv['allow-local-changes']) {
+      // Applying stash
+      console.info(`${chalk.cyan('INFO ')} Un-Stashing local changes if any`);
+      await execAsync('git stash pop');
+    }
   }
 
   const PRERUN_SAMPLES = Math.floor(argv.samples / 10);
