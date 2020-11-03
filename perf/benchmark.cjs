@@ -52,7 +52,7 @@ const argv = yargs(hideBin(process.argv))
   .option('allow-local-changes', {
     type: 'boolean',
     default: false,
-    description: 'Do not check for local changes, your local changes might be lost if you toggle that option',
+    description: 'Do not check for local changes, your local changes will be automatically stashed and un-stashed',
   })
   .option('verbose', {
     alias: 'v',
