@@ -54,6 +54,11 @@ const argv = yargs(hideBin(process.argv))
     default: false,
     description: 'Do not check for local changes, your local changes will be automatically stashed and un-stashed',
   })
+  .option('print-confidence', {
+    type: 'boolean',
+    default: false,
+    description: 'Print 95 % confidence range in reports instead of +X% (increase the number of samples to reduce this range)',
+  })
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
@@ -106,6 +111,9 @@ const prettyName = ({ hash, alias }) => {
 };
 const libName = ({ hash, target }) => {
   return `lib-${hash}-${target}`;
+};
+const formatRatio = (ratio) => {
+  return `${ratio >= 0 ? '+' : ''}${ratio.toFixed(2)} %`;
 };
 
 async function run() {
@@ -272,7 +280,7 @@ async function run() {
     configurations.map(([type, lib]) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
   );
   const benchmarkStatsFor = (configurationIndex, testIndex) => {
-    return benchmarks[configurationIndex + testIndex * configurations.length].stats.mean;
+    return benchmarks[configurationIndex + testIndex * configurations.length].stats;
   };
 
   // Simple checks concerning number of calls to the underlying generators
@@ -320,33 +328,49 @@ async function run() {
     const table = new Table({
       columns: [
         { name: 'Name', alignment: 'left' },
-        ...configurations.map(([configName]) => ({ name: configName, alignment: 'right' })),
+        ...configurations.map(([configName]) => ({
+          name: configName,
+          alignment: argv['print-confidence'] ? 'center' : 'right',
+        })),
       ],
     });
     // Find the best and worst configurations
     const [idxWorst, idxBest] = configurations.reduce(
       ([idxWorst, idxBest], _, currentConfigIndex) => {
-        const worst = benchmarkStatsFor(idxWorst, testIndex);
-        const best = benchmarkStatsFor(idxBest, testIndex);
-        const current = benchmarkStatsFor(currentConfigIndex, testIndex);
+        const worst = benchmarkStatsFor(idxWorst, testIndex).mean;
+        const best = benchmarkStatsFor(idxBest, testIndex).mean;
+        const current = benchmarkStatsFor(currentConfigIndex, testIndex).mean;
         return [current > worst ? currentConfigIndex : idxWorst, current < best ? currentConfigIndex : idxBest];
       },
       [0, 0]
     );
     // Add rows
     for (let currentConfigIndex = 0; currentConfigIndex !== configurations.length; ++currentConfigIndex) {
-      const currentBenchMean = benchmarkStatsFor(currentConfigIndex, testIndex);
+      const currentBenchStats = benchmarkStatsFor(currentConfigIndex, testIndex);
+      // [mean - 2 * sigma, mean + 2 * sigma] is 95 %
+      const currentBenchWorst = Math.max(Number.MIN_VALUE, currentBenchStats.mean - 2 * currentBenchStats.deviation);
+      const currentBenchMean = currentBenchStats.mean;
+      const currentBenchBest = currentBenchStats.mean + 2 * currentBenchStats.deviation;
       table.addRow(
         {
           Name: configurations[currentConfigIndex][0],
           ...Object.fromEntries(
             configurations.map((config, configIndex) => {
               if (configIndex === currentConfigIndex) {
-                return [config[0], '-'];
+                return [config[0], '—'];
               }
-              const otherBenchMean = benchmarkStatsFor(configIndex, testIndex);
+              const otherBenchStats = benchmarkStatsFor(configIndex, testIndex);
+              const otherBenchWorst = Math.max(Number.MIN_VALUE, otherBenchStats.mean - 2 * otherBenchStats.deviation);
+              const otherBenchMean = otherBenchStats.mean;
+              const otherBenchBest = otherBenchStats.mean + 2 * otherBenchStats.deviation;
+              const ratioWorst = (100.0 * otherBenchWorst) / currentBenchBest - 100.0;
               const ratio = (100.0 * otherBenchMean) / currentBenchMean - 100.0;
-              return [config[0], `${ratio >= 0 ? '+' : ''}${ratio.toFixed(2)} %`];
+              const ratioBest = (100.0 * otherBenchBest) / currentBenchWorst - 100.0;
+              if (argv['print-confidence']) {
+                return [config[0], `${formatRatio(ratioWorst)} — ${formatRatio(ratioBest)}`]; // ~95% interval
+              } else {
+                return [config[0], formatRatio(ratio)];
+              }
             })
           ),
         },
