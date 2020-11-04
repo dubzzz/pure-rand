@@ -117,7 +117,7 @@ const formatRatio = (ratio) => {
 };
 
 async function run() {
-  let stashedId = null;
+  let stashedMessage = null;
   if (!argv['allow-local-changes']) {
     // Check that there is no local changes
     const { err: gitDiffErr } = await execAsync('git diff-index --quiet HEAD --');
@@ -127,16 +127,16 @@ async function run() {
     }
   } else {
     // Stash local changes
-    const localStashId = `bench-${Math.random().toString(16).substr(2)}`;
-    console.info(`${chalk.cyan('INFO ')} Stashing local changes if any under stash name ${localStashId}`);
+    const localStashMessage = `bench-${Math.random().toString(16).substr(2)}`;
+    console.info(`${chalk.cyan('INFO ')} Stashing local changes if any under stash name ${localStashMessage}`);
     const { stdout: stashCountBefore } = await execAsync('git stash list | wc -l');
-    const { err: gitStashErr } = await execAsync(`git stash push -m "${localStashId}"`);
+    const { err: gitStashErr } = await execAsync(`git stash push -m "${localStashMessage}"`);
     if (gitStashErr && gitStashErr.code) {
       console.info(`${chalk.yellow('WARN ')} Something went wrong when trying to stash your changes`);
     }
     const { stdout: stashCountAfter } = await execAsync('git stash list | wc -l');
     if (stashCountBefore != null && stashCountAfter != null && String(stashCountAfter) !== String(stashCountBefore)) {
-      stashedId = localStashId;
+      stashedMessage = localStashMessage;
       console.info(`${chalk.cyan('INFO ')} Your local changes have been stashed`);
     } else {
       console.info(`${chalk.cyan('INFO ')} No local changes to stash`);
@@ -188,10 +188,10 @@ async function run() {
     // Go back to the original branch
     await execFileAsync('git', ['checkout', currentBranch]);
 
-    if (stashedId !== null) {
+    if (stashedMessage !== null) {
       // Applying stash
-      console.info(`${chalk.cyan('INFO ')} Un-Stashing local changes stored under stash ${stashedId}`);
-      const { err: gitStashErr } = await execAsync(`git stash pop stash^{/${stashedId}}`);
+      console.info(`${chalk.cyan('INFO ')} Un-Stashing local changes stored under stash ${stashedMessage}`);
+      const { err: gitStashErr } = await execAsync(`git stash apply stash^{/${stashedMessage}}`); // pop does not handle messages
       if (gitStashErr && gitStashErr.code) {
         console.info(`${chalk.yellow('WARN ')} Something went wrong when trying to un-stash your changes`);
       }
