@@ -57,8 +57,7 @@ const argv = yargs(hideBin(process.argv))
   .option('print-confidence', {
     type: 'boolean',
     default: false,
-    description:
-      'Print 95 % confidence range in reports instead of +X% (increase the number of samples to reduce this range)',
+    description: 'Print 95 % confidence range in reports instead of +X% (increase the number of samples to reduce this range)',
   })
   .option('verbose', {
     alias: 'v',
