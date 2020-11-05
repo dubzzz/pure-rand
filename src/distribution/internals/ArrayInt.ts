@@ -99,11 +99,7 @@ export function substractArrayInt64(out: ArrayInt64, arrayIntA: ArrayInt64, arra
     reminderLow = 1;
     low = low >>> 0;
   }
-  let high = highFirst - highSecond - reminderLow;
-  if (high < 0) {
-    high = high >>> 0;
-  }
-  out.data[0] = high;
+  out.data[0] = highFirst - highSecond - reminderLow;
   out.data[1] = low;
   return out;
 }
