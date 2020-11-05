@@ -198,13 +198,11 @@ async function run() {
     }
   }
 
-  const PRERUN_SAMPLES = Math.floor(argv.samples / 10);
   const MIN_SAMPLES = argv.samples;
   const NUM_TESTS = 500;
   const benchConf = { minSamples: MIN_SAMPLES };
 
   const PROF_GEN = argv.generator;
-  console.info(`${chalk.cyan('INFO ')} Pre-run samples  : ${PRERUN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
 
@@ -283,6 +281,13 @@ async function run() {
   };
 
   // Simple checks concerning number of calls to the underlying generators
+  // Run all the code of all the benchmarks at least once before running them for measurements.
+  // It ensures that non-optimized path will not be wrongly optimized. In the past we had reports like:
+  //   test1 @reference - 400 ops/s
+  //   test2 @reference - 200 ops/s
+  //   test1 @reference - 200 ops/s
+  //   test2 @reference - 200 ops/s
+  // Because running test2 de-optimized the code that was optimized for test1 during first runs.
   console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
   for (const test of performanceTests) {
     for (const [type, lib] of configurations) {
@@ -292,23 +297,6 @@ async function run() {
     }
   }
   console.log(``);
-
-  // Run all the code of all the benchmarks at least once before running them for measurements.
-  // It ensures that non-optimized path will not be wrongly optimized. In the past we had reports like:
-  //   test1 @reference - 400 ops/s
-  //   test2 @reference - 200 ops/s
-  //   test1 @reference - 200 ops/s
-  //   test2 @reference - 200 ops/s
-  // Because running test2 de-optimized the code that was optimized for test1 during first runs.
-  console.info(`${chalk.cyan('INFO ')} Pre-run phase...\n`);
-  Benchmark.invoke(
-    benchmarks.map((b) => b.clone({ minSamples: PRERUN_SAMPLES })),
-    {
-      name: 'run',
-      queued: true,
-      onCycle: (event) => console.log(String(event.target)),
-    }
-  );
 
   // Run benchmarks
   console.info(`\n${chalk.cyan('INFO ')} Benchmark phase...\n`);
