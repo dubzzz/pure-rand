@@ -1,6 +1,6 @@
 {
   "name": "pure-rand",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": " Pure random number generator written in TypeScript",
   "type": "commonjs",
   "main": "lib/pure-rand.js",
