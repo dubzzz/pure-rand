@@ -57,7 +57,7 @@ const argv = yargs(hideBin(process.argv))
   .option('print-confidence', {
     type: 'boolean',
     default: false,
-    description: 'Print 95 % confidence range in reports instead of +X% (increase the number of samples to reduce this range)',
+    description: 'Print 95% confidence range in reports instead of +X%',
   })
   .option('verbose', {
     alias: 'v',
@@ -199,13 +199,12 @@ async function run() {
   }
 
   const PRERUN_SAMPLES = Math.floor(argv.samples / 10);
-  const WARMUP_SAMPLES = argv.samples;
   const MIN_SAMPLES = argv.samples;
   const NUM_TESTS = 500;
-  const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
+  const benchConf = { minSamples: MIN_SAMPLES };
 
   const PROF_GEN = argv.generator;
-  console.info(`${chalk.cyan('INFO ')} Warm-up samples  : ${PRERUN_SAMPLES}`);
+  console.info(`${chalk.cyan('INFO ')} Pre-run samples  : ${PRERUN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
   console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
 
@@ -301,9 +300,9 @@ async function run() {
   //   test1 @reference - 200 ops/s
   //   test2 @reference - 200 ops/s
   // Because running test2 de-optimized the code that was optimized for test1 during first runs.
-  console.info(`${chalk.cyan('INFO ')} Warm-up phase...\n`);
+  console.info(`${chalk.cyan('INFO ')} Pre-run phase...\n`);
   Benchmark.invoke(
-    benchmarks.map((b) => b.clone({ initCount: 1, minSamples: PRERUN_SAMPLES })),
+    benchmarks.map((b) => b.clone({ minSamples: PRERUN_SAMPLES })),
     {
       name: 'run',
       queued: true,
