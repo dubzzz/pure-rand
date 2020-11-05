@@ -291,7 +291,7 @@ async function run() {
   console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
   for (const test of performanceTests) {
     for (const [type, lib] of configurations) {
-      const [g, counter] = countCallsToNext(genFor(lib, PROF_GEN));
+      const [g, counter] = countCallsToNext(genFor(lib, PROF_GEN, 42)); // seed: 42, we always want the same seed
       test.run(lib, () => g);
       console.log(`${test.name(type)} called generator on next ${counter.count} times`);
     }
