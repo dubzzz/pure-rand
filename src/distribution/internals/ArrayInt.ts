@@ -36,7 +36,7 @@ export function toNumber(arrayInt: ArrayInt): number {
 // Helpers specific to 64 bits versions
 
 /** @internal */
-export type ArrayInt64 = ArrayInt & { data: [number, number] };
+export type ArrayInt64 = Required<ArrayInt> & { data: [number, number] };
 
 /**
  * We only accept safe integers here
@@ -64,10 +64,10 @@ export function fromNumberToArrayInt64(out: ArrayInt64, n: number): ArrayInt64 {
 export function substractArrayInt64(out: ArrayInt64, arrayIntA: ArrayInt64, arrayIntB: ArrayInt64): ArrayInt64 {
   const lowA = arrayIntA.data[1];
   const highA = arrayIntA.data[0];
-  const signA = arrayIntA.sign || 1;
+  const signA = arrayIntA.sign;
   const lowB = arrayIntB.data[1];
   const highB = arrayIntB.data[0];
-  const signB = arrayIntB.sign || 1;
+  const signB = arrayIntB.sign;
 
   // Requirement: arrayIntA - arrayIntB >= 0
   out.sign = 1;
