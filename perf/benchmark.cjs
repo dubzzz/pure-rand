@@ -57,7 +57,7 @@ const argv = yargs(hideBin(process.argv))
   .option('print-confidence', {
     type: 'boolean',
     default: false,
-    description: 'Print 95 % confidence range in reports instead of +X% (increase the number of samples to reduce this range)',
+    description: 'Print 95% confidence range in reports instead of +X%',
   })
   .option('verbose', {
     alias: 'v',
@@ -198,16 +198,13 @@ async function run() {
     }
   }
 
-  const PRERUN_SAMPLES = Math.floor(argv.samples / 10);
-  const WARMUP_SAMPLES = argv.samples;
+  const NUM_TESTS = 50;
   const MIN_SAMPLES = argv.samples;
-  const NUM_TESTS = 500;
-  const benchConf = { initCount: WARMUP_SAMPLES, minSamples: MIN_SAMPLES };
-
   const PROF_GEN = argv.generator;
-  console.info(`${chalk.cyan('INFO ')} Warm-up samples  : ${PRERUN_SAMPLES}`);
-  console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
-  console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
+
+  console.info(`${chalk.cyan('INFO ')} Generated values per run: ${NUM_TESTS}`);
+  console.info(`${chalk.cyan('INFO ')} Requested number of samples: ${MIN_SAMPLES}`);
+  console.info(`${chalk.cyan('INFO ')} Generator: ${PROF_GEN}\n`);
 
   // Declare configuration matrix
   const configurations = [...Array(argv.count)].flatMap((_, index) =>
@@ -276,6 +273,7 @@ async function run() {
   ];
 
   // Declare the benchmarks
+  const benchConf = { minSamples: MIN_SAMPLES };
   let benchmarks = performanceTests.flatMap((test) =>
     configurations.map(([type, lib]) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
   );
@@ -284,16 +282,6 @@ async function run() {
   };
 
   // Simple checks concerning number of calls to the underlying generators
-  console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
-  for (const test of performanceTests) {
-    for (const [type, lib] of configurations) {
-      const [g, counter] = countCallsToNext(genFor(lib, PROF_GEN));
-      test.run(lib, () => g);
-      console.log(`${test.name(type)} called generator on next ${counter.count} times`);
-    }
-  }
-  console.log(``);
-
   // Run all the code of all the benchmarks at least once before running them for measurements.
   // It ensures that non-optimized path will not be wrongly optimized. In the past we had reports like:
   //   test1 @reference - 400 ops/s
@@ -301,15 +289,15 @@ async function run() {
   //   test1 @reference - 200 ops/s
   //   test2 @reference - 200 ops/s
   // Because running test2 de-optimized the code that was optimized for test1 during first runs.
-  console.info(`${chalk.cyan('INFO ')} Warm-up phase...\n`);
-  Benchmark.invoke(
-    benchmarks.map((b) => b.clone({ initCount: 1, minSamples: PRERUN_SAMPLES })),
-    {
-      name: 'run',
-      queued: true,
-      onCycle: (event) => console.log(String(event.target)),
+  console.info(`${chalk.cyan('INFO ')} Measuring number of calls to next...\n`);
+  for (const test of performanceTests) {
+    for (const [type, lib] of configurations) {
+      const [g, counter] = countCallsToNext(genFor(lib, PROF_GEN, 42)); // seed: 42, we always want the same seed
+      test.run(lib, () => g);
+      console.log(`${test.name(type)} called generator on next ${counter.count} times`);
     }
-  );
+  }
+  console.log(``);
 
   // Run benchmarks
   console.info(`\n${chalk.cyan('INFO ')} Benchmark phase...\n`);

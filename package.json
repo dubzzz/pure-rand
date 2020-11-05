@@ -47,6 +47,7 @@
     "fast-check": "^2.0.0",
     "glob": "^7.1.6",
     "jest": "^26.1.0",
+    "microtime": "^3.0.0",
     "prettier": "2.1.2",
     "replace-in-file": "^6.1.0",
     "source-map-support": "^0.5.16",

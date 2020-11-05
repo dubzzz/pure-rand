@@ -1,9 +1,10 @@
 // @ts-check
 
+let seed = 0;
 // Build a generator for
-exports.genFor = (lib, genName) => {
-  const seed = 42;
-  return lib[genName](seed);
+exports.genFor = (lib, genName, askedSeed) => {
+  seed = (seed + 1) | 0;
+  return lib[genName](askedSeed || seed);
 };
 
 // Build a wrapper around a generator to count calls to next
