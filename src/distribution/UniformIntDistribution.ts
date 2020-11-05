@@ -9,16 +9,12 @@ const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedD: ArrayInt64 = { sign: 1, data: [0, 0] };
 
-function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
-  const rangeSize = to - from;
-  if (rangeSize <= 0xffffffff) {
-    // Calling uniformIntDistributionInternal can be considered safe
-    // up-to 2**32 values. Above this range it may miss values.
-    const g = uniformIntDistributionInternal(rangeSize + 1, rng);
-    g[0] += from;
-    return g;
-  }
-
+function uniformLargeIntInternal(
+  from: number,
+  to: number,
+  rangeSize: number,
+  rng: RandomGenerator
+): [number, RandomGenerator] {
   const rangeSizeArrayIntValue =
     rangeSize <= Number.MAX_SAFE_INTEGER
       ? fromNumberToArrayInt64(sharedC, rangeSize) // no possible overflow given rangeSize is in a safe range
@@ -38,6 +34,18 @@ function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [nu
   sharedD.sign = 1;
   const g = uniformArrayIntDistributionInternal(sharedD.data, rangeSizeArrayIntValue.data, rng);
   return [from + toNumber(sharedD), g[1]];
+}
+
+function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
+  const rangeSize = to - from;
+  if (rangeSize <= 0xffffffff) {
+    // Calling uniformIntDistributionInternal can be considered safe
+    // up-to 2**32 values. Above this range it may miss values.
+    const g = uniformIntDistributionInternal(rangeSize + 1, rng);
+    g[0] += from;
+    return g;
+  }
+  return uniformLargeIntInternal(from, to, rangeSize, rng);
 }
 
 /**
