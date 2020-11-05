@@ -22,17 +22,6 @@ export type ArrayInt = {
   data: number[];
 };
 
-/** @internal */
-export function toNumber(arrayInt: ArrayInt): number {
-  let current = arrayInt.data[0];
-  const arrayIntLength = arrayInt.data.length;
-  for (let index = 1; index < arrayIntLength; ++index) {
-    current *= 0x100000000;
-    current += arrayInt.data[index];
-  }
-  return current * (arrayInt.sign || 1);
-}
-
 // Helpers specific to 64 bits versions
 
 /** @internal */

@@ -5,7 +5,6 @@ import {
   ArrayInt64,
   fromNumberToArrayInt64,
   substractArrayInt64,
-  toNumber,
 } from '../../../../src/distribution/internals/ArrayInt';
 
 describe('ArrayInt', () => {
@@ -50,32 +49,6 @@ describe('ArrayInt', () => {
       ));
   });
 
-  describe('toNumber', () => {
-    it('Should be able to read ArrayInt of length 1', () =>
-      fc.assert(
-        fc.property(
-          fc.constantFrom(undefined, -1, 1),
-          fc.integer({ min: 0, max: 0xffffffff }),
-          (sign: 1 | -1 | undefined, value) => {
-            const arrayInt: ArrayInt = { sign, data: [value] };
-            expect(toNumber(arrayInt)).toBe(sign === -1 ? -value : value);
-          }
-        )
-      ));
-
-    it('Should be able to read ArrayInt of length 2 (in safe zone)', () =>
-      fc.assert(
-        fc.property(fc.maxSafeInteger(), (value) => {
-          const valueHexaRepr = Math.abs(value).toString(16).padStart(16, '0');
-          const arrayInt: ArrayInt = {
-            sign: value < 0 ? -1 : (1 as const),
-            data: [parseInt(valueHexaRepr.substring(0, 8), 16), parseInt(valueHexaRepr.substring(8), 16)],
-          };
-          expect(toNumber(arrayInt)).toBe(value);
-        })
-      ));
-  });
-
   describe('substractArrayInt64', () => {
     if (typeof BigInt === 'undefined') {
       it('no test', () => {
@@ -114,4 +87,14 @@ describe('ArrayInt', () => {
 
 function arrayInt64Buffer(): ArrayInt64 {
   return { sign: 1, data: [0, 0] };
+}
+
+function toNumber(arrayInt: ArrayInt): number {
+  let current = arrayInt.data[0];
+  const arrayIntLength = arrayInt.data.length;
+  for (let index = 1; index < arrayIntLength; ++index) {
+    current *= 0x100000000;
+    current += arrayInt.data[index];
+  }
+  return current * (arrayInt.sign || 1);
 }

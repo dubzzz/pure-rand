@@ -1,13 +1,13 @@
 import Distribution from './Distribution';
 import RandomGenerator from '../generator/RandomGenerator';
 import { uniformIntDistributionInternal } from './internals/UniformIntDistributionInternal';
-import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64, toNumber } from './internals/ArrayInt';
+import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
 import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
 
 const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
-const sharedD: ArrayInt64 = { sign: 1, data: [0, 0] };
+const sharedData = [0, 0];
 
 function uniformLargeIntInternal(
   from: number,
@@ -31,9 +31,8 @@ function uniformLargeIntInternal(
     rangeSizeArrayIntValue.data[1] += 1;
   }
 
-  sharedD.sign = 1;
-  const g = uniformArrayIntDistributionInternal(sharedD.data, rangeSizeArrayIntValue.data, rng);
-  return [from + toNumber(sharedD), g[1]];
+  const g = uniformArrayIntDistributionInternal(sharedData, rangeSizeArrayIntValue.data, rng);
+  return [sharedData[0] * 0x100000000 + sharedData[1] + from, g[1]];
 }
 
 function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
