@@ -198,13 +198,13 @@ async function run() {
     }
   }
 
+  const NUM_TESTS = 50;
   const MIN_SAMPLES = argv.samples;
-  const NUM_TESTS = 500;
-  const benchConf = { minSamples: MIN_SAMPLES };
-
   const PROF_GEN = argv.generator;
-  console.info(`${chalk.cyan('INFO ')} Benchmark samples: ${MIN_SAMPLES}`);
-  console.info(`${chalk.cyan('INFO ')} Generator        : ${PROF_GEN}\n`);
+
+  console.info(`${chalk.cyan('INFO ')} Generated values per run: ${NUM_TESTS}`);
+  console.info(`${chalk.cyan('INFO ')} Requested number of samples: ${MIN_SAMPLES}`);
+  console.info(`${chalk.cyan('INFO ')} Generator: ${PROF_GEN}\n`);
 
   // Declare configuration matrix
   const configurations = [...Array(argv.count)].flatMap((_, index) =>
@@ -273,6 +273,7 @@ async function run() {
   ];
 
   // Declare the benchmarks
+  const benchConf = { minSamples: MIN_SAMPLES };
   let benchmarks = performanceTests.flatMap((test) =>
     configurations.map(([type, lib]) => new Benchmark(test.name(type), () => test.run(lib), benchConf))
   );
