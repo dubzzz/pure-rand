@@ -1,13 +1,66 @@
 import * as fc from 'fast-check';
 
 import {
+  addArrayIntToNew,
+  addOneToPositiveArrayInt,
   ArrayInt,
   ArrayInt64,
   fromNumberToArrayInt64,
   substractArrayInt64,
+  substractArrayIntToNew,
 } from '../../../../src/distribution/internals/ArrayInt';
 
 describe('ArrayInt', () => {
+  describe('addArrayIntToNew', () => {
+    if (typeof BigInt === 'undefined') {
+      it('no test', () => {
+        expect(true).toBe(true);
+      });
+    } else {
+      it('Should properly compute a plus b', () =>
+        fc.assert(
+          fc.property(arrayIntArb(), arrayIntArb(), fc.context(), (a, b) => {
+            const r = addArrayIntToNew(a, b);
+            expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + arrayIntToBigInt(b));
+          })
+        ));
+    }
+  });
+
+  describe('addOneToPositiveArrayInt', () => {
+    if (typeof BigInt === 'undefined') {
+      it('no test', () => {
+        expect(true).toBe(true);
+      });
+    } else {
+      it('Should properly compute a plus 1', () =>
+        fc.assert(
+          fc.property(arrayIntArb(), (a) => {
+            fc.pre(a.sign === 1);
+            const r = { sign: a.sign, data: a.data.slice(0) };
+            addOneToPositiveArrayInt(r);
+            expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + BigInt(1));
+          })
+        ));
+    }
+  });
+
+  describe('substractArrayIntToNew', () => {
+    if (typeof BigInt === 'undefined') {
+      it('no test', () => {
+        expect(true).toBe(true);
+      });
+    } else {
+      it('Should properly compute a minus b', () =>
+        fc.assert(
+          fc.property(arrayIntArb(), arrayIntArb(), (a, b) => {
+            const r = substractArrayIntToNew(a, b);
+            expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) - arrayIntToBigInt(b));
+          })
+        ));
+    }
+  });
+
   describe('fromNumberToArrayInt64', () => {
     it('Should be able to convert any 32 bits positive integer to an ArrayInt64', () =>
       fc.assert(
@@ -84,6 +137,21 @@ describe('ArrayInt', () => {
 });
 
 // Helpers
+
+const arrayIntArb = () =>
+  fc.record({
+    sign: fc.constantFrom(1 as const, -1 as const),
+    data: fc.array(fc.integer({ min: 0, max: 0xffffffff })),
+  });
+
+function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
+  let current = BigInt(0);
+  for (let index = 0; index < arrayInt.data.length; ++index) {
+    current <<= BigInt(32);
+    current += BigInt(arrayInt.data[index]);
+  }
+  return current * BigInt(arrayInt.sign);
+}
 
 function arrayInt64Buffer(): ArrayInt64 {
   return { sign: 1, data: [0, 0] };
