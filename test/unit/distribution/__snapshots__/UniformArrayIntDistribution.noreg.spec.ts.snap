@@ -1,0 +1,581 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (3 states [-1, 0, 1]) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (4 states [-2, -1, 0, 1]) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (32-bit signed) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      398764591,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      869582249,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1903903272,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      976433780,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      95927615,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1340754471,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      460485807,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1544681649,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      113352605,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1292401841,
+    ],
+    "sign": 1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (32-bit unsigned) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      2546248239,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1277901399,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      243580376,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1171049868,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2051556033,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3488238119,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1686997841,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      602801999,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2034131043,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3439885489,
+    ],
+    "sign": 1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (64-bit signed) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      398764591,
+      3071714933,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      441365315,
+      3684848379,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      869582248,
+      464831418,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1991416408,
+      1171049868,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      95927614,
+      894534170,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      460485806,
+      319560027,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1428591347,
+      4110950085,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1544681648,
+      558293585,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2055650130,
+      2034131043,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1292401841,
+      1982038771,
+    ],
+    "sign": 1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (64-bit unsigned) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      2546248239,
+      3071714933,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2588848963,
+      3684848379,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1277901399,
+      3830135878,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4138900056,
+      1171049868,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2051556033,
+      3400433126,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1686997841,
+      3975407269,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3576074995,
+      4110950085,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      602801999,
+      3736673711,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4203133778,
+      2034131043,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3439885489,
+      1982038771,
+    ],
+    "sign": 1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (128-bit signed) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      398764591,
+      3071714933,
+      3626093760,
+      2588848963,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1991416408,
+      1171049868,
+      1646868794,
+      2051556033,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1340754471,
+      2271586391,
+      2061486254,
+      2439732824,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      113352604,
+      862607399,
+      855081806,
+      2312928525,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      352272321,
+      615697673,
+      2308000441,
+      4057322111,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      93837855,
+      454869706,
+      1780959476,
+      2034098327,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      293921570,
+      580757632,
+      80701568,
+      1392175012,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      485603871,
+      1877037944,
+      3875557633,
+      2996303169,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      792729201,
+      1684354460,
+      2732841418,
+      2898900084,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1709204539,
+      1491254224,
+      3397848448,
+      1567410188,
+    ],
+    "sign": -1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (fuzzy) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      2662555941,
+      678459422,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3377134830,
+      1758304943,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2894268860,
+      1817059562,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2645675324,
+      1771129686,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2125003394,
+      810396866,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3079513997,
+      4078085345,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2184842652,
+      3705079878,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4135555774,
+      2670758855,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1476469764,
+      4074047273,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2356975930,
+      1532644309,
+    ],
+    "sign": 1,
+  },
+]
+`;

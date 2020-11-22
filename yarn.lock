@@ -1417,7 +1417,7 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fast-check@^2.0.0:
+fast-check@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-2.7.0.tgz#d935243a43bc5e8ac4724ee2cb6c109533e8fd85"
   integrity sha512-+frnWpxp43Egnx2wuqRVrbHj1YXpHRwLle6lhKJODnu7uH0krGjNRlUo+1oioKULA5jgQ6I6ctTrqFuaw4gZFA==
