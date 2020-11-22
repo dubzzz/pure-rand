@@ -46,8 +46,12 @@ export function addArrayIntToNew(arrayIntA: ArrayInt, arrayIntB: ArrayInt): Arra
   return { sign: arrayIntA.sign, data: data.reverse() };
 }
 
-/** @internal */
+/**
+ * Add one to a given positive ArrayInt
+ * @internal
+ */
 export function addOneToPositiveArrayInt(arrayInt: ArrayInt): ArrayInt {
+  arrayInt.sign = 1; // handling case { sign: -1, data: [0,...,0] }
   const data = arrayInt.data;
   for (let index = data.length - 1; index >= 0; --index) {
     if (data[index] === 0xffffffff) {
@@ -100,6 +104,24 @@ export function substractArrayIntToNew(arrayIntA: ArrayInt, arrayIntB: ArrayInt)
     reminder = current < 0 ? 1 : 0;
   }
   return { sign: arrayIntA.sign, data: data.reverse() };
+}
+
+/**
+ * Trim uneeded zeros in ArrayInt
+ * and uniform notation for zero: {sign: 1, data: [0]}
+ */
+export function trimArrayIntInplace(arrayInt: ArrayInt) {
+  const data = arrayInt.data;
+  let firstNonZero = 0;
+  for (; firstNonZero !== data.length && data[firstNonZero] === 0; ++firstNonZero) {}
+  if (firstNonZero === data.length) {
+    // only zeros
+    arrayInt.sign = 1;
+    arrayInt.data = [0];
+    return arrayInt;
+  }
+  data.splice(0, firstNonZero);
+  return arrayInt;
 }
 
 // Helpers specific to 64 bits versions

@@ -44,7 +44,7 @@
     "chalk": "^4.1.0",
     "console-table-printer": "2.5.0",
     "coveralls": "^3.0.9",
-    "fast-check": "^2.0.0",
+    "fast-check": "^2.7.0",
     "glob": "^7.1.6",
     "jest": "^26.1.0",
     "microtime": "^3.0.0",

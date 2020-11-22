@@ -1,6 +1,12 @@
 import Distribution from './Distribution';
 import RandomGenerator from '../generator/RandomGenerator';
-import { addArrayIntToNew, addOneToPositiveArrayInt, ArrayInt, substractArrayIntToNew } from './internals/ArrayInt';
+import {
+  addArrayIntToNew,
+  addOneToPositiveArrayInt,
+  ArrayInt,
+  substractArrayIntToNew,
+  trimArrayIntInplace,
+} from './internals/ArrayInt';
 import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
 
 /** @internal */
@@ -8,7 +14,7 @@ function uniformArrayIntInternal(from: ArrayInt, to: ArrayInt, rng: RandomGenera
   const rangeSize = addOneToPositiveArrayInt(substractArrayIntToNew(to, from));
   const emptyArrayIntData = rangeSize.data.slice(0);
   const g = uniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, rng);
-  return [addArrayIntToNew({ sign: 1, data: g[0] }, from), g[1]];
+  return [trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g[0] }, from)), g[1]];
 }
 
 /**

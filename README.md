@@ -118,6 +118,9 @@ All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distr
 
 For the moment, available `Distribution` are:
 - `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
-- `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`*
+- `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`\*
+- `prand.uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt): Distribution<ArrayInt>`\*\*
 
 \*Requires your JavaScript interpreter to support bigint
+
+\*\*ArrayInt is an object having the structure `{sign, data}` with sign being either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
