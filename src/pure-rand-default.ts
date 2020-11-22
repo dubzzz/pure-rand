@@ -5,6 +5,7 @@ import { xorshift128plus } from './generator/XorShift';
 import { xoroshiro128plus } from './generator/XoroShiro';
 
 import Distribution from './distribution/Distribution';
+import { uniformArrayIntDistribution } from './distribution/UniformArrayIntDistribution';
 import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';
 
@@ -24,6 +25,7 @@ export {
   xorshift128plus,
   xoroshiro128plus,
   Distribution,
+  uniformArrayIntDistribution,
   uniformBigIntDistribution,
   uniformIntDistribution,
 };
