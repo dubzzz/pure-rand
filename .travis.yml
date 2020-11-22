@@ -57,7 +57,7 @@ jobs:
         email: npm@dubien.org
         skip_cleanup: true
         api_key:
-          secure: lHunqDdos1umal6SvUE6SdOf8DC9BCI4qhumxwf3RXt1E0OqKh2tIfdfBMb+JdTjceb1sRswPg+M0phmU6fRYI81ZjPA7/qzW4V8zy3E/TGbH6TT0Tx2AhPUDgNE1kt2mW3L5T9uHX+CVPsrqNmauQDAtzf4HXJCroQ+QWGwUzVjvEVc/KSeb5MFer1tQoTcjj0bHeFta5e/W0IK2rx6dHI817ctOL8VYoNqZ0iiasPqQo4AeBVouX0WRSXEAti3FN+l5oZ3dLOHbztQqWj0u86j3tH4QJ6ypjx3vd8JTb2ePzSg2OVdP3/MkRHlpehyoCAr+Cwme7FeKJVI748/BmshiFFAYbMZrnUj9sbmJZM/2tkpZh+uDL/FkADv3QIo/O++l30C8fMFScMkujGJuCECJBe/mZYDRJFjcl0BCgsJbk0F9MY2cxfHWssUpa31E3WoPEJa+1/oy6HYlN3wq9KjxrTmbJ87PBexnfSgmzB2QVw0irEjGETBkZvUeDP4LuHx7vHml1TqRvlcFZMrV9tT9CT7ngTB/6J/yey8WOaU4u8uJoBY23xJipgxGnqHk7PmYqV0Laa+Bn+aoSITgzvBYvY0imZCa3+YD3G1/2eBuJ6ztBALjQRWM4uGix0UXaRLzcdVlLlCxSTOD6TW8ZneQX8Ng5fVcv/ZkOdmIV0=
+          secure: jgmcqj5jMrAn31dTzI2eJ9ya99mDXF6cESsQF0vDsUx98z6flHsMAGtnE7uJC/PSlYKHDcX5aNXkJLpZUeqDch6zMh4qzQYNuasK+EPD5zJGy3dVz5JrF6Jidk/WbWtR3S6zm8+WFou+9oaniei4hXucq5qVo89kRPAfGPsyJJNRwKOLVakHZGkVJ2s/rgMeP4UlFWN0QxfHYHAEmkdWvW2CMQwTLuValrax17xvQFIZRYbEAGCrFIM1u4kO0hTxKwwy+HjamOklRwqHyMHYr5JvRsqzaFFIp05ff6LLBlGSJNM19tEjPLBkhzj5GFyhM83vAQpPz/pzSrUSNMfkLQPre6yV9H4gLIyJhCZvs3Isl/8Fm1K+XX7DlpiwDPLtDM7JRPFmZjPYIJRLIuANhDThsGNsP8Dw170aMMXforUMzNHC9Iv/nkuLzPsB2iAhW+cbWjGiW+/Sn6JJn+bavMLK1gnZsH+ShkHWbm9vvDLCDJXw4RTsocVZxi22ZDsRkc+q9oV+iSJYIoD4p9lppEH2BNE96sqm+MiO1JWj9j4GRoBmv0x0q2Tw9Wgfw4Oy2LmToSV+APuWJB+5IqZ7M3Iav8cr6nDp2Eo7Y1rqIkz2L2Hqi6hj8FpZFFEChP6J4rdQFp/XJl7X+XxE3/t8sdod2stK/0EvO5SPWsIcB+Q=
         on:
           tags: true
       repo: dubzzz/pure-rand
