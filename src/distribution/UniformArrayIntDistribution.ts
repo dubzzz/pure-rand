@@ -11,7 +11,7 @@ import { uniformArrayIntDistributionInternal } from './internals/UniformArrayInt
 
 /** @internal */
 function uniformArrayIntInternal(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): [ArrayInt, RandomGenerator] {
-  const rangeSize = addOneToPositiveArrayInt(substractArrayIntToNew(to, from));
+  const rangeSize = trimArrayIntInplace(addOneToPositiveArrayInt(substractArrayIntToNew(to, from)));
   const emptyArrayIntData = rangeSize.data.slice(0);
   const g = uniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, rng);
   return [trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g[0] }, from)), g[1]];

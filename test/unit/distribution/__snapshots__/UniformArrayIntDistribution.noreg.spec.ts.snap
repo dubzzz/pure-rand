@@ -579,3 +579,68 @@ Array [
   },
 ]
 `;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (trailing zeros) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      4,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      5,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": 1,
+  },
+]
+`;

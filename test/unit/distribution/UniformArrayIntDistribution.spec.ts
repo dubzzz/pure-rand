@@ -21,26 +21,73 @@ describe('uniformArrayIntDistribution', () => {
   // Skip next tests if BigInt is not supported
   if (typeof BigInt === 'undefined') return it('no test', () => expect(true).toBe(true));
 
-  it('Should call uniformIntDistributionInternal with correct size of range and source rng', () =>
+  it('Should call uniformArrayIntDistributionInternal with correct range and source rng', () =>
     fc.assert(
       fc
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
-          const { uniformArrayIntDistributionInternal } = mocked(UniformArrayIntDistributionInternalMock);
-          uniformArrayIntDistributionInternal.mockImplementation((out, _rangeSize, rng) => [out, rng]);
-          const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
-          const rng = buildUniqueRng();
+          const { uniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
           const expectedRangeSize = arrayIntToBigInt(to) - arrayIntToBigInt(from) + BigInt(1);
+          const expectedRng = buildUniqueRng();
 
           // Act
-          uniformArrayIntDistribution(from, to, rng);
+          uniformArrayIntDistribution(from, to, expectedRng);
 
           // Assert
-          expect(uniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
-          expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(expect.any(Array), expect.any(Array), rng);
-          const params = uniformArrayIntDistributionInternal.mock.calls[0];
-          const rangeSize = params[1];
+          const { rangeSize, rng } = extractParams(uniformArrayIntDistributionInternal);
           expect(arrayIntToBigInt({ sign: 1, data: rangeSize })).toBe(expectedRangeSize);
+          expect(rng).toBe(expectedRng);
+        })
+        .beforeEach(clean)
+    ));
+
+  it('Should call uniformArrayIntDistributionInternal with non-empty range', () =>
+    fc.assert(
+      fc
+        .property(arrayIntArb(), arrayIntArb(), (a, b) => {
+          // Arrange
+          const { uniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+
+          // Act
+          uniformArrayIntDistribution(from, to, buildUniqueRng());
+
+          // Assert
+          const { rangeSize } = extractParams(uniformArrayIntDistributionInternal);
+          expect(rangeSize.length).toBeGreaterThanOrEqual(1);
+        })
+        .beforeEach(clean)
+    ));
+
+  it('Should call uniformArrayIntDistributionInternal with trimmed range (no trailing zeros)', () =>
+    fc.assert(
+      fc
+        .property(arrayIntArb(), arrayIntArb(), (a, b) => {
+          // Arrange
+          const { uniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+
+          // Act
+          uniformArrayIntDistribution(from, to, buildUniqueRng());
+
+          // Assert
+          const { rangeSize } = extractParams(uniformArrayIntDistributionInternal);
+          expect(rangeSize[0]).not.toBe(0); // rangeSize >= 1
+        })
+        .beforeEach(clean)
+    ));
+
+  it('Should call uniformArrayIntDistributionInternal with out having same length as range', () =>
+    fc.assert(
+      fc
+        .property(arrayIntArb(), arrayIntArb(), (a, b) => {
+          // Arrange
+          const { uniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+
+          // Act
+          uniformArrayIntDistribution(from, to, buildUniqueRng());
+
+          // Assert
+          const { out, rangeSize } = extractParams(uniformArrayIntDistributionInternal);
+          expect(out).toHaveLength(rangeSize.length);
         })
         .beforeEach(clean)
     ));
@@ -63,4 +110,23 @@ function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
   return current * BigInt(arrayInt.sign);
 }
 
-//const { uniformArrayIntDistributionInternal } = mocked(UniformArrayIntDistributionInternalMock)
+function mockInternals(a: ArrayInt, b: ArrayInt) {
+  const { uniformArrayIntDistributionInternal } = mocked(UniformArrayIntDistributionInternalMock);
+  uniformArrayIntDistributionInternal.mockImplementation((out, _rangeSize, rng) => [out, rng]);
+  const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
+  return { uniformArrayIntDistributionInternal, from, to };
+}
+
+function extractParams(
+  uniformArrayIntDistributionInternal: ReturnType<typeof mockInternals>['uniformArrayIntDistributionInternal']
+) {
+  expect(uniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
+  expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(
+    expect.any(Array),
+    expect.any(Array),
+    expect.anything()
+  );
+  const params = uniformArrayIntDistributionInternal.mock.calls[0];
+  const [out, rangeSize, rng] = params;
+  return { out, rangeSize, rng };
+}
