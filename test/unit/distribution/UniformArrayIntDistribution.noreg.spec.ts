@@ -15,6 +15,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     ${{ sign: 1, data: [0x00000000, 0x00000000] }}  | ${{ sign: 1, data: [0xffffffff, 0xffffffff] }}                         | ${'64-bit unsigned'}
     ${{ sign: -1, data: [0x80000000, 0, 0, 0] }}    | ${{ sign: 1, data: [0x7fffffff, 0xffffffff, 0xffffffff, 0xffffffff] }} | ${'128-bit signed'}
     ${{ sign: 1, data: [0x12345678, 0x90abcdef] }}  | ${{ sign: 1, data: [0xfedcba09, 0x87654321] }}                         | ${'fuzzy'}
+    ${{ sign: 1, data: [0, 0] }}                    | ${{ sign: 1, data: [0, 5] }}                                           | ${'trailing zeros'}
   `('Should not change its output in asked range except for major bumps ($topic)', ({ from, to }) => {
     // Remark:
     // ========================
