@@ -1046,10 +1046,10 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-console-table-printer@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/console-table-printer/-/console-table-printer-2.5.1.tgz#dfbd7cc9b5a0e9bae8f88e2d8061fad740867bdd"
-  integrity sha512-mBHNuisXIcYPkyjBfV/LUox+JbDFZYax4NHHzZJSh7eaprArNqIZz7iUFNfcfJtfJlOtWwsbbqyF7+42Ztsfgw==
+console-table-printer@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/console-table-printer/-/console-table-printer-2.6.0.tgz#f309259a57c039d2582d22335992d907ae2349fc"
+  integrity sha512-THLmjVI1W5XW4PWeQtyBJkjSdIj+FTJseKALw+l14sSw7WzCrR+nusdeWIBHDgudRwpp820qfdy3PEYMS3ACwQ==
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
