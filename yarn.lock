@@ -1046,10 +1046,12 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-console-table-printer@2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/console-table-printer/-/console-table-printer-2.6.0.tgz#f309259a57c039d2582d22335992d907ae2349fc"
-  integrity sha512-THLmjVI1W5XW4PWeQtyBJkjSdIj+FTJseKALw+l14sSw7WzCrR+nusdeWIBHDgudRwpp820qfdy3PEYMS3ACwQ==
+console-table-printer@2.7.5:
+  version "2.7.5"
+  resolved "https://registry.yarnpkg.com/console-table-printer/-/console-table-printer-2.7.5.tgz#67abba748530698d704b55855213602990ce60ae"
+  integrity sha512-A2ag/iOJXFJs9ep1fhlMbufsToHQ+Ph4m7pZ4DeDZNDU0nbCX97uOa0sPoLmRM6f4GxXQVEsFGD+wrXT8xwSnw==
+  dependencies:
+    simple-wcswidth "^1.0.0"
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
@@ -3164,6 +3166,11 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
+
+simple-wcswidth@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/simple-wcswidth/-/simple-wcswidth-1.0.0.tgz#4f1b000577507c268856198d5d94bc8749cfe45c"
+  integrity sha512-gdLYVBke6eUDOre0ZB8DjQgNvsbNUHV9SMtJ/K/9/fj925nNEjwPr9naNpmHjqydwJUNmg43r1ec3usiSE0Z5w==
 
 sisteransi@^1.0.4:
   version "1.0.5"
