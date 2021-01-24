@@ -1,0 +1,35 @@
+name: 'Install dependencies but use current build for pure-rand'
+description: 'Install dependencies but use current build for pure-rand'
+inputs:
+  path:
+    description: 'Directory path'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        PROJECT_ROOT_PATH="$(pwd)"
+        cd "${{inputs.path}}"
+        echo "ℹ️ Clean yarn cache entry for pure-rand (if any)..."
+        yarn cache clean pure-rand
+        echo "ℹ️ Install dependencies..."
+        yarn --frozen-lockfile
+        echo "ℹ️ Clean yarn cache entry for pure-rand..."
+        yarn cache clean pure-rand
+        echo "ℹ️ Install current build for pure-rand..."
+        yarn add "file:$PROJECT_ROOT_PATH/pure-rand.tgz"
+        echo "ℹ️ Clean yarn cache entry for pure-rand..."
+        yarn cache clean pure-rand
+        echo "ℹ️ Revert local changes..."
+        git checkout -- package.json
+        git checkout -- yarn.lock
+      shell: bash
+    - run: |
+        echo "ℹ️ Copy script..."
+        cp .github/actions/install-deps-with-current-fc/check-hash.cjs "${{inputs.path}}/check-hash-$GITHUB_SHA.cjs"
+        echo "ℹ️ Check version of pure-rand..."
+        cd "${{inputs.path}}"
+        node check-hash-*.cjs
+        echo "ℹ️ Remove script..."
+        rm "check-hash-$GITHUB_SHA.cjs"
+      shell: bash
