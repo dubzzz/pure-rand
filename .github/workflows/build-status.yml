@@ -99,7 +99,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   test_legacy:
-    name: 'Test example'
+    name: 'Test legacy'
     needs: production_package
     runs-on: ubuntu-latest
     steps:
