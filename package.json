@@ -12,6 +12,9 @@
   },
   "module": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
+  "files": [
+    "lib"
+  ],
   "sideEffects": false,
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
