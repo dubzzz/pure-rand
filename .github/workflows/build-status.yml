@@ -1,0 +1,186 @@
+name: Build Status
+
+on:
+  push:
+    branches: 
+      - master
+      - next-*
+      - fix-v*
+    tags:
+      - v**
+  pull_request:
+    branches:
+      - master
+      - next-*
+      - fix-v*
+
+jobs:
+  format:
+    name: 'Format'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
+      - name: Using Node v14.x
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Check format
+        run: yarn format:check
+  test:
+    name: 'Test'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}-${{matrix.node-version}}
+      - name: Using Node v${{matrix.node-version}}
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Unit tests
+        run: yarn test
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          name: unit-tests-${{matrix.node-version}}-${{runner.os}}
+          flags: unit-tests, unit-tests-${{matrix.node-version}}-${{runner.os}}
+          fail_ci_if_error: false # default: false
+          verbose: false # default: false
+  test_package_quality:
+    name: 'Test package quality'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Using Node v14.x
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: '14.x'
+      - name: Check package score using skypack
+        run: npx @skypack/package-check
+  production_package:
+    name: 'Build production package'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}-v14.x
+      - name: Using Node v14.x
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Build production package
+        run: yarn build:prod
+      - name: Create bundle
+        run: |
+          yarn pack
+          mv pure-rand-*.tgz pure-rand.tgz
+      - name: Upload production package
+        uses: actions/upload-artifact@v2
+        with:
+          name: bundle
+          path: pure-rand.tgz
+          if-no-files-found: error
+          retention-days: 1
+  test_legacy:
+    name: 'Test example'
+    needs: production_package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Using Node 0.12
+        shell: bash -l {0}
+        run: nvm install 0.12
+      - name: Download production package
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle
+      - name: Untar the published package
+        run: |
+          mkdir lib
+          tar -zxvf pure-rand.tgz -C lib
+      - name: Test
+        run: node test/legacy/main.js
+  test_cjs_esm:
+    name: 'Test CJS & ESM'
+    needs: production_package
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          # Node latest version supports ES modules by default
+          - 'node'
+          # Node >=13.2.0 enables support for ES modules by default
+          # Our default version of node is above 13.2.0
+          - '14'
+          # Node 12.20 includes import from CJS and removes warnings related to ES Modules
+          - '12.20'
+          # Node 12.x and >=12.18 enables support for ES modules by default
+          - '12.18'
+          # Node <12.18 requires a flag to support ES modules but can understand them
+          - '12.17'
+          # Node 10 does not understand ES modules
+          - '10'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Using Node v${{matrix.node-version}}
+      shell: bash -l {0}
+      run: nvm install ${{matrix.node-version}}
+    - name: Download production package
+      uses: actions/download-artifact@v2
+      with:
+        name: bundle
+    - name: Install dependencies but use current build for pure-rand (node-with-import)
+      uses: ./.github/actions/install-deps-with-current-fc
+      with:
+        path: 'test/esm/node-with-import'
+    - name: Install dependencies but use current build for pure-rand (node-with-require)
+      uses: ./.github/actions/install-deps-with-current-fc
+      with:
+        path: 'test/esm/node-with-require'
+    - name: Check compatibility
+      run: |
+        cd test/esm
+        node --version
+        sh run.sh
+  publish_package:
+    name: 'Publish package'
+    needs: 
+      - production_package
+      - format
+      - test
+      - test_cjs_esm
+      - test_legacy
+      - test_package_quality
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Using Node v14.x
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Download production package
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle
+      - name: Publish package
+        run: npm publish pure-rand.tgz
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
