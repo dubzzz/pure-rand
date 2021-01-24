@@ -112,9 +112,7 @@ jobs:
         with:
           name: bundle
       - name: Untar the published package
-        run: |
-          mkdir lib
-          tar -zxvf pure-rand.tgz -C lib
+        run: tar -zxvf pure-rand.tgz package
       - name: Test
         run: node test/legacy/main.js
   test_cjs_esm:
