@@ -112,7 +112,9 @@ jobs:
         with:
           name: bundle
       - name: Untar the published package
-        run: tar strip-components=2 -zxvf pure-rand.tgz package/lib && ls -alh
+        run: |
+          tar -zxvf pure-rand.tgz
+          mv package/lib lib
       - name: Test
         run: node test/legacy/main.js
   test_cjs_esm:
