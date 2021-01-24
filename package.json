@@ -7,6 +7,7 @@
   "exports": {
     ".": {
       "require": "./lib/pure-rand.js",
+      "import": "./lib/esm/pure-rand.js",
       "default": "./lib/esm/pure-rand.js"
     }
   },
