@@ -6,7 +6,7 @@
 [![dependencies Status](https://david-dm.org/dubzzz/pure-rand/status.svg)](https://david-dm.org/dubzzz/pure-rand)
 [![devDependencies Status](https://david-dm.org/dubzzz/pure-rand/dev-status.svg)](https://david-dm.org/dubzzz/pure-rand?type=dev)
 
-[![Coverage Status](https://coveralls.io/repos/github/dubzzz/pure-rand/badge.svg)](https://coveralls.io/github/dubzzz/pure-rand)
+[![codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/master/graph/badge.svg?token=KYN5IQCGE5)](https://codecov.io/gh/dubzzz/pure-rand)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7cb8cb395740446a3108/maintainability)](https://codeclimate.com/github/dubzzz/pure-rand/maintainability)
 
 ## Getting started
