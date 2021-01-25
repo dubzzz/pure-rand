@@ -1,12 +1,12 @@
 # pure-rand
 #### Pure random number generator written in TypeScript
 
-[![Build Status](https://travis-ci.org/dubzzz/pure-rand.svg?branch=master)](https://travis-ci.org/dubzzz/pure-rand)
+[![Build Status](https://github.com/dubzzz/pure-rand/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/dubzzz/pure-rand/actions)
 [![npm version](https://badge.fury.io/js/pure-rand.svg)](https://badge.fury.io/js/pure-rand)
 [![dependencies Status](https://david-dm.org/dubzzz/pure-rand/status.svg)](https://david-dm.org/dubzzz/pure-rand)
 [![devDependencies Status](https://david-dm.org/dubzzz/pure-rand/dev-status.svg)](https://david-dm.org/dubzzz/pure-rand?type=dev)
 
-[![codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/master/graph/badge.svg?token=KYN5IQCGE5)](https://codecov.io/gh/dubzzz/pure-rand)
+[![codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/main/graph/badge.svg?token=KYN5IQCGE5)](https://codecov.io/gh/dubzzz/pure-rand)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7cb8cb395740446a3108/maintainability)](https://codeclimate.com/github/dubzzz/pure-rand/maintainability)
 
 ## Getting started
@@ -15,7 +15,7 @@
 
 Install the module with: `npm install pure-rand`
 
-Unlike classical random number generators, `pure-rand` comes with a set of *pure* and *seeded* generators (implementing the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/RandomGenerator.ts)).
+Unlike classical random number generators, `pure-rand` comes with a set of *pure* and *seeded* generators (implementing the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts)).
 Each time a call to `.next()` method is done, the generator provides both the generated value and the next generator.
 
 As a consequence, a given generator will always produce the same value. It can be called as many times as required without impacting its state. This ability makes it easier to replay code section relying on random without having to re-seed a new generator and replay the whole path to be in the same state.
@@ -99,7 +99,7 @@ const { mersenne } = require('pure-rand');
 
 ### Random number generators
 
-All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/) provided by `pure-rand` derive from the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/master/src/generator/RandomGenerator.ts) and are pure and seeded as described above.
+All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/) provided by `pure-rand` derive from the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts) and are pure and seeded as described above.
 
 The following generators are available:
 - `prand.xorshift128plus(seed: number)`: xorshift128+ generator whose values are within the range -0x80000000 to 0x7fffffff
@@ -114,7 +114,7 @@ Some helpers are also provided in order to ease the use of `RandomGenerator` ins
 
 ### Distributions
 
-All the [Distribution](https://github.com/dubzzz/pure-rand/tree/master/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
+All the [Distribution](https://github.com/dubzzz/pure-rand/tree/main/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
 
 For the moment, available `Distribution` are:
 - `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
