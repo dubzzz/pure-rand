@@ -3,14 +3,14 @@ name: Build Status
 on:
   push:
     branches: 
-      - master
+      - main
       - next-*
       - fix-v*
     tags:
       - v**
   pull_request:
     branches:
-      - master
+      - main
       - next-*
       - fix-v*
 
