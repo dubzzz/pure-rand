@@ -181,6 +181,6 @@ jobs:
         with:
           name: bundle
       - name: Publish package
-        run: npm publish pure-rand.tgz
+        run: npm publish pure-rand.tgz --tag experimental
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
