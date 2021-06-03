@@ -8,7 +8,7 @@ import { RandomGenerator } from './RandomGenerator';
 // NOTE: Math.random() of V8 uses XorShift128+ with a=23, b=17, c=26,
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
 class XorShift128Plus implements RandomGenerator {
-  constructor(readonly s01: number, readonly s00: number, readonly s11: number, readonly s10: number) {}
+  constructor(private s01: number, private s00: number, private s11: number, private s10: number) {}
   min(): number {
     return -0x80000000;
   }
@@ -16,16 +16,26 @@ class XorShift128Plus implements RandomGenerator {
     return 0x7fffffff;
   }
   next(): [number, XorShift128Plus] {
+    const nextRng = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
+    const out = nextRng.unsafeNext();
+    return [out, nextRng];
+  }
+  private unsafeNext(): number {
     const a0 = this.s00 ^ (this.s00 << 23);
     const a1 = this.s01 ^ ((this.s01 << 23) | (this.s00 >>> 9));
     const b0 = a0 ^ this.s10 ^ ((a0 >>> 18) | (a1 << 14)) ^ ((this.s10 >>> 5) | (this.s11 << 27));
     const b1 = a1 ^ this.s11 ^ (a1 >>> 18) ^ (this.s11 >>> 5);
-    return [(this.s00 + this.s10) | 0, new XorShift128Plus(this.s11, this.s10, b1, b0)];
+    const out = (this.s00 + this.s10) | 0;
+    this.s01 = this.s11;
+    this.s00 = this.s10;
+    this.s11 = b1;
+    this.s10 = b0;
+    return out;
   }
   jump(): XorShift128Plus {
     // equivalent to 2^64 calls to next()
     // can be used to generate 2^64 non-overlapping subsequences
-    let rngRunner: XorShift128Plus = this;
+    let rngRunner: XorShift128Plus = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
     let ns01 = 0;
     let ns00 = 0;
     let ns11 = 0;
@@ -40,10 +50,14 @@ class XorShift128Plus implements RandomGenerator {
           ns11 ^= rngRunner.s11;
           ns10 ^= rngRunner.s10;
         }
-        rngRunner = rngRunner.next()[1];
+        rngRunner.unsafeNext();
       }
     }
-    return new XorShift128Plus(ns01, ns00, ns11, ns10);
+    rngRunner.s01 = ns01;
+    rngRunner.s00 = ns00;
+    rngRunner.s11 = ns11;
+    rngRunner.s10 = ns10;
+    return rngRunner;
   }
 }
 
