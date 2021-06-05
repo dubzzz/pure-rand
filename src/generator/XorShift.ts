@@ -35,7 +35,7 @@ class XorShift128Plus implements RandomGenerator {
   jump(): XorShift128Plus {
     // equivalent to 2^64 calls to next()
     // can be used to generate 2^64 non-overlapping subsequences
-    let rngRunner: XorShift128Plus = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
+    let rngRunner = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
     let ns01 = 0;
     let ns00 = 0;
     let ns11 = 0;
