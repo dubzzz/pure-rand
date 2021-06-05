@@ -19,7 +19,7 @@
   "sideEffects": false,
   "scripts": {
     "format:check": "prettier --list-different \"**/*.{js,ts}\"",
-    "format:fix": "prettier --write \"**/*.{js,ts}\"",
+    "format": "prettier --write \"**/*.{js,ts}\"",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
