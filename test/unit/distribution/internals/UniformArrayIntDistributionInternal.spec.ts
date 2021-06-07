@@ -3,7 +3,7 @@ import { mocked } from 'ts-jest/utils';
 
 import { uniformArrayIntDistributionInternal } from '../../../../src/distribution/internals/UniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
-import RandomGenerator from '../../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
 import * as UniformIntDistributionInternalMock from '../../../../src/distribution/internals/UniformIntDistributionInternal';
 jest.mock('../../../../src/distribution/internals/UniformIntDistributionInternal');

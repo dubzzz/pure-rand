@@ -4,7 +4,6 @@ import * as fc from 'fast-check';
 import { congruential, congruential32 } from '../../../src/generator/LinearCongruential';
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
 import * as p from './RandomGenerator.properties';
-import RandomGenerator from '../../../src/generator/RandomGenerator';
 
 describe('congruential', () => {
   it('Should produce the right sequence for seed=42', () => {
@@ -35,8 +34,8 @@ describe('congruential32', () => {
   it('Should be equivalent to a uniform distribution of congruential over 32 bits', () =>
     fc.assert(
       fc.property(fc.integer(), fc.integer(1, 100), (seed, num) => {
-        let rng: RandomGenerator = congruential(seed);
-        let rng32: RandomGenerator = congruential32(seed);
+        let rng = congruential(seed);
+        let rng32 = congruential32(seed);
         const dist = uniformIntDistribution(0, 0xffffffff);
         for (let idx = 0; idx !== num; ++idx) {
           const [v1, nrng] = dist(rng);

@@ -1,4 +1,4 @@
-import Distribution from './Distribution';
+import { Distribution } from './Distribution';
 import { RandomGenerator } from '../generator/RandomGenerator';
 
 function uniformBigIntInternal(from: bigint, diff: bigint, rng: RandomGenerator): [bigint, RandomGenerator] {

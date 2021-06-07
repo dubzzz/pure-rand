@@ -1,9 +1,9 @@
-import { RandomGeneratorWithUnsafe } from './RandomGenerator';
+import { RandomGenerator } from './RandomGenerator';
 
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
-class XoroShiro128Plus implements RandomGeneratorWithUnsafe {
+class XoroShiro128Plus implements RandomGenerator {
   constructor(private s01: number, private s00: number, private s11: number, private s10: number) {}
   min(): number {
     return -0x80000000;
@@ -66,6 +66,6 @@ class XoroShiro128Plus implements RandomGeneratorWithUnsafe {
   }
 }
 
-export const xoroshiro128plus = function (seed: number): RandomGeneratorWithUnsafe {
+export const xoroshiro128plus = function (seed: number): RandomGenerator {
   return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
 };

@@ -1,13 +1,7 @@
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import {
-  RandomGenerator,
-  skipN,
-  generateN,
-  RandomGeneratorWithUnsafe,
-  unsafeSkipN,
-} from '../../../src/generator/RandomGenerator';
+import { RandomGenerator, skipN, generateN, unsafeSkipN } from '../../../src/generator/RandomGenerator';
 
 const MAX_SIZE: number = 2048;
 
@@ -48,7 +42,7 @@ export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const [expectedValue, expectedNextRng] = skipN(rng_for(seed), offset).next();
@@ -68,7 +62,7 @@ export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenera
   });
 }
 
-export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const expectedJumpRng = skipN(rng_for(seed), offset).jump!();
@@ -87,7 +81,7 @@ export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGenera
   });
 }
 
-export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -103,7 +97,7 @@ export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGeneratorW
   });
 }
 
-export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -119,7 +113,7 @@ export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGeneratorW
   });
 }
 
-export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -140,7 +134,7 @@ export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => Random
   });
 }
 
-export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => RandomGeneratorWithUnsafe) {
+export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
