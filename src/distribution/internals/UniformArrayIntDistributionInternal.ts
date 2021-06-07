@@ -1,4 +1,4 @@
-import RandomGenerator from '../../generator/RandomGenerator';
+import { RandomGenerator } from '../../generator/RandomGenerator';
 import { ArrayInt } from './ArrayInt';
 import { uniformIntDistributionInternal } from './UniformIntDistributionInternal';
 

@@ -1,4 +1,4 @@
-import { RandomGenerator, RandomGeneratorWithUnsafe, generateN, skipN } from './generator/RandomGenerator';
+import { RandomGenerator, generateN, skipN } from './generator/RandomGenerator';
 import { congruential, congruential32 } from './generator/LinearCongruential';
 import mersenne from './generator/MersenneTwister';
 import { xorshift128plus } from './generator/XorShift';
@@ -19,7 +19,6 @@ export {
   __version,
   __commitHash,
   RandomGenerator,
-  RandomGeneratorWithUnsafe,
   generateN,
   skipN,
   congruential,

@@ -2,16 +2,23 @@ import * as fc from 'fast-check';
 
 import { uniformIntDistributionInternal } from '../../../../src/distribution/internals/UniformIntDistributionInternal';
 import mersenne from '../../../../src/generator/MersenneTwister';
-import RandomGenerator from '../../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
-  readonly current: number;
-  constructor(current: number) {
+  constructor(private current: number) {
     this.current = current % 0x80000000;
   }
-
+  clone(): RandomGenerator {
+    return new NatGenerator(this.current);
+  }
   next(): [number, RandomGenerator] {
-    return [this.current, new NatGenerator(this.current + 1)];
+    const nextRng = this.clone();
+    return [nextRng.unsafeNext(), nextRng];
+  }
+  unsafeNext(): number {
+    const previousCurrent = this.current;
+    this.current = (this.current + 1) % 0x80000000;
+    return previousCurrent;
   }
   min(): number {
     return 0;
@@ -22,11 +29,18 @@ class NatGenerator implements RandomGenerator {
 }
 
 class ModNatGenerator implements RandomGenerator {
-  constructor(readonly current: RandomGenerator, readonly mod: number) {}
-
+  constructor(private current: RandomGenerator, private mod: number) {}
+  clone(): RandomGenerator {
+    return new ModNatGenerator(this.current, this.mod);
+  }
   next(): [number, RandomGenerator] {
+    const nextRng = this.clone();
+    return [nextRng.unsafeNext(), nextRng];
+  }
+  unsafeNext(): number {
     const [v, nrng] = this.current.next();
-    return [Math.abs(v % this.mod), new ModNatGenerator(nrng, this.mod)];
+    this.current = nrng;
+    return Math.abs(v % this.mod);
   }
   min(): number {
     return 0;
