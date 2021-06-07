@@ -6,10 +6,3 @@ import { RandomGenerator } from '../generator/RandomGenerator';
  * @public
  */
 export type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];
-
-/**
- * Generate random value based on a given RandomGenerator.
- * Return the generated value. WARNING: The original random number generator (rng) will be altered.
- * @public
- */
-export type UnsafeDistribution<T> = (rng: RandomGenerator) => T;
