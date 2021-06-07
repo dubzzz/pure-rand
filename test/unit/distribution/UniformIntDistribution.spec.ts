@@ -2,7 +2,7 @@ import * as fc from 'fast-check';
 import { mocked } from 'ts-jest/utils';
 
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
-import RandomGenerator from '../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../src/generator/RandomGenerator';
 
 import * as UniformIntDistributionInternalMock from '../../../src/distribution/internals/UniformIntDistributionInternal';
 import * as UniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UniformArrayIntDistributionInternal';
