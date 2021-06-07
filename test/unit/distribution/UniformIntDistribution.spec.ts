@@ -2,14 +2,21 @@ import * as fc from 'fast-check';
 import { mocked } from 'ts-jest/utils';
 
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
-import RandomGenerator from '../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../src/generator/RandomGenerator';
 
-import * as UniformIntDistributionInternalMock from '../../../src/distribution/internals/UniformIntDistributionInternal';
-import * as UniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UniformArrayIntDistributionInternal';
-jest.mock('../../../src/distribution/internals/UniformIntDistributionInternal');
-jest.mock('../../../src/distribution/internals/UniformArrayIntDistributionInternal');
+import * as UnsafeUniformIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
+import * as UnsafeUniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
+jest.mock('../../../src/distribution/internals/UnsafeUniformIntDistributionInternal');
+jest.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
 
-function buildUniqueRng() {
+function buildUniqueRng(clonedRng?: RandomGenerator) {
+  if (clonedRng !== undefined) {
+    return {
+      clone() {
+        return clonedRng;
+      },
+    } as RandomGenerator;
+  }
   return {} as RandomGenerator;
 }
 function clean() {
@@ -20,24 +27,24 @@ function clean() {
 beforeEach(clean);
 describe('uniformIntDistribution', () => {
   describe('Small ranges (<= 2**32)', () => {
-    it('Should call uniformIntDistributionInternal with correct size of range and source rng', () =>
+    it('Should call unsafeUniformIntDistributionInternal with correct size of range and source rng', () =>
       fc.assert(
         fc
           .property(settingsArbitrary, (settings) => {
             // Arrange
-            const { from, to, rng, uniformIntDistributionInternal } = mockInternals(settings);
+            const { from, to, rng, clonedRng, unsafeUniformIntDistributionInternal } = mockInternals(settings);
 
             // Act
             uniformIntDistribution(from, to)(rng);
 
             // Assert
-            expect(uniformIntDistributionInternal).toHaveBeenCalledTimes(1);
-            expect(uniformIntDistributionInternal).toHaveBeenCalledWith(to - from + 1, rng);
+            expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledTimes(1);
+            expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledWith(to - from + 1, clonedRng);
           })
           .beforeEach(clean)
       ));
 
-    it('Should offset by "from" the value produced by uniformIntDistributionInternal', () =>
+    it('Should offset by "from" the value produced by unsafeUniformIntDistributionInternal', () =>
       fc.assert(
         fc
           .property(settingsArbitrary, (settings) => {
@@ -48,34 +55,39 @@ describe('uniformIntDistribution', () => {
             const [v, _nrng] = uniformIntDistribution(from, to)(rng);
 
             // Assert
-            expect(v).toBe(outputs[0][0] + from);
+            expect(v).toBe(outputs[0] + from);
           })
           .beforeEach(clean)
       ));
   });
 
   describe('Large ranges (> 2**32)', () => {
-    it('Should call uniformIntDistributionInternal with correct size of range and source rng', () =>
+    it('Should call unsafeUniformIntDistributionInternal with correct size of range and source rng', () =>
       fc.assert(
         fc
           .property(settingsLargeArbitrary, (settings) => {
             // Arrange
-            const { from, to, rng, uniformArrayIntDistributionInternal } = mockLargeInternals(settings);
+            const { from, to, rng, clonedRng, unsafeUniformArrayIntDistributionInternal } =
+              mockLargeInternals(settings);
 
             // Act
             uniformIntDistribution(from, to)(rng);
 
             // Assert
-            expect(uniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
-            expect(uniformArrayIntDistributionInternal).toHaveBeenCalledWith(expect.any(Array), expect.any(Array), rng);
-            const params = uniformArrayIntDistributionInternal.mock.calls[0];
+            expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
+            expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
+              expect.any(Array),
+              expect.any(Array),
+              clonedRng
+            );
+            const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
             const rangeSize = params[1];
             expect(rangeSize[0] * 2 ** 32 + rangeSize[1]).toBe(to - from + 1);
           })
           .beforeEach(clean)
       ));
 
-    it('Should offset by "from" the value produced by uniformIntDistributionInternal', () =>
+    it('Should offset by "from" the value produced by unsafeUniformIntDistributionInternal', () =>
       fc.assert(
         fc
           .property(settingsLargeArbitrary, (settings) => {
@@ -86,24 +98,24 @@ describe('uniformIntDistribution', () => {
             const [v, _nrng] = uniformIntDistribution(from, to)(rng);
 
             // Assert
-            expect(v).toBe(outputs[0][0][0] * 2 ** 32 + outputs[0][0][1] + from);
+            expect(v).toBe(outputs[0][0] * 2 ** 32 + outputs[0][1] + from);
           })
           .beforeEach(clean)
       ));
   });
 
-  it('Should return the rng produced by uniformIntDistributionInternal', () =>
+  it('Should return the rng passed to unsafeUniformIntDistributionInternal', () =>
     fc.assert(
       fc
         .property(settingsArbitrary, (settings) => {
           // Arrange
-          const { from, to, rng, outputs } = mockInternals(settings);
+          const { from, to, rng, clonedRng, outputs } = mockInternals(settings);
 
           // Act
           const [_v1, nrng] = uniformIntDistribution(from, to)(rng);
 
           // Assert
-          expect(nrng).toBe(outputs[0][1]);
+          expect(nrng).toBe(clonedRng);
         })
         .beforeEach(clean)
     ));
@@ -143,20 +155,21 @@ const settingsArbitrary = fc
 type SettingsType = typeof settingsArbitrary extends fc.Arbitrary<infer U> ? U : never;
 
 function mockInternals(settings: SettingsType) {
-  const { uniformIntDistributionInternal } = mocked(UniformIntDistributionInternalMock);
+  const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
 
   const { from, gap, rangeRandom, ctx } = settings;
   const to = from + gap;
-  const rng = buildUniqueRng();
-  const outputs: [number, RandomGenerator][] = [];
-  uniformIntDistributionInternal.mockImplementation((rangeSize) => {
-    const out = [rangeRandom % rangeSize, buildUniqueRng()] as [number, RandomGenerator];
-    ctx.log(`uniformIntDistributionInternal(${rangeSize}) -> [${out[0]}, <rng>]`);
-    outputs.push([...out]); // we clone it, nothing forbid caller to mutate it
+  const clonedRng = buildUniqueRng();
+  const rng = buildUniqueRng(clonedRng);
+  const outputs: number[] = [];
+  unsafeUniformIntDistributionInternal.mockImplementation((rangeSize) => {
+    const out = rangeRandom % rangeSize;
+    ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> ${out}`);
+    outputs.push(out);
     return out;
   });
 
-  return { from, to, rng, outputs, uniformIntDistributionInternal };
+  return { from, to, rng, clonedRng, outputs, unsafeUniformIntDistributionInternal };
 }
 
 const settingsLargeArbitrary = fc
@@ -174,18 +187,19 @@ const settingsLargeArbitrary = fc
 type SettingsLargeType = typeof settingsLargeArbitrary extends fc.Arbitrary<infer U> ? U : never;
 
 function mockLargeInternals(settings: SettingsLargeType) {
-  const { uniformArrayIntDistributionInternal } = mocked(UniformArrayIntDistributionInternalMock);
+  const { unsafeUniformArrayIntDistributionInternal } = mocked(UnsafeUniformArrayIntDistributionInternalMock);
 
   const { from, gap, rangeRandom, ctx } = settings;
   const to = from + gap;
-  const rng = buildUniqueRng();
-  const outputs: [number[], RandomGenerator][] = [];
-  uniformArrayIntDistributionInternal.mockImplementation((rangeSize) => {
-    const out = [rangeSize.map((r) => rangeRandom % (r || 1)), buildUniqueRng()] as [number[], RandomGenerator];
-    ctx.log(`uniformArrayIntDistributionInternal(${JSON.stringify(rangeSize)}) -> [${JSON.stringify(out[0])}, <rng>]`);
-    outputs.push([...out]); // we clone it, nothing forbid caller to mutate it
+  const clonedRng = buildUniqueRng();
+  const rng = buildUniqueRng(clonedRng);
+  const outputs: number[][] = [];
+  unsafeUniformArrayIntDistributionInternal.mockImplementation((rangeSize) => {
+    const out = rangeSize.map((r) => rangeRandom % (r || 1));
+    ctx.log(`unsafeUniformArrayIntDistributionInternal(${JSON.stringify(rangeSize)}) -> ${JSON.stringify(out)}`);
+    outputs.push(out);
     return out;
   });
 
-  return { from, to, rng, outputs, uniformArrayIntDistributionInternal };
+  return { from, to, rng, clonedRng, outputs, unsafeUniformArrayIntDistributionInternal };
 }

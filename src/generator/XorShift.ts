@@ -15,12 +15,15 @@ class XorShift128Plus implements RandomGenerator {
   max(): number {
     return 0x7fffffff;
   }
+  clone(): XorShift128Plus {
+    return new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
+  }
   next(): [number, XorShift128Plus] {
     const nextRng = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
     const out = nextRng.unsafeNext();
     return [out, nextRng];
   }
-  private unsafeNext(): number {
+  unsafeNext(): number {
     const a0 = this.s00 ^ (this.s00 << 23);
     const a1 = this.s01 ^ ((this.s01 << 23) | (this.s00 >>> 9));
     const b0 = a0 ^ this.s10 ^ ((a0 >>> 18) | (a1 << 14)) ^ ((this.s10 >>> 5) | (this.s11 << 27));
@@ -33,9 +36,13 @@ class XorShift128Plus implements RandomGenerator {
     return out;
   }
   jump(): XorShift128Plus {
+    const nextRng = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
+    nextRng.unsafeJump();
+    return nextRng;
+  }
+  unsafeJump() {
     // equivalent to 2^64 calls to next()
     // can be used to generate 2^64 non-overlapping subsequences
-    let rngRunner = new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
     let ns01 = 0;
     let ns00 = 0;
     let ns11 = 0;
@@ -45,19 +52,18 @@ class XorShift128Plus implements RandomGenerator {
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
         if (jump[i] & mask) {
-          ns01 ^= rngRunner.s01;
-          ns00 ^= rngRunner.s00;
-          ns11 ^= rngRunner.s11;
-          ns10 ^= rngRunner.s10;
+          ns01 ^= this.s01;
+          ns00 ^= this.s00;
+          ns11 ^= this.s11;
+          ns10 ^= this.s10;
         }
-        rngRunner.unsafeNext();
+        this.unsafeNext();
       }
     }
-    rngRunner.s01 = ns01;
-    rngRunner.s00 = ns00;
-    rngRunner.s11 = ns11;
-    rngRunner.s10 = ns10;
-    return rngRunner;
+    this.s01 = ns01;
+    this.s00 = ns00;
+    this.s11 = ns11;
+    this.s10 = ns10;
   }
 }
 

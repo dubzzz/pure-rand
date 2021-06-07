@@ -1,14 +1,21 @@
 import * as fc from 'fast-check';
 import { mocked } from 'ts-jest/utils';
 
-import { uniformArrayIntDistributionInternal } from '../../../../src/distribution/internals/UniformArrayIntDistributionInternal';
+import { unsafeUniformArrayIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
-import RandomGenerator from '../../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
-import * as UniformIntDistributionInternalMock from '../../../../src/distribution/internals/UniformIntDistributionInternal';
-jest.mock('../../../../src/distribution/internals/UniformIntDistributionInternal');
+import * as UnsafeUniformIntDistributionInternalMock from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
+jest.mock('../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal');
 
-function buildUniqueRng() {
+function buildUniqueRng(clonedRng?: RandomGenerator) {
+  if (clonedRng !== undefined) {
+    return {
+      clone() {
+        return clonedRng;
+      },
+    } as RandomGenerator;
+  }
   return {} as RandomGenerator;
 }
 function clean() {
@@ -17,7 +24,7 @@ function clean() {
 }
 
 beforeEach(clean);
-describe('uniformArrayIntDistributionInternal', () => {
+describe('unsafeUniformArrayIntDistributionInternal', () => {
   it.each`
     rangeSize             | resultingArrayInt     | description
     ${[10, 20, 30]}       | ${[1, 1, 1]}          | ${'all generated values are smaller'}
@@ -27,9 +34,8 @@ describe('uniformArrayIntDistributionInternal', () => {
     ${[0, 0, 1, 0, 1, 0]} | ${[0, 0, 1, 0, 0, 1]} | ${'rangeSize starting by and including zeros'}
   `('Should only call the rangeSize.length times when $description', ({ rangeSize, resultingArrayInt }) => {
     // Arrange
-    const { uniformIntDistributionInternal } = mocked(UniformIntDistributionInternalMock);
+    const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
     const initialRng = buildUniqueRng();
-    let expectedRng = initialRng;
     for (let idx = 0; idx !== resultingArrayInt.length; ++idx) {
       // In terms of calls, the expectedRangeSize is:
       //    [ rangeSize[0] + 1 , 0x1_00000000 , ... ]
@@ -38,20 +44,19 @@ describe('uniformArrayIntDistributionInternal', () => {
       // Values outside greater or equal to rangeSize will be rejected. We will retry until we get a valid value.
       const expectedRangeSize = idx === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = resultingArrayInt[idx];
-      const nextRng = buildUniqueRng();
-      uniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, _rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
-        return [generatedItem, nextRng];
+        expect(rng).toBe(initialRng);
+        return generatedItem;
       });
-      expectedRng = nextRng;
     }
 
     // Act
-    const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
+    const g = unsafeUniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
 
     // Assert
-    expect(g[0]).toEqual(resultingArrayInt);
-    expect(g[1]).toBe(expectedRng);
+    expect(g).toEqual(resultingArrayInt);
+    expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledTimes(resultingArrayInt.length);
   });
 
   it.each`
@@ -62,41 +67,38 @@ describe('uniformArrayIntDistributionInternal', () => {
     ${[10, 20, 30]} | ${[10, 100, 1000, 10, 100, 1000, 10, 100, 1000]} | ${[1, 1, 1]}      | ${'multiple rejections in a row'}
   `('Should retry until we get a valid value when $description', ({ rangeSize, rejections, resultingArrayInt }) => {
     // Arrange
-    const { uniformIntDistributionInternal } = mocked(UniformIntDistributionInternalMock);
+    const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
     const initialRng = buildUniqueRng();
-    let expectedRng = initialRng;
     for (let idx = 0; idx !== rejections.length; ++idx) {
       // Rq: We check on `idx % rangeSize.length === 0` as our surrent implementation does not quit earlier.
       //     It will generate a full value before rejecting it.
       const expectedRangeSize = idx % rangeSize.length === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = rejections[idx];
-      const nextRng = buildUniqueRng();
-      uniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, _rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
-        return [generatedItem, nextRng];
+        expect(rng).toBe(initialRng);
+        return generatedItem;
       });
-      expectedRng = nextRng;
     }
     for (let idx = 0; idx !== resultingArrayInt.length; ++idx) {
       const expectedRangeSize = idx === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = resultingArrayInt[idx];
-      const nextRng = buildUniqueRng();
-      uniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, _rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
-        return [generatedItem, nextRng];
+        expect(rng).toBe(initialRng);
+        return generatedItem;
       });
-      expectedRng = nextRng;
     }
 
     // Act
-    const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
+    const g = unsafeUniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
 
     // Assert
-    expect(g[0]).toEqual(resultingArrayInt);
-    expect(g[1]).toBe(expectedRng);
+    expect(g).toEqual(resultingArrayInt);
+    expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledTimes(rejections.length + resultingArrayInt.length);
   });
 
-  it('Should call uniformIntDistributionInternal until it produces a valid ArrayInt', () =>
+  it('Should call unsafeUniformIntDistributionInternal until it produces a valid ArrayInt', () =>
     // Identical to the test above "Should retry until we get a valid value when $description" but with property based testing
     fc.assert(
       fc
@@ -135,26 +137,28 @@ describe('uniformArrayIntDistributionInternal', () => {
           ({ rangeSize, rejectedValues, validValue }, ctx) => {
             // Arrange
             const initialRng = buildUniqueRng();
-            let expectedRng = initialRng;
             for (const rejected of rejectedValues) {
-              // Our mock for uniformIntDistributionInternal starts by producing invalid values
+              // Our mock for unsafeUniformIntDistributionInternal starts by producing invalid values
               // (too large for the requested range).
-              // All those values should be rejected by uniformArrayIntDistributionInternal.
-              // Internally uniformArrayIntDistributionInternal do not optimize calls (for the moment)
+              // All those values should be rejected by unsafeUniformArrayIntDistributionInternal.
+              // Internally unsafeUniformArrayIntDistributionInternal do not optimize calls (for the moment)
               // it always queries for all the data then checks if the data is ok or not given rangeSize.
               // In other words, if rangeSize = [1,1,1], the algorithm will query for at least three entries
               // even if it can stop earlier [1,2,1,...] (when receiving the 2, we know it will not fit our needs).
-              expectedRng = mockResponse(rejected, expectedRng, ctx);
+              mockResponse(rejected, initialRng, ctx);
             }
-            expectedRng = mockResponse(validValue, expectedRng, ctx);
+            mockResponse(validValue, initialRng, ctx);
             mockRejectNextCalls(ctx);
 
             // Act
-            const g = uniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
+            const g = unsafeUniformArrayIntDistributionInternal(
+              arrayIntBuffer(rangeSize.length).data,
+              rangeSize,
+              initialRng
+            );
 
             // Assert
-            expect(g[0]).toEqual(validValue);
-            expect(g[1]).toBe(expectedRng);
+            expect(g).toEqual(validValue);
           }
         )
         .beforeEach(clean)
@@ -180,25 +184,21 @@ function padDataOfArrayInt(arrayIntData: ArrayInt['data'], length: number): Arra
   return [...Array(length - arrayIntData.length).fill(0), ...arrayIntData];
 }
 
-function mockResponse(arrayIntData: ArrayInt['data'], previousRng: RandomGenerator, ctx: fc.ContextValue) {
-  const { uniformIntDistributionInternal } = mocked(UniformIntDistributionInternalMock);
-  let currentRng = previousRng;
+function mockResponse(arrayIntData: ArrayInt['data'], clonedRng: RandomGenerator, ctx: fc.ContextValue) {
+  const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
   for (const item of arrayIntData) {
-    const nextRng = buildUniqueRng();
-    uniformIntDistributionInternal.mockImplementationOnce((rangeSize, _rng) => {
-      const out = [item, nextRng] as [number, RandomGenerator];
-      ctx.log(`uniformIntDistributionInternal(${rangeSize}) -> [${out[0]}, <rng>]`);
-      return out;
+    unsafeUniformIntDistributionInternal.mockImplementationOnce((rangeSize, rng) => {
+      expect(rng).toBe(clonedRng);
+      ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> ${item}`);
+      return item;
     });
-    currentRng = nextRng;
   }
-  return currentRng;
 }
 
 function mockRejectNextCalls(ctx: fc.ContextValue) {
-  const { uniformIntDistributionInternal } = mocked(UniformIntDistributionInternalMock);
-  uniformIntDistributionInternal.mockImplementationOnce((rangeSize, _rng) => {
-    ctx.log(`uniformIntDistributionInternal(${rangeSize}) -> [..., <rng>]`);
+  const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
+  unsafeUniformIntDistributionInternal.mockImplementationOnce((rangeSize, _rng) => {
+    ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> [..., <rng>]`);
     throw new Error('No more calls expected');
   });
 }

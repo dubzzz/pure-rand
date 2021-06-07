@@ -43,21 +43,12 @@ class MersenneTwister implements RandomGenerator {
     return out;
   }
 
-  readonly index: number;
-  readonly states: number[]; // between -0x80000000 and 0x7fffffff
-
-  private constructor(states: number[], index: number) {
-    if (index >= MersenneTwister.N) {
-      this.states = MersenneTwister.twist(states);
-      this.index = 0;
-    } else {
-      this.states = states;
-      this.index = index;
-    }
+  private constructor(private states: number[], private index: number) {
+    // states: between -0x80000000 and 0x7fffffff
   }
 
   static from(seed: number): MersenneTwister {
-    return new MersenneTwister(MersenneTwister.seeded(seed), MersenneTwister.N);
+    return new MersenneTwister(MersenneTwister.twist(MersenneTwister.seeded(seed)), 0);
   }
 
   min(): number {
@@ -68,13 +59,27 @@ class MersenneTwister implements RandomGenerator {
     return MersenneTwister.max;
   }
 
+  clone(): MersenneTwister {
+    return new MersenneTwister(this.states, this.index);
+  }
+
   next(): [number, MersenneTwister] {
+    const nextRng = new MersenneTwister(this.states, this.index);
+    const out = nextRng.unsafeNext();
+    return [out, nextRng];
+  }
+
+  unsafeNext(): number {
     let y = this.states[this.index];
     y ^= this.states[this.index] >>> MersenneTwister.U;
     y ^= (y << MersenneTwister.S) & MersenneTwister.B;
     y ^= (y << MersenneTwister.T) & MersenneTwister.C;
     y ^= y >>> MersenneTwister.L;
-    return [y >>> 0, new MersenneTwister(this.states, this.index + 1)];
+    if (++this.index >= MersenneTwister.N) {
+      this.states = MersenneTwister.twist(this.states);
+      this.index = 0;
+    }
+    return y >>> 0;
   }
 }
 

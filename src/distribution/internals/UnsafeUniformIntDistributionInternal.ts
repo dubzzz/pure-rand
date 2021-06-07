@@ -1,10 +1,10 @@
-import RandomGenerator from '../../generator/RandomGenerator';
+import { RandomGenerator } from '../../generator/RandomGenerator';
 
 /**
  * Uniformly generate number in range [0 ; rangeSize[
  * @internal
  */
-export function uniformIntDistributionInternal(rangeSize: number, rng: RandomGenerator): [number, RandomGenerator] {
+export function unsafeUniformIntDistributionInternal(rangeSize: number, rng: RandomGenerator): number {
   const MinRng = rng.min();
   const NumValues = rng.max() - rng.min() + 1;
 
@@ -13,11 +13,10 @@ export function uniformIntDistributionInternal(rangeSize: number, rng: RandomGen
     let nrng = rng;
     const MaxAllowed = NumValues - (NumValues % rangeSize);
     while (true) {
-      const out = nrng.next();
-      const deltaV = out[0] - MinRng;
-      nrng = out[1];
+      const out = nrng.unsafeNext();
+      const deltaV = out - MinRng;
       if (deltaV < MaxAllowed) {
-        return [deltaV % rangeSize, nrng]; // Warning: we expect NumValues <= 2**32, so diff too
+        return deltaV % rangeSize; // Warning: we expect NumValues <= 2**32, so diff too
       }
     }
   }
@@ -37,13 +36,12 @@ export function uniformIntDistributionInternal(rangeSize: number, rng: RandomGen
     // Aggregate mutiple calls to next() into a single random value
     let value = 0;
     for (let num = 0; num !== NumIterations; ++num) {
-      const out = nrng.next();
-      value = NumValues * value + (out[0] - MinRng); // Warning: we overflow may when diff > max_safe (eg: =max_safe-min_safe+1)
-      nrng = out[1];
+      const out = nrng.unsafeNext();
+      value = NumValues * value + (out - MinRng); // Warning: we overflow may when diff > max_safe (eg: =max_safe-min_safe+1)
     }
     if (value < MaxAcceptedRandom) {
       const inDiff = value - rangeSize * Math.floor((1 * value) / rangeSize);
-      return [inDiff, nrng];
+      return inDiff;
     }
   }
 }

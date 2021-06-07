@@ -1,6 +1,6 @@
-import RandomGenerator from '../../generator/RandomGenerator';
+import { RandomGenerator } from '../../generator/RandomGenerator';
 import { ArrayInt } from './ArrayInt';
-import { uniformIntDistributionInternal } from './UniformIntDistributionInternal';
+import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistributionInternal';
 
 /**
  * Uniformly generate ArrayInt in range [0 ; rangeSize[
@@ -11,22 +11,20 @@ import { uniformIntDistributionInternal } from './UniformIntDistributionInternal
  *
  * @internal
  */
-export function uniformArrayIntDistributionInternal(
+export function unsafeUniformArrayIntDistributionInternal(
   out: ArrayInt['data'],
   rangeSize: ArrayInt['data'],
   rng: RandomGenerator
-): [ArrayInt['data'], RandomGenerator] {
+): ArrayInt['data'] {
   const rangeLength = rangeSize.length;
-  let nrng = rng;
 
   // We iterate until we find a valid value for arrayInt
   while (true) {
     // We compute a new value for arrayInt
     for (let index = 0; index !== rangeLength; ++index) {
       const indexRangeSize = index === 0 ? rangeSize[0] + 1 : 0x100000000;
-      const g = uniformIntDistributionInternal(indexRangeSize, nrng);
-      out[index] = g[0];
-      nrng = g[1];
+      const g = unsafeUniformIntDistributionInternal(indexRangeSize, rng);
+      out[index] = g;
     }
 
     // If in the correct range we can return it
@@ -34,7 +32,7 @@ export function uniformArrayIntDistributionInternal(
       const current = out[index];
       const currentInRange = rangeSize[index];
       if (current < currentInRange) {
-        return [out, nrng]; // arrayInt < rangeSize
+        return out; // arrayInt < rangeSize
       } else if (current > currentInRange) {
         break; // arrayInt > rangeSize
       }
