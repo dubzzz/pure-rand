@@ -1,22 +1,7 @@
 import { Distribution } from './Distribution';
 import { RandomGenerator } from '../generator/RandomGenerator';
-import {
-  addArrayIntToNew,
-  addOneToPositiveArrayInt,
-  ArrayInt,
-  substractArrayIntToNew,
-  trimArrayIntInplace,
-} from './internals/ArrayInt';
-import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
-
-/** @internal */
-function uniformArrayIntInternal(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): [ArrayInt, RandomGenerator] {
-  const rangeSize = trimArrayIntInplace(addOneToPositiveArrayInt(substractArrayIntToNew(to, from)));
-  const emptyArrayIntData = rangeSize.data.slice(0);
-  const nextRng = rng.clone();
-  const g = unsafeUniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, nextRng);
-  return [trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g }, from)), nextRng];
-}
+import { ArrayInt } from './internals/ArrayInt';
+import { unsafeUniformArrayIntDistribution } from './UnsafeUniformArrayIntDistribution';
 
 /**
  * Uniformly generate random ArrayInt values between `from` (included) and `to` (included)
@@ -39,10 +24,12 @@ function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt): Distribution
 function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): [ArrayInt, RandomGenerator];
 function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng?: RandomGenerator) {
   if (rng != null) {
-    return uniformArrayIntInternal(from, to, rng);
+    const nextRng = rng.clone();
+    return [unsafeUniformArrayIntDistribution(from, to, nextRng), nextRng];
   }
   return function (rng: RandomGenerator) {
-    return uniformArrayIntInternal(from, to, rng);
+    const nextRng = rng.clone();
+    return [unsafeUniformArrayIntDistribution(from, to, nextRng), nextRng];
   };
 }
 

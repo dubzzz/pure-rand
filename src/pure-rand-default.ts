@@ -8,6 +8,7 @@ import { Distribution, UnsafeDistribution } from './distribution/Distribution';
 import { uniformArrayIntDistribution } from './distribution/UniformArrayIntDistribution';
 import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';
+import { unsafeUniformArrayIntDistribution } from './distribution/UnsafeUniformArrayIntDistribution';
 import { unsafeUniformBigIntDistribution } from './distribution/UnsafeUniformBigIntDistribution';
 import { unsafeUniformIntDistribution } from './distribution/UnsafeUniformIntDistribution';
 
@@ -33,6 +34,7 @@ export {
   uniformArrayIntDistribution,
   uniformBigIntDistribution,
   uniformIntDistribution,
+  unsafeUniformArrayIntDistribution,
   unsafeUniformBigIntDistribution,
   unsafeUniformIntDistribution,
 };
