@@ -1,6 +1,6 @@
 import * as fc from 'fast-check';
 
-import { uniformIntDistributionInternal } from '../../../../src/distribution/internals/UniformIntDistributionInternal';
+import { unsafeUniformIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
 import mersenne from '../../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
@@ -52,11 +52,11 @@ class ModNatGenerator implements RandomGenerator {
 
 const MAX_RANGE: number = 1000;
 
-describe('uniformIntDistributionInternal', () => {
+describe('unsafeUniformIntDistributionInternal', () => {
   it('Should always generate values within the range [0 ; rangeSize[', () =>
     fc.assert(
       fc.property(fc.nat(), fc.integer({ min: 1, max: MAX_RANGE }), (offset, rangeSize) => {
-        const [v, nrng] = uniformIntDistributionInternal(rangeSize, new NatGenerator(offset));
+        const v = unsafeUniformIntDistributionInternal(rangeSize, new NatGenerator(offset));
         return v >= 0 && v < rangeSize;
       })
     ));
@@ -64,10 +64,9 @@ describe('uniformIntDistributionInternal', () => {
     fc.assert(
       fc.property(fc.nat(), fc.integer({ min: 1, max: MAX_RANGE }), fc.nat(), (offset, rangeSize, targetOffset) => {
         const target = targetOffset % rangeSize;
-        let rng: RandomGenerator = new NatGenerator(offset);
+        const rng: RandomGenerator = new NatGenerator(offset);
         for (let numTries = 0; numTries < 2 * rangeSize; ++numTries) {
-          const [v, nrng] = uniformIntDistributionInternal(rangeSize, rng);
-          rng = nrng;
+          const v = unsafeUniformIntDistributionInternal(rangeSize, rng);
           if (v === target) {
             return true;
           }
@@ -88,10 +87,9 @@ describe('uniformIntDistributionInternal', () => {
         fc.integer({ min: 1, max: 100 }),
         (offset, rangeSize, num) => {
           let buckets = [...Array(rangeSize)].map(() => 0);
-          let rng: RandomGenerator = new NatGenerator(offset);
+          const rng: RandomGenerator = new NatGenerator(offset);
           for (let numTries = 0; numTries < num * rangeSize; ++numTries) {
-            const [v, nrng] = uniformIntDistributionInternal(rangeSize, rng);
-            rng = nrng;
+            const v = unsafeUniformIntDistributionInternal(rangeSize, rng);
             buckets[v] += 1;
           }
           return buckets.every((n) => n === num);
@@ -105,8 +103,7 @@ describe('uniformIntDistributionInternal', () => {
         expect(rng.max() - rng.min() + 1).toBeLessThan(Number.MAX_SAFE_INTEGER);
 
         for (let numTries = 0; numTries < 100; ++numTries) {
-          const [v, nrng] = uniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
-          rng = nrng;
+          const v = unsafeUniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
           if (v > rng.max()) {
             return true;
           }
@@ -119,8 +116,7 @@ describe('uniformIntDistributionInternal', () => {
       fc.property(fc.integer(), fc.integer({ min: 2, max: 0x7fffffff }), (seed, mod) => {
         let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
         for (let numTries = 0; numTries < 100; ++numTries) {
-          const [v, nrng] = uniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
-          rng = nrng;
+          const v = unsafeUniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
           if (v > 0xffffffff) {
             return true;
           }

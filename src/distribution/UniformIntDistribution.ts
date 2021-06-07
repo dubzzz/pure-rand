@@ -1,6 +1,6 @@
 import { Distribution } from './Distribution';
 import { RandomGenerator } from '../generator/RandomGenerator';
-import { uniformIntDistributionInternal } from './internals/UniformIntDistributionInternal';
+import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformIntDistributionInternal';
 import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
 import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
 
@@ -38,11 +38,11 @@ function uniformLargeIntInternal(
 function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {
   const rangeSize = to - from;
   if (rangeSize <= 0xffffffff) {
-    // Calling uniformIntDistributionInternal can be considered safe
+    // Calling unsafeUniformIntDistributionInternal can be considered safe
     // up-to 2**32 values. Above this range it may miss values.
-    const g = uniformIntDistributionInternal(rangeSize + 1, rng);
-    g[0] += from;
-    return g;
+    const nextRng = rng.clone();
+    const g = unsafeUniformIntDistributionInternal(rangeSize + 1, nextRng);
+    return [g + from, nextRng];
   }
   return uniformLargeIntInternal(from, to, rangeSize, rng);
 }
