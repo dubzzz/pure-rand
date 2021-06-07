@@ -52,7 +52,11 @@ class XoroShiro128Plus implements RandomGenerator {
         rngRunner.unsafeNext();
       }
     }
-    return new XoroShiro128Plus(ns01, ns00, ns11, ns10);
+    rngRunner.s01 = ns01;
+    rngRunner.s00 = ns00;
+    rngRunner.s11 = ns11;
+    rngRunner.s10 = ns10;
+    return rngRunner;
   }
 }
 
