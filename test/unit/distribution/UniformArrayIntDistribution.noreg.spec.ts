@@ -3,6 +3,7 @@ import fc from 'fast-check';
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
 import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
 import mersenne from '../../../src/generator/MersenneTwister';
+import { RandomGenerator } from '../../../src/generator/RandomGenerator';
 
 describe('uniformArrayIntDistribution [non regression]', () => {
   it.each`
@@ -24,7 +25,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     // The values we expect in the output are just a snapshot taken at a certain time
     // in the past. They might be wrong values with bugs.
 
-    let rng = mersenne(0);
+    let rng: RandomGenerator = mersenne(0);
     const distribution = uniformArrayIntDistribution(from, to);
 
     const values: ArrayInt[] = [];
