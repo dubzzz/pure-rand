@@ -8,6 +8,7 @@ import { Distribution, UnsafeDistribution } from './distribution/Distribution';
 import { uniformArrayIntDistribution } from './distribution/UniformArrayIntDistribution';
 import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';
+import { unsafeUniformBigIntDistribution } from './distribution/UnsafeUniformBigIntDistribution';
 import { unsafeUniformIntDistribution } from './distribution/UnsafeUniformIntDistribution';
 
 // Explicit cast into string to avoid to have __type: "__PACKAGE_TYPE__"
@@ -32,5 +33,6 @@ export {
   uniformArrayIntDistribution,
   uniformBigIntDistribution,
   uniformIntDistribution,
+  unsafeUniformBigIntDistribution,
   unsafeUniformIntDistribution,
 };
