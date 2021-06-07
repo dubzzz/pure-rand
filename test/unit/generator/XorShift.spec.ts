@@ -95,22 +95,12 @@ describe('xorshift128plus', () => {
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xorshift128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xorshift128plus)));
   it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xorshift128plus)));
-  it('Should not impact itself when calling next', () => {
-    const g = xorshift128plus(42);
-    const gInitialFootprint = JSON.stringify(g);
-    const gNext = g.next()[1];
-    const gAfterNextFootprint = JSON.stringify(g);
-    const gNextFootprint = JSON.stringify(gNext);
-    expect(gAfterNextFootprint).toBe(gInitialFootprint);
-    expect(gNextFootprint).not.toBe(gInitialFootprint);
-  });
-  it('Should not impact itself when calling jump', () => {
-    const g = xorshift128plus(42);
-    const gInitialFootprint = JSON.stringify(g);
-    const gJump = g.jump!();
-    const gAfterJumpFootprint = JSON.stringify(g);
-    const gJumpFootprint = JSON.stringify(gJump);
-    expect(gAfterJumpFootprint).toBe(gInitialFootprint);
-    expect(gJumpFootprint).not.toBe(gInitialFootprint);
-  });
+  it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(xorshift128plus)));
+  it('Should impact itself with unsafeJump', () => fc.assert(p.changeSelfWithUnsafeJump(xorshift128plus)));
+  it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(xorshift128plus)));
+  it('Should not impact itself with jump', () => fc.assert(p.noChangeSelfWithJump(xorshift128plus)));
+  it('Should not impact clones when impacting itself on unsafeNext', () =>
+    fc.assert(p.noChangeOnClonedWithUnsafeNext(xorshift128plus)));
+  it('Should not impact clones when impacting itself on unsafeJump', () =>
+    fc.assert(p.noChangeOnClonedWithUnsafeJump(xorshift128plus)));
 });
