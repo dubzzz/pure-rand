@@ -23,6 +23,15 @@ export interface RandomGeneratorWithUnsafe {
   unsafeJump?(): void;
 }
 
+export function unsafeGenerateN(rng: RandomGeneratorWithUnsafe, num: number): number[] {
+  const out: number[] = [];
+  for (let idx = 0; idx != num; ++idx) {
+    out.push(rng.unsafeNext());
+  }
+  return out;
+}
+
+// TODO implement it with unsafeGenerateN
 export function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
   let cur: RandomGenerator = rng;
   const out: number[] = [];
@@ -34,6 +43,13 @@ export function generateN(rng: RandomGenerator, num: number): [number[], RandomG
   return [out, cur];
 }
 
+export function unsafeSkipN(rng: RandomGeneratorWithUnsafe, num: number): void {
+  for (let idx = 0; idx != num; ++idx) {
+    rng.unsafeNext();
+  }
+}
+
+// TODO Implement it with unsafeSkipN
 export function skipN(rng: RandomGenerator, num: number): RandomGenerator {
   return generateN(rng, num)[1];
 }
