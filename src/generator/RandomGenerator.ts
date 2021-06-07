@@ -24,9 +24,9 @@ export function unsafeGenerateN(rng: RandomGenerator, num: number): number[] {
 }
 
 export function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
-  const cur = rng.clone();
-  const out = unsafeGenerateN(cur, num);
-  return [out, cur];
+  const nextRng = rng.clone();
+  const out = unsafeGenerateN(nextRng, num);
+  return [out, nextRng];
 }
 
 export function unsafeSkipN(rng: RandomGenerator, num: number): void {
@@ -36,7 +36,7 @@ export function unsafeSkipN(rng: RandomGenerator, num: number): void {
 }
 
 export function skipN(rng: RandomGenerator, num: number): RandomGenerator {
-  const cur = rng.clone();
-  unsafeSkipN(rng, num);
-  return cur;
+  const nextRng = rng.clone();
+  unsafeSkipN(nextRng, num);
+  return nextRng;
 }
