@@ -1,6 +1,6 @@
-import { RandomGeneratorWithUnsafe } from './RandomGenerator';
+import { RandomGenerator } from './RandomGenerator';
 
-class MersenneTwister implements RandomGeneratorWithUnsafe {
+class MersenneTwister implements RandomGenerator {
   static readonly min: number = 0;
   static readonly max: number = 0xffffffff;
 
@@ -83,6 +83,6 @@ class MersenneTwister implements RandomGeneratorWithUnsafe {
   }
 }
 
-export default function (seed: number): RandomGeneratorWithUnsafe {
+export default function (seed: number): RandomGenerator {
   return MersenneTwister.from(seed);
 }

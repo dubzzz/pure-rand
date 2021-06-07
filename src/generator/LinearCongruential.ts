@@ -1,4 +1,4 @@
-import { RandomGenerator, RandomGeneratorWithUnsafe } from './RandomGenerator';
+import { RandomGenerator } from './RandomGenerator';
 
 // Inspired from java.util.Random implementation
 // http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/util/Random.java#Random.next%28int%29
@@ -15,7 +15,7 @@ const computeValueFromNextSeed = function (nextseed: number) {
   return (nextseed & MASK_2) >> 16;
 };
 
-class LinearCongruential implements RandomGeneratorWithUnsafe {
+class LinearCongruential implements RandomGenerator {
   // Should produce exactly the same values
   // as the following C++ code compiled with Visual Studio:
   //  * constructor = srand(seed);
@@ -49,7 +49,7 @@ class LinearCongruential implements RandomGeneratorWithUnsafe {
   }
 }
 
-class LinearCongruential32 implements RandomGeneratorWithUnsafe {
+class LinearCongruential32 implements RandomGenerator {
   static readonly min: number = 0;
   static readonly max: number = 0xffffffff;
 
@@ -90,9 +90,9 @@ class LinearCongruential32 implements RandomGeneratorWithUnsafe {
   }
 }
 
-export const congruential = function (seed: number): RandomGeneratorWithUnsafe {
+export const congruential = function (seed: number): RandomGenerator {
   return new LinearCongruential(seed);
 };
-export const congruential32 = function (seed: number): RandomGeneratorWithUnsafe {
+export const congruential32 = function (seed: number): RandomGenerator {
   return new LinearCongruential32(seed);
 };

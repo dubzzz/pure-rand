@@ -1,5 +1,5 @@
-import Distribution from './Distribution';
-import RandomGenerator from '../generator/RandomGenerator';
+import { Distribution } from './Distribution';
+import { RandomGenerator } from '../generator/RandomGenerator';
 import { uniformIntDistributionInternal } from './internals/UniformIntDistributionInternal';
 import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
 import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
