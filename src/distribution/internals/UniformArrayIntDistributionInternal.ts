@@ -1,6 +1,6 @@
 import { RandomGenerator } from '../../generator/RandomGenerator';
 import { ArrayInt } from './ArrayInt';
-import { uniformIntDistributionInternal } from './UniformIntDistributionInternal';
+import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistributionInternal';
 
 /**
  * Uniformly generate ArrayInt in range [0 ; rangeSize[
@@ -17,16 +17,15 @@ export function uniformArrayIntDistributionInternal(
   rng: RandomGenerator
 ): [ArrayInt['data'], RandomGenerator] {
   const rangeLength = rangeSize.length;
-  let nrng = rng;
+  const nrng = rng.clone();
 
   // We iterate until we find a valid value for arrayInt
   while (true) {
     // We compute a new value for arrayInt
     for (let index = 0; index !== rangeLength; ++index) {
       const indexRangeSize = index === 0 ? rangeSize[0] + 1 : 0x100000000;
-      const g = uniformIntDistributionInternal(indexRangeSize, nrng);
-      out[index] = g[0];
-      nrng = g[1];
+      const g = unsafeUniformIntDistributionInternal(indexRangeSize, nrng);
+      out[index] = g;
     }
 
     // If in the correct range we can return it
