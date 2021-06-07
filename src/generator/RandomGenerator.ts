@@ -23,15 +23,9 @@ export function unsafeGenerateN(rng: RandomGenerator, num: number): number[] {
   return out;
 }
 
-// TODO implement it with unsafeGenerateN
 export function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
-  let cur: RandomGenerator = rng;
-  const out: number[] = [];
-  for (let idx = 0; idx != num; ++idx) {
-    const nextOut = cur.next();
-    out.push(nextOut[0]);
-    cur = nextOut[1];
-  }
+  const cur = rng.clone();
+  const out = unsafeGenerateN(cur, num);
   return [out, cur];
 }
 
@@ -41,7 +35,8 @@ export function unsafeSkipN(rng: RandomGenerator, num: number): void {
   }
 }
 
-// TODO Implement it with unsafeSkipN
 export function skipN(rng: RandomGenerator, num: number): RandomGenerator {
-  return generateN(rng, num)[1];
+  const cur = rng.clone();
+  unsafeSkipN(rng, num);
+  return cur;
 }
