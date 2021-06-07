@@ -1,5 +1,6 @@
 import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigIntDistribution';
 import mersenne from '../../../src/generator/MersenneTwister';
+import { RandomGenerator } from '../../../src/generator/RandomGenerator';
 
 const MERSENNE_MIN = mersenne(0).min();
 const MERSENNE_MAX = mersenne(0).max();
@@ -33,7 +34,7 @@ describe('uniformBigIntDistribution [non regression]', () => {
       // The values we expect in the output are just a snapshot taken at a certain time
       // in the past. They might be wrong values with bugs.
 
-      let rng = mersenne(0);
+      let rng: RandomGenerator = mersenne(0);
       const distribution = uniformBigIntDistribution(BigInt(from), BigInt(to));
 
       const values: bigint[] = [];
