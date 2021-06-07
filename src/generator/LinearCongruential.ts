@@ -1,4 +1,4 @@
-import { RandomGenerator } from './RandomGenerator';
+import { RandomGenerator, RandomGeneratorWithUnsafe } from './RandomGenerator';
 
 // Inspired from java.util.Random implementation
 // http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/util/Random.java#Random.next%28int%29
@@ -15,7 +15,7 @@ const computeValueFromNextSeed = function (nextseed: number) {
   return (nextseed & MASK_2) >> 16;
 };
 
-class LinearCongruential implements RandomGenerator {
+class LinearCongruential implements RandomGeneratorWithUnsafe {
   // Should produce exactly the same values
   // as the following C++ code compiled with Visual Studio:
   //  * constructor = srand(seed);
@@ -23,7 +23,7 @@ class LinearCongruential implements RandomGenerator {
   static readonly min: number = 0;
   static readonly max: number = 2 ** 15 - 1;
 
-  constructor(readonly seed: number) {}
+  constructor(private seed: number) {}
 
   min(): number {
     return LinearCongruential.min;
@@ -33,17 +33,27 @@ class LinearCongruential implements RandomGenerator {
     return LinearCongruential.max;
   }
 
+  clone(): LinearCongruential {
+    return new LinearCongruential(this.seed);
+  }
+
   next(): [number, LinearCongruential] {
-    const nextseed = computeNextSeed(this.seed);
-    return [computeValueFromNextSeed(nextseed), new LinearCongruential(nextseed)];
+    const nextRng = new LinearCongruential(this.seed);
+    const out = nextRng.unsafeNext();
+    return [out, nextRng];
+  }
+
+  unsafeNext(): number {
+    this.seed = computeNextSeed(this.seed);
+    return computeValueFromNextSeed(this.seed);
   }
 }
 
-class LinearCongruential32 implements RandomGenerator {
+class LinearCongruential32 implements RandomGeneratorWithUnsafe {
   static readonly min: number = 0;
   static readonly max: number = 0xffffffff;
 
-  constructor(readonly seed: number) {}
+  constructor(private seed: number) {}
 
   min(): number {
     return LinearCongruential32.min;
@@ -53,26 +63,36 @@ class LinearCongruential32 implements RandomGenerator {
     return LinearCongruential32.max;
   }
 
-  next(): [number, RandomGenerator] {
+  clone(): LinearCongruential32 {
+    return new LinearCongruential32(this.seed);
+  }
+
+  next(): [number, LinearCongruential32] {
+    const nextRng = new LinearCongruential32(this.seed);
+    const out = nextRng.unsafeNext();
+    return [out, nextRng];
+  }
+
+  unsafeNext(): number {
     const s1 = computeNextSeed(this.seed);
     const v1 = computeValueFromNextSeed(s1);
     const s2 = computeNextSeed(s1);
     const v2 = computeValueFromNextSeed(s2);
-    const s3 = computeNextSeed(s2);
-    const v3 = computeValueFromNextSeed(s3);
+    this.seed = computeNextSeed(s2);
+    const v3 = computeValueFromNextSeed(this.seed);
 
     // value between: -0x80000000 and 0x7fffffff
     // in theory it should have been: v1 & 3 instead of v1 alone
     // but as binary operations truncate between -0x80000000 and 0x7fffffff in JavaScript
     // we can get rid of this operation
     const vnext = v3 + ((v2 + (v1 << 15)) << 15);
-    return [((vnext + 0x80000000) | 0) + 0x80000000, new LinearCongruential32(s3)];
+    return ((vnext + 0x80000000) | 0) + 0x80000000;
   }
 }
 
-export const congruential = function (seed: number): RandomGenerator {
+export const congruential = function (seed: number): RandomGeneratorWithUnsafe {
   return new LinearCongruential(seed);
 };
-export const congruential32 = function (seed: number): RandomGenerator {
+export const congruential32 = function (seed: number): RandomGeneratorWithUnsafe {
   return new LinearCongruential32(seed);
 };
