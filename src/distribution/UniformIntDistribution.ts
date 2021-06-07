@@ -2,7 +2,7 @@ import { Distribution } from './Distribution';
 import { RandomGenerator } from '../generator/RandomGenerator';
 import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformIntDistributionInternal';
 import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
-import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
+import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
 
 const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
@@ -31,8 +31,9 @@ function uniformLargeIntInternal(
     rangeSizeArrayIntValue.data[1] += 1;
   }
 
-  const g = uniformArrayIntDistributionInternal(sharedData, rangeSizeArrayIntValue.data, rng);
-  return [sharedData[0] * 0x100000000 + sharedData[1] + from, g[1]];
+  const nextRng = rng.clone();
+  unsafeUniformArrayIntDistributionInternal(sharedData, rangeSizeArrayIntValue.data, nextRng);
+  return [sharedData[0] * 0x100000000 + sharedData[1] + from, nextRng];
 }
 
 function uniformIntInternal(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator] {

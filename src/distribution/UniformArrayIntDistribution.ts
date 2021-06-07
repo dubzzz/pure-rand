@@ -7,14 +7,15 @@ import {
   substractArrayIntToNew,
   trimArrayIntInplace,
 } from './internals/ArrayInt';
-import { uniformArrayIntDistributionInternal } from './internals/UniformArrayIntDistributionInternal';
+import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
 
 /** @internal */
 function uniformArrayIntInternal(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): [ArrayInt, RandomGenerator] {
   const rangeSize = trimArrayIntInplace(addOneToPositiveArrayInt(substractArrayIntToNew(to, from)));
   const emptyArrayIntData = rangeSize.data.slice(0);
-  const g = uniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, rng);
-  return [trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g[0] }, from)), g[1]];
+  const nextRng = rng.clone();
+  const g = unsafeUniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, nextRng);
+  return [trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g }, from)), nextRng];
 }
 
 /**
