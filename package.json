@@ -8,6 +8,7 @@
     ".": {
       "require": "./lib/pure-rand.js",
       "import": "./lib/esm/pure-rand.js",
+      "types": "./lib/types/pure-rand.d.ts",
       "default": "./lib/esm/pure-rand.js"
     }
   },
