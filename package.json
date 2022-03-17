@@ -53,7 +53,7 @@
     "glob": "^7.1.6",
     "jest": "^26.1.0",
     "microtime": "^3.0.0",
-    "prettier": "2.5.1",
+    "prettier": "2.6.0",
     "replace-in-file": "^6.1.0",
     "source-map-support": "^0.5.16",
     "ts-jest": "^26.1.2",
