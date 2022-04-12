@@ -50,7 +50,7 @@
     "console-table-printer": "2.10.0",
     "cross-env": "^7.0.3",
     "fast-check": "^2.7.0",
-    "glob": "^7.1.6",
+    "glob": "^8.0.1",
     "jest": "^26.1.0",
     "microtime": "^3.0.0",
     "prettier": "2.6.1",
