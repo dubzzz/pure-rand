@@ -1486,10 +1486,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fast-check@^2.7.0:
-  version "2.25.0"
-  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-2.25.0.tgz#5146601851bf3be0953bd17eb2b7d547936c6561"
-  integrity sha512-wRUT2KD2lAmT75WNIJIHECawoUUMHM0I5jrlLXGtGeqmPL8jl/EldUDjY1VCp6fDY8yflyfUeIOsOBrIbIiArg==
+fast-check@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-3.0.1.tgz#b9e7b57c4643a4e62893aca85e21c270591d0eac"
+  integrity sha512-AriFDYpYVOBynpPZq/quxSLumFOo2hPB2H5Nz2vc1QlNfjOaA62zX8USNXcOY5nwKHEq7lZ84dG9M1W+LAND1g==
   dependencies:
     pure-rand "^5.0.1"
 
