@@ -18,7 +18,7 @@ describe('ArrayInt', () => {
 
     it('Should properly compute a plus b', () =>
       fc.assert(
-        fc.property(arrayIntArb(), arrayIntArb(), fc.context(), (a, b) => {
+        fc.property(arrayIntArb(), arrayIntArb(), (a, b) => {
           const r = addArrayIntToNew(a, b);
           expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + arrayIntToBigInt(b));
         })
