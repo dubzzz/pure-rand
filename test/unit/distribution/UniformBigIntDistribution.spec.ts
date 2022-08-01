@@ -38,8 +38,8 @@ describe('uniformBigIntDistribution', () => {
       fc.assert(
         fc.property(
           fc.integer().noShrink(),
-          fc.integer(MERSENNE_MIN, MERSENNE_MAX),
-          fc.integer(MERSENNE_MIN, MERSENNE_MAX),
+          fc.integer({ min: MERSENNE_MIN, max: MERSENNE_MAX }),
+          fc.integer({ min: MERSENNE_MIN, max: MERSENNE_MAX }),
           (seed, a, b) => {
             const minV = a < b ? a : b;
             const maxV = a < b ? b : a;

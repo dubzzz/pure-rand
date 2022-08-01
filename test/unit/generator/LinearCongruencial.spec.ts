@@ -33,7 +33,7 @@ describe('congruential32', () => {
   it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(congruential32)));
   it('Should be equivalent to a uniform distribution of congruential over 32 bits', () =>
     fc.assert(
-      fc.property(fc.integer(), fc.integer(1, 100), (seed, num) => {
+      fc.property(fc.integer(), fc.integer({ min: 1, max: 100 }), (seed, num) => {
         let rng = congruential(seed);
         let rng32 = congruential32(seed);
         const dist = uniformIntDistribution(0, 0xffffffff);
