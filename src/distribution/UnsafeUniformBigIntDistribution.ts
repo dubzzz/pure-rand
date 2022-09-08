@@ -2,7 +2,7 @@ import { RandomGenerator } from '../generator/RandomGenerator';
 
 // We are capturing the reference to BigInt so that it cannot be altered
 // by any external code after that point.
-const SBigInt = BigInt;
+const SBigInt: typeof BigInt = typeof BigInt !== 'undefined' ? BigInt : undefined!;
 
 /**
  * Uniformly generate random bigint values between `from` (included) and `to` (included)
