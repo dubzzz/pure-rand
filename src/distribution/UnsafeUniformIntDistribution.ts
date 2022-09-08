@@ -3,6 +3,8 @@ import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformI
 import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
 import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
 
+const safeNumberMaxSafeInteger = Number.MAX_SAFE_INTEGER;
+
 const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
@@ -10,7 +12,7 @@ const sharedData = [0, 0];
 
 function uniformLargeIntInternal(from: number, to: number, rangeSize: number, rng: RandomGenerator): number {
   const rangeSizeArrayIntValue =
-    rangeSize <= Number.MAX_SAFE_INTEGER
+    rangeSize <= safeNumberMaxSafeInteger
       ? fromNumberToArrayInt64(sharedC, rangeSize) // no possible overflow given rangeSize is in a safe range
       : substractArrayInt64(sharedC, fromNumberToArrayInt64(sharedA, to), fromNumberToArrayInt64(sharedB, from)); // rangeSize might be incorrect, we compute a safer range
 
