@@ -9,8 +9,8 @@
 // $:  yarn bench mersenne
 
 const { Bench } = require('tinybench');
-const libReference = require('../lib/pure-rand');
-const libTest = require('../lib-new/pure-rand');
+const libReference = require('../lib-reference/pure-rand');
+const libTest = require('../lib-test/pure-rand');
 
 const SEED = Date.now();
 const PROF_GEN = process.argv[2] || 'xoroshiro128plus';
@@ -22,17 +22,32 @@ console.info(`Seed     : ${SEED}\n`);
 const numInts = 100_000;
 const numIterations = 1_000;
 
+function noDistribution(from, to, g) {
+  const out = g.unsafeNext();
+  return from + (out % (to - from + 1))
+}
+
 function fillBench(bench) {
   let g = profGenBuilder(SEED);
 
   function setup(t) {
-    if (t.name === 'old') g = profGenBuilder(SEED);
-    else if (t.name === 'new') g = profGenBuilderNew(SEED);
+    if (t.name.startWith('reference')) g = profGenBuilder(SEED);
+    else if (t.name.startWith('test')) g = profGenBuilderNew(SEED);
     else throw new Error(`Unknown task ${t.name}`);
   }
   bench.setup(setup, 'warmup');
   bench.setup(setup, 'run');
 
+  bench.add('reference (no-distrib)', () => {
+    for (let i = 0; i !== numInts; ++i) {
+      noDistribution(0, i, g);
+    }
+  });
+  bench.add('test (no-distrib)', () => {
+    for (let i = 0; i !== numInts; ++i) {
+      noDistribution(0, i, g);
+    }
+  });
   bench.add('reference', () => {
     for (let i = 0; i !== numInts; ++i) {
       libReference.unsafeUniformIntDistribution(0, i, g);
