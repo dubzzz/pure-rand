@@ -26,8 +26,8 @@
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true yarn build:prod",
     "test": "jest --config jest.config.js --coverage",
-    "build:bench:old": "tsc --target es6",
-    "build:bench:new": "tsc --target es6 --outDir lib-new/",
+    "build:bench:old": "tsc --outDir lib-reference/",
+    "build:bench:new": "tsc --outDir lib-test/",
     "bench": "node perf/benchmark.cjs"
   },
   "repository": {
