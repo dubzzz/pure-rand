@@ -44,6 +44,8 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Build production package
+        run: yarn build:prod-ci
       - name: Unit tests
         run: yarn test
       - name: Codecov
