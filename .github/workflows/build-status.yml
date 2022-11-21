@@ -15,8 +15,25 @@ on:
       - fix-v*
 
 jobs:
+  warmup_yarn_cache:
+    name: 'Warm up Yarn cache'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Using Node v16.x
+        uses: actions/setup-node@v3
+        id: yarn-cache
+        with:
+          node-version: '16.x'
+      - name: Update Yarn cache
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        env:
+          # Using PNP linker for better performance
+          YARN_NODE_LINKER: pnp
+        run: yarn install --immutable
   format:
     name: 'Format'
+    needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,6 +47,7 @@ jobs:
         run: yarn format:check
   test:
     name: 'Test'
+    needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -66,6 +84,7 @@ jobs:
         run: yarn dlx @skypack/package-check
   production_package:
     name: 'Build production package'
+    needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
