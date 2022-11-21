@@ -20,16 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
       - name: Using Node v16.x
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn install --immutable
       - name: Check format
         run: yarn format:check
   test:
@@ -40,16 +37,13 @@ jobs:
         node-version: [12.x, 14.x, 16.x]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}-${{matrix.node-version}}
       - name: Using Node v${{matrix.node-version}}
         uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{matrix.node-version}}
+          cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn install --immutable
       - name: Unit tests
         run: yarn test
       - name: Codecov
@@ -68,23 +62,21 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Check package score using skypack
-        run: npx @skypack/package-check
+        run: yarn dlx @skypack/package-check
   production_package:
     name: 'Build production package'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}-v16.x
       - name: Using Node v16.x
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn install --immutable
       - name: Build production package
         run: yarn build:prod-ci
       - name: Create bundle
@@ -181,6 +173,6 @@ jobs:
         with:
           name: bundle
       - name: Publish package
-        run: npm publish pure-rand.tgz
+        run: npm publish --access public pure-rand.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
