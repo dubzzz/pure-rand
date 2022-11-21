@@ -124,55 +124,12 @@ jobs:
           mv package/lib lib
       - name: Test
         run: node test/legacy/main.js
-  test_cjs_esm:
-    name: 'Test CJS & ESM'
-    needs: production_package
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          # Node latest version supports ES modules by default
-          - 'node'
-          # Node >=13.2.0 enables support for ES modules by default
-          # Our default version of node is above 13.2.0
-          - '14'
-          # Node 12.20 includes import from CJS and removes warnings related to ES Modules
-          - '12.20'
-          # Node 12.x and >=12.18 enables support for ES modules by default
-          - '12.18'
-          # Node <12.18 requires a flag to support ES modules but can understand them
-          - '12.17'
-          # Node 10 does not understand ES modules
-          - '10'
-    steps:
-    - uses: actions/checkout@v2
-    - name: Using Node v${{matrix.node-version}}
-      shell: bash -l {0}
-      run: nvm install ${{matrix.node-version}}
-    - name: Download production package
-      uses: actions/download-artifact@v2
-      with:
-        name: bundle
-    - name: Install dependencies but use current build for pure-rand (node-with-import)
-      uses: ./.github/actions/install-deps-with-current-fc
-      with:
-        path: 'test/esm/node-with-import'
-    - name: Install dependencies but use current build for pure-rand (node-with-require)
-      uses: ./.github/actions/install-deps-with-current-fc
-      with:
-        path: 'test/esm/node-with-require'
-    - name: Check compatibility
-      run: |
-        cd test/esm
-        node --version
-        sh run.sh
   publish_package:
     name: 'Publish package'
     needs: 
       - production_package
       - format
       - test
-      - test_cjs_esm
       - test_legacy
       - test_package_quality
     if: startsWith(github.ref, 'refs/tags/v')
