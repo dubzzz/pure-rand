@@ -82,14 +82,12 @@ jobs:
       - name: Build production package
         run: yarn build:prod-ci
       - name: Create bundle
-        run: |
-          yarn pack
-          mv pure-rand-*.tgz pure-rand.tgz
+        run: yarn pack
       - name: Upload production package
         uses: actions/upload-artifact@v2
         with:
           name: bundle
-          path: pure-rand.tgz
+          path: package.tgz
           if-no-files-found: error
           retention-days: 1
   test_legacy:
@@ -107,7 +105,7 @@ jobs:
           name: bundle
       - name: Untar the published package
         run: |
-          tar -zxvf pure-rand.tgz
+          tar -zxvf package.tgz
           mv package/lib lib
       - name: Test
         run: node test/legacy/main.js
@@ -175,6 +173,6 @@ jobs:
         with:
           name: bundle
       - name: Publish package
-        run: npm publish --access public pure-rand.tgz
+        run: npm publish --access public package.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
