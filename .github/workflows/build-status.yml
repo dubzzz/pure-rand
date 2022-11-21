@@ -24,7 +24,6 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Check format
@@ -41,7 +40,6 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: ${{matrix.node-version}}
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build production package
@@ -64,7 +62,6 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
-          cache: 'yarn'
       - name: Check package score using skypack
         run: yarn dlx @skypack/package-check
   production_package:
@@ -76,7 +73,6 @@ jobs:
         uses: actions/setup-node@v2.1.4
         with:
           node-version: '16.x'
-          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build production package
