@@ -25,6 +25,7 @@ jobs:
         id: yarn-cache
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Update Yarn cache
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         env:
@@ -38,9 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Using Node v16.x
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Check format
@@ -55,9 +57,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Using Node v${{matrix.node-version}}
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v3
         with:
           node-version: ${{matrix.node-version}}
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build production package
@@ -77,9 +80,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Using Node v16.x
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Check package score using skypack
         run: yarn dlx @skypack/package-check
   production_package:
@@ -89,9 +93,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Using Node v16.x
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build production package
@@ -136,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Using Node v16.x
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
