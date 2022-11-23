@@ -4344,7 +4344,7 @@ __metadata:
     fast-check: ^3.3.0
     jest: ^26.1.0
     prettier: 2.8.0
-    replace-in-file: ^6.1.0
+    replace-in-file: ^6.3.5
     source-map-support: ^0.5.16
     tinybench: ^2.3.1
     ts-jest: ^26.1.2
@@ -4432,7 +4432,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"replace-in-file@npm:^6.1.0":
+"replace-in-file@npm:^6.3.5":
   version: 6.3.5
   resolution: "replace-in-file@npm:6.3.5"
   dependencies:
