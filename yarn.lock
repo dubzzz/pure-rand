@@ -2085,7 +2085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^3.1.1":
+"fast-check@npm:^3.3.0":
   version: 3.3.0
   resolution: "fast-check@npm:3.3.0"
   dependencies:
@@ -4341,7 +4341,7 @@ __metadata:
     "@types/jest": ^27.0.1
     "@types/node": ^18.11.9
     cross-env: ^7.0.3
-    fast-check: ^3.1.1
+    fast-check: ^3.3.0
     jest: ^26.1.0
     prettier: 2.8.0
     replace-in-file: ^6.1.0
