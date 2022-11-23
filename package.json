@@ -20,8 +20,8 @@
   "sideEffects": false,
   "packageManager": "yarn@3.3.0",
   "scripts": {
-    "format:check": "prettier --list-different \"**/*.{js,ts}\"",
-    "format": "prettier --write \"**/*.{js,ts}\"",
+    "format:check": "prettier --list-different .",
+    "format": "prettier --write .",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",

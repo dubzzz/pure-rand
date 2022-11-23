@@ -1,4 +1,5 @@
 # pure-rand
+
 #### Pure random number generator written in TypeScript
 
 [![Build Status](https://github.com/dubzzz/pure-rand/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/dubzzz/pure-rand/actions)
@@ -15,7 +16,7 @@
 
 Install the module with: `npm install pure-rand`
 
-Unlike classical random number generators, `pure-rand` comes with a set of *pure* and *seeded* generators (implementing the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts)).
+Unlike classical random number generators, `pure-rand` comes with a set of _pure_ and _seeded_ generators (implementing the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts)).
 Each time a call to `.next()` method is done, the generator provides both the generated value and the next generator.
 
 As a consequence, a given generator will always produce the same value. It can be called as many times as required without impacting its state. This ability makes it easier to replay code section relying on random without having to re-seed a new generator and replay the whole path to be in the same state.
@@ -26,8 +27,8 @@ In order to use `pure-rand` from a web-page, you have to reference the web-aware
 
 ```html
 <script type="module">
-   import * as prand from "https://unpkg.com/pure-rand/lib/esm/pure-rand.js";
-   // prand is now available
+  import * as prand from 'https://unpkg.com/pure-rand/lib/esm/pure-rand.js';
+  // prand is now available
 </script>
 ```
 
@@ -35,15 +36,15 @@ You can also reference a precise version by setting the version you want in the 
 
 ```html
 <script type="module">
-   import * as prand from "https://unpkg.com/pure-rand@1.2.0/lib/esm/pure-rand.js";
-   // prand is now available
+  import * as prand from 'https://unpkg.com/pure-rand@1.2.0/lib/esm/pure-rand.js';
+  // prand is now available
 </script>
 ```
 
 ## Usage
 
 ```javascript
-import prand from 'pure-rand'
+import prand from 'pure-rand';
 
 const seed = 42;
 
@@ -102,6 +103,7 @@ const { mersenne } = require('pure-rand');
 All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/) provided by `pure-rand` derive from the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts) and are pure and seeded as described above.
 
 The following generators are available:
+
 - `prand.xorshift128plus(seed: number)`: xorshift128+ generator whose values are within the range -0x80000000 to 0x7fffffff
 - `prand.xoroshiro128plus(seed: number)`: xoroshiro128+ generator whose values are within the range -0x80000000 to 0x7fffffff
 - `prand.mersenne(seed: number)`: Mersenne Twister generator whose values are within the range 0 to 0xffffffff
@@ -109,6 +111,7 @@ The following generators are available:
 - `prand.congruential32(seed: number)`: Linear Congruential generator whose values are within the range 0 to 0xffffffff
 
 Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
+
 - `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
 - `prand.skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
 
@@ -117,6 +120,7 @@ Some helpers are also provided in order to ease the use of `RandomGenerator` ins
 All the [Distribution](https://github.com/dubzzz/pure-rand/tree/main/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
 
 For the moment, available `Distribution` are:
+
 - `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
 - `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`\*
 - `prand.uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt): Distribution<ArrayInt>`\*\*
