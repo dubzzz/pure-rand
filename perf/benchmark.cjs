@@ -24,7 +24,7 @@ const numIterations = 1_000;
 
 function noDistribution(from, to, g) {
   const out = g.unsafeNext();
-  return from + (out % (to - from + 1))
+  return from + (out % (to - from + 1));
 }
 
 function fillBench(bench) {
