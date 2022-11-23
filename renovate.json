@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", ":dependencyDashboard"],
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "⬆️ ",
+  "packageRules": [
+    {
+      "matchPaths": ["**/package.json"],
+      "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
+      "rangeStrategy": "update-lockfile"
+    },
+    {
+      "matchPaths": ["**/package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchPaths": ["**/!(package.json)"],
+      "rangeStrategy": "bump"
+    }
+  ],
+  "postUpdateOptions": ["yarnDedupeHighest"]
+}
