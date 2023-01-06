@@ -55,7 +55,7 @@ function fillBench(bench) {
   });
   bench.add('test', () => {
     for (let i = 0; i !== numInts; ++i) {
-      libReference.unsafeUniformIntDistribution(0, i, g);
+      libTest.unsafeUniformIntDistribution(0, i, g);
     }
   });
 }
