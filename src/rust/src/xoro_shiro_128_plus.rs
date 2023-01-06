@@ -30,19 +30,19 @@ impl XoroShiro128Plus {
         }
     }
 
-    fn next(&self) -> Array {
+    pub fn next(&self) -> Array {
         let data = Array::new(); // more precisely: (i32, XoroShiro128Plus)
-        let mut nextRng: XoroShiro128Plus = self.clone();
-        let out: i32 = nextRng.unsafeNext();
+        let mut next_rng: XoroShiro128Plus = self.clone();
+        let out: i32 = next_rng.unsafeNext();
         data.push(&JsValue::from_f64(out.into()));
-        //data.push(&JsValue::from_serde(&nextRng).unwrap());
+        //data.push(&JsValue::from_serde(&next_rng).unwrap());
         data
     }
 
     pub fn jump(&self) -> XoroShiro128Plus {
-        let mut nextRng = self.clone();
-        let out = nextRng.unsafeJump();
-        nextRng
+        let mut next_rng = self.clone();
+        next_rng.unsafeJump();
+        next_rng
     }
 
     #[allow(non_snake_case)]
