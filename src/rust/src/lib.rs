@@ -1,3 +1,4 @@
+mod uniform_int_distribution;
 mod xoro_shiro_128_plus;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
