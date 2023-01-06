@@ -9,8 +9,8 @@
 // $:  yarn bench mersenne
 
 const { Bench } = require('tinybench');
-const libReference = require('../lib-reference/pure-rand');
-const libTest = require('../lib-test/pure-rand');
+const libReference = require('../lib/pure-rand');
+const libTest = require('../lib/wasm/wasm');
 
 const SEED = Date.now();
 const PROF_GEN = process.argv[2] || 'xoroshiro128plus';
@@ -55,7 +55,7 @@ function fillBench(bench) {
   });
   bench.add('test', () => {
     for (let i = 0; i !== numInts; ++i) {
-      libTest.unsafeUniformIntDistribution(0, i, g);
+      libReference.unsafeUniformIntDistribution(0, i, g);
     }
   });
 }
