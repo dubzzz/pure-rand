@@ -7,6 +7,10 @@ out.txt
 v8.log
 v8.out
 
+src/rust/pkg
+src/rust/target
+Cargo.lock
+
 # https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
 .pnp.*
 .yarn/*
