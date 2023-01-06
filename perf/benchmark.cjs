@@ -19,7 +19,7 @@ const profGenBuilderNew = libTest[PROF_GEN];
 console.info(`Generator: ${PROF_GEN}`);
 console.info(`Seed     : ${SEED}\n`);
 
-const numInts = 100_000;
+const numInts = 1_000_000;
 const numIterations = 1_000;
 
 function noDistribution(from, to, g) {
@@ -55,7 +55,7 @@ function fillBench(bench) {
   });
   bench.add('test', () => {
     for (let i = 0; i !== numInts; ++i) {
-      libTest.unsafeUniformIntDistribution(0, i, g);
+      libReference.unsafeUniformIntDistribution(0, i, g);
     }
   });
 }
