@@ -10,6 +10,12 @@
       "import": "./lib/esm/pure-rand.js",
       "types": "./lib/types/pure-rand.d.ts",
       "default": "./lib/esm/pure-rand.js"
+    },
+    "./wasm": {
+      "require": "./lib/wasm/wasm.js",
+      "import": "./lib/esm/wasm/wasm.js",
+      "types": "./lib/types/wasm/wasm.d.ts",
+      "default": "./lib/esm/wasm/wasm.js"
     }
   },
   "module": "lib/esm/pure-rand.js",
