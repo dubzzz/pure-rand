@@ -23,6 +23,7 @@
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
+    "build:rust:dev": "cd src/rust && wasm-pack build --target bundler --out-dir ../wasm/generated",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true yarn build:prod",

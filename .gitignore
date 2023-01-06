@@ -9,6 +9,7 @@ v8.out
 
 src/rust/pkg
 src/rust/target
+src/wasm/generated
 Cargo.lock
 
 # https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
