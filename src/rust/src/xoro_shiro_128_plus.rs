@@ -1,5 +1,8 @@
 use wasm_bindgen::prelude::*;
 
+use js_sys::Array;
+use wasm_bindgen::JsValue;
+
 #[wasm_bindgen]
 pub struct XoroShiro128Plus {
     s0: u64,
@@ -25,6 +28,21 @@ impl XoroShiro128Plus {
             s0: self.s0,
             s1: self.s1,
         }
+    }
+
+    fn next(&self) -> Array {
+        let data = Array::new(); // more precisely: (i32, XoroShiro128Plus)
+        let mut nextRng: XoroShiro128Plus = self.clone();
+        let out: i32 = nextRng.unsafeNext();
+        data.push(&JsValue::from_f64(out.into()));
+        //data.push(&JsValue::from_serde(&nextRng).unwrap());
+        data
+    }
+
+    pub fn jump(&self) -> XoroShiro128Plus {
+        let mut nextRng = self.clone();
+        let out = nextRng.unsafeJump();
+        nextRng
     }
 
     #[allow(non_snake_case)]
