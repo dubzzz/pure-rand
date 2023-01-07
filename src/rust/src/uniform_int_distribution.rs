@@ -1,5 +1,5 @@
-use wasm_bindgen::prelude::*;
 use js_sys::Array;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -23,9 +23,9 @@ extern "C" {
 #[wasm_bindgen]
 #[allow(unused_mut)]
 pub fn unsafe_uniform_int_distribution(from: i64, to: i64, mut rng: RandomGenerator) -> i64 {
-	let range_size = to - from +1;
+    let range_size = to - from + 1;
     let min_value = rng.min() as i64;
-    let num_values = (rng.max() - rng.min() +1) as i64;
+    let num_values = (rng.max() - rng.min() + 1) as i64;
 
     // Range provided by the RandomGenerator is large enough
     if range_size <= num_values {

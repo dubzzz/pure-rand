@@ -10,7 +10,7 @@ pub struct XoroShiro128Plus {
 }
 
 fn rotl(x: u64, k: u64) -> u64 {
-	(x << k) | (x >> (64 - k))
+    (x << k) | (x >> (64 - k))
 }
 
 #[wasm_bindgen]
