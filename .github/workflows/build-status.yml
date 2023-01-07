@@ -61,6 +61,12 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
           cache: 'yarn'
+      - name: Using Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install WASM toolchain
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build production package
