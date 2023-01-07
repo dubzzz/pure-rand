@@ -26,8 +26,8 @@
   "sideEffects": false,
   "packageManager": "yarn@3.3.1",
   "scripts": {
-    "format:check": "prettier --list-different .",
-    "format": "prettier --write .",
+    "format:check": "prettier --list-different . && cd src/rust && cargo fmt --all -- --check && cd ../..",
+    "format": "prettier --write . && cd src/rust && cargo fmt --all && cd ../..",
     "prebuild:rust": "cd src/rust && wasm-pack build --target bundler --out-dir ../wasm/generated && cd ../..",
     "build": "yarn prebuild:rust && tsc && tsc -p ./tsconfig.declaration.json",
     "build:rust": "yarn build:rust:esm && yarn build:rust:cjs",

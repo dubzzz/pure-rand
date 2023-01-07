@@ -43,6 +43,11 @@ jobs:
         with:
           node-version: '16.x'
           cache: 'yarn'
+      - name: Using Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt
       - name: Install dependencies
         run: yarn install --immutable
       - name: Check format
