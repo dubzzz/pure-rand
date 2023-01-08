@@ -16,8 +16,8 @@ const computeValueFromNextSeed = function (nextseed: number) {
 };
 
 class LinearCongruential32 implements RandomGenerator {
-  static readonly min: number = 0;
-  static readonly max: number = 0xffffffff;
+  static readonly min: number = -0x80000000;
+  static readonly max: number = 0x7fffffff;
 
   constructor(private seed: number) {}
 
