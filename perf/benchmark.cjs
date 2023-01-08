@@ -17,8 +17,8 @@ const PROF_GEN = process.argv[2] || 'xoroshiro128plus';
 console.info(`Generator: ${PROF_GEN}`);
 console.info(`Seed     : ${SEED}\n`);
 
-const numInts = 100_000;
-const numIterations = 1_000;
+const numInts = 1_000;
+const numIterations = 10_000;
 
 function noDistribution(from, to, g) {
   const out = g.unsafeNext();
@@ -41,7 +41,7 @@ function fillBench(bench) {
   bench.add('reference (uniform large)', () => {
     const g = libReference[PROF_GEN](SEED);
     for (let i = 0; i !== numInts; ++i) {
-      libTest.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
+      libReference.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
     }
   });
   bench.add('test (no distrib)', () => {
