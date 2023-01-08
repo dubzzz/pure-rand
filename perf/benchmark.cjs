@@ -41,7 +41,7 @@ function fillBench(bench) {
   bench.add('reference (uniform large)', () => {
     const g = libReference[PROF_GEN](SEED);
     for (let i = 0; i !== numInts; ++i) {
-      libTest.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
+      libReference.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
     }
   });
   bench.add('test (no distrib)', () => {
