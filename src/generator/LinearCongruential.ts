@@ -15,40 +15,6 @@ const computeValueFromNextSeed = function (nextseed: number) {
   return (nextseed & MASK_2) >> 16;
 };
 
-class LinearCongruential implements RandomGenerator {
-  // Should produce exactly the same values
-  // as the following C++ code compiled with Visual Studio:
-  //  * constructor = srand(seed);
-  //  * next        = rand();
-  static readonly min: number = 0;
-  static readonly max: number = 2 ** 15 - 1;
-
-  constructor(private seed: number) {}
-
-  min(): number {
-    return LinearCongruential.min;
-  }
-
-  max(): number {
-    return LinearCongruential.max;
-  }
-
-  clone(): LinearCongruential {
-    return new LinearCongruential(this.seed);
-  }
-
-  next(): [number, LinearCongruential] {
-    const nextRng = new LinearCongruential(this.seed);
-    const out = nextRng.unsafeNext();
-    return [out, nextRng];
-  }
-
-  unsafeNext(): number {
-    this.seed = computeNextSeed(this.seed);
-    return computeValueFromNextSeed(this.seed);
-  }
-}
-
 class LinearCongruential32 implements RandomGenerator {
   static readonly min: number = 0;
   static readonly max: number = 0xffffffff;
@@ -90,9 +56,6 @@ class LinearCongruential32 implements RandomGenerator {
   }
 }
 
-export const congruential = function (seed: number): RandomGenerator {
-  return new LinearCongruential(seed);
-};
 export const congruential32 = function (seed: number): RandomGenerator {
   return new LinearCongruential32(seed);
 };
