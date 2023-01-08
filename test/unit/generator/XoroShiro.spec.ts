@@ -14,7 +14,11 @@ describe.each([{ withBigInt: true }, { withBigInt: false }])(
       let data = [];
       for (let idx = 0; idx !== 100; ++idx) {
         const [v, nextG] = g.next();
-        data.push(v);
+        if (withBigInt) {
+          data.push(v - 0x80000000);
+        } else {
+          data.push(v);
+        }
         g = nextG;
       }
       // should be equivalent to the following C code:
@@ -54,7 +58,11 @@ describe.each([{ withBigInt: true }, { withBigInt: false }])(
       let data = [];
       for (let idx = 0; idx !== 100; ++idx) {
         const [v, nextG] = g.next();
-        data.push(v);
+        if (withBigInt) {
+          data.push(v - 0x80000000);
+        } else {
+          data.push(v);
+        }
         g = nextG;
       }
       // should be equivalent to the following C code (+previous):
