@@ -1,5 +1,5 @@
 import { RandomGenerator } from '../generator/RandomGenerator';
-import { xoro_shiro_128_plus, unsafe_uniform_int_distribution } from './generated/pure_rand_rs';
+import { xoro_shiro_128_plus, unsafe_uniform_int_distribution } from './generated/pure_rand';
 
 type WasmRandomGenerator = Omit<RandomGenerator, 'clone' | 'next' | 'jump'> & {
   clone: () => WasmRandomGenerator;
