@@ -9,17 +9,13 @@
 // $:  yarn bench mersenne
 
 const { Bench } = require('tinybench');
-const libReference = require('../lib/pure-rand');
+const libReference = require('../lib/pure-rand-default');
 const libTest = require('../lib/wasm/wasm');
 
-const SEED = Date.now();
-const PROF_GEN = process.argv[2] || 'xoroshiro128plus';
-const profGenBuilder = libReference[PROF_GEN];
-const profGenBuilderNew = libTest[PROF_GEN];
-console.info(`Generator: ${PROF_GEN}`);
+const SEED = Date.now() | 0;
 console.info(`Seed     : ${SEED}\n`);
 
-const numInts = 1_000_000;
+const numInts = 100_000;
 const numIterations = 1_000;
 
 function noDistribution(from, to, g) {
@@ -28,34 +24,40 @@ function noDistribution(from, to, g) {
 }
 
 function fillBench(bench) {
-  let g = profGenBuilder(SEED);
-
-  function setup(t) {
-    if (t.name.startWith('reference')) g = profGenBuilder(SEED);
-    else if (t.name.startWith('test')) g = profGenBuilderNew(SEED);
-    else throw new Error(`Unknown task ${t.name}`);
-  }
-  bench.setup(setup, 'warmup');
-  bench.setup(setup, 'run');
-
   bench.add('reference (no-distrib)', () => {
+    const g = libReference.xoroshiro128plus(SEED);
     for (let i = 0; i !== numInts; ++i) {
       noDistribution(0, i, g);
     }
   });
   bench.add('test (no-distrib)', () => {
+    const g = libTest.xoroShiro128Plus(SEED);
     for (let i = 0; i !== numInts; ++i) {
       noDistribution(0, i, g);
     }
   });
   bench.add('reference', () => {
+    const g = libReference.xoroshiro128plus(SEED);
     for (let i = 0; i !== numInts; ++i) {
       libReference.unsafeUniformIntDistribution(0, i, g);
     }
   });
   bench.add('test', () => {
+    const g = libTest.xoroShiro128Plus(SEED);
     for (let i = 0; i !== numInts; ++i) {
       libReference.unsafeUniformIntDistribution(0, i, g);
+    }
+  });
+  bench.add('reference (large)', () => {
+    const g = libReference.xoroshiro128plus(SEED);
+    for (let i = 0; i !== numInts; ++i) {
+      libReference.unsafeUniformIntDistribution(0, 0xffff_ffff + i, g);
+    }
+  });
+  bench.add('test (large)', () => {
+    const g = libTest.xoroShiro128Plus(SEED);
+    for (let i = 0; i !== numInts; ++i) {
+      libReference.unsafeUniformIntDistribution(0, 0xffff_ffff + i, g);
     }
   });
 }
