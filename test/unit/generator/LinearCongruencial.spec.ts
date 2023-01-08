@@ -127,12 +127,12 @@ describe('congruential32', () => {
         100594764, 1754357691, 2940213637, 1822860290, 1822569888, 3692081352, 4126111909, 2548328615, 1559153086,
         2229736813, 3416000363, 1307522393, 2537287304, 1493158878, 3075976674, 3907402638, 433041229, 3014088443,
         3259785341, 1539470501, 1803261200, 518157909, 1135233158, 406515323, 3831259675, 2405854817, 1438184902,
-      ]
+      ].map((v) => v | 0)
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(congruential32)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential32)));
-  it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(congruential32)));
+  it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(congruential32)));
   it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(congruential32)));
   it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(congruential32)));
   it('Should not impact clones when impacting itself on unsafeNext', () =>

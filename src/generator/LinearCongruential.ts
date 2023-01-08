@@ -52,7 +52,7 @@ class LinearCongruential32 implements RandomGenerator {
     // but as binary operations truncate between -0x80000000 and 0x7fffffff in JavaScript
     // we can get rid of this operation
     const vnext = v3 + ((v2 + (v1 << 15)) << 15);
-    return ((vnext + 0x80000000) | 0) + 0x80000000;
+    return vnext | 0;
   }
 }
 
