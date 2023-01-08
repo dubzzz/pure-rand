@@ -58,7 +58,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pure-rand-rs"
+name = "pure-rand"
 version = "0.0.0"
 dependencies = [
  "js-sys",

@@ -35,7 +35,7 @@ impl XoroShiro128Plus {
         let mut next_rng: XoroShiro128Plus = self.clone();
         let out: i32 = next_rng.unsafeNext();
         data.push(&JsValue::from_f64(out.into()));
-        data.push(next_rng.memory());
+        data.push(&JsValue::from(next_rng));
         data
     }
 

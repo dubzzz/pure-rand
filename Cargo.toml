@@ -1,5 +1,5 @@
 [package]
-name = "pure-rand-rs"
+name = "pure-rand"
 version = "0.0.0"
 authors = ["Nicolas DUBIEN <github@dubien.org>"]
 edition = "2021"
