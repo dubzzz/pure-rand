@@ -8,9 +8,9 @@ for (var idx = 0; idx !== 1000; ++idx) gMersenne = gMersenne.next()[1]; // 1k lo
 
 // congruential32
 
-var gc32 = prand.congruential32(seed);
-gc32 = gc32.next()[1];
-gc32 = gc32.next()[1];
+var gc = prand.congruential32(seed);
+gc = gc.next()[1];
+gc = gc.next()[1];
 
 // uniform distribution
 
