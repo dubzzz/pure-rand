@@ -21,6 +21,7 @@ describe.each([{ withBigInt: true }, { withBigInt: false }])(
         }
         g = nextG;
       }
+      // 18446744073709551573;180388626432
       // should be equivalent to the following C code:
       // uint64_t s[] = { (uint64_t) (~42), ((uint64_t) 42) << 32 };
       // uint64_t rotl(const uint64_t x, int k) {

@@ -132,8 +132,8 @@ export const xoroshiro128plusNoBigInt = function (seed: number): RandomGenerator
 };
 
 export const xoroshiro128plusBigInt = function (seed: number): RandomGenerator {
-  const s0 = (BigInt(0xffffffff) << BigInt(32)) + BigInt(~seed + 0x80000000);
-  const s1 = BigInt((seed | 0) + 0x80000000) << BigInt(32);
+  const s0 = (BigInt(0xffffffff) << BigInt(32)) + BigInt(0xffffffff - (seed | 0)); // seed < 0 boom
+  const s1 = BigInt(seed | 0) << BigInt(32); // seed < 0 boom
   return new XoroShiro128PlusBigInt(s0, s1);
 };
 
