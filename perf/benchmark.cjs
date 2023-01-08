@@ -9,13 +9,11 @@
 // $:  yarn bench mersenne
 
 const { Bench } = require('tinybench');
-const libReference = require('../lib-reference/pure-rand');
-const libTest = require('../lib-test/pure-rand');
+const libReference = require('../lib-reference/pure-rand-default');
+const libTest = require('../lib-test/pure-rand-default');
 
-const SEED = Date.now();
+const SEED = Date.now() | 0;
 const PROF_GEN = process.argv[2] || 'xoroshiro128plus';
-const profGenBuilder = libReference[PROF_GEN];
-const profGenBuilderNew = libTest[PROF_GEN];
 console.info(`Generator: ${PROF_GEN}`);
 console.info(`Seed     : ${SEED}\n`);
 
@@ -28,34 +26,40 @@ function noDistribution(from, to, g) {
 }
 
 function fillBench(bench) {
-  let g = profGenBuilder(SEED);
-
-  function setup(t) {
-    if (t.name.startWith('reference')) g = profGenBuilder(SEED);
-    else if (t.name.startWith('test')) g = profGenBuilderNew(SEED);
-    else throw new Error(`Unknown task ${t.name}`);
-  }
-  bench.setup(setup, 'warmup');
-  bench.setup(setup, 'run');
-
-  bench.add('reference (no-distrib)', () => {
+  bench.add('reference (no distrib)', () => {
+    const g = libReference[PROF_GEN](SEED);
     for (let i = 0; i !== numInts; ++i) {
       noDistribution(0, i, g);
     }
   });
-  bench.add('test (no-distrib)', () => {
-    for (let i = 0; i !== numInts; ++i) {
-      noDistribution(0, i, g);
-    }
-  });
-  bench.add('reference', () => {
+  bench.add('reference (uniform small)', () => {
+    const g = libReference[PROF_GEN](SEED);
     for (let i = 0; i !== numInts; ++i) {
       libReference.unsafeUniformIntDistribution(0, i, g);
     }
   });
-  bench.add('test', () => {
+  bench.add('reference (uniform large)', () => {
+    const g = libReference[PROF_GEN](SEED);
+    for (let i = 0; i !== numInts; ++i) {
+      libTest.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
+    }
+  });
+  bench.add('test (no distrib)', () => {
+    const g = libTest[PROF_GEN](SEED);
+    for (let i = 0; i !== numInts; ++i) {
+      noDistribution(0, i, g);
+    }
+  });
+  bench.add('test (uniform small)', () => {
+    const g = libTest[PROF_GEN](SEED);
     for (let i = 0; i !== numInts; ++i) {
       libTest.unsafeUniformIntDistribution(0, i, g);
+    }
+  });
+  bench.add('test (uniform large)', () => {
+    const g = libTest[PROF_GEN](SEED);
+    for (let i = 0; i !== numInts; ++i) {
+      libTest.unsafeUniformIntDistribution(-0x1_0000_0000, i, g);
     }
   });
 }
