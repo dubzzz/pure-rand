@@ -132,12 +132,12 @@ describe('mersenne', () => {
         4117595465, 4081986271, 248523535, 3823653831, 1694458213, 1957030859, 458513815, 2663449243, 1441649012,
         1191343111, 728769657, 807974235, 2778192547, 1991569497, 1667600007, 1517636281, 985242939, 2506783921,
         1142194715, 333867739, 1547670372, 4184993832, 1116476131, 4235742911, 1946654618,
-      ]
+      ].map((v) => v | 0)
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
-  it('Should generate values between 0 and 2**32 -1', () => fc.assert(p.valuesInRange(mersenne)));
+  it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
   it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(mersenne)));
   it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(mersenne)));
   it('Should not impact clones when impacting itself on unsafeNext', () =>

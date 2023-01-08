@@ -71,7 +71,49 @@ Array [
     "data": Array [
       1,
     ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      0,
+    ],
     "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2,
+    ],
+    "sign": -1,
   },
   Object {
     "data": Array [
@@ -85,48 +127,6 @@ Array [
     ],
     "sign": 1,
   },
-  Object {
-    "data": Array [
-      0,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      1,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      0,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      1,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      1,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1,
-    ],
-    "sign": -1,
-  },
 ]
 `;
 
@@ -134,74 +134,9 @@ exports[`uniformArrayIntDistribution [non regression] Should not change its outp
 Array [
   Object {
     "data": Array [
-      398764591,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      869582249,
+      1748719057,
     ],
     "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1903903272,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      976433780,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      95927615,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1340754471,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      460485807,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1544681649,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      113352605,
-    ],
-    "sign": -1,
-  },
-  Object {
-    "data": Array [
-      1292401841,
-    ],
-    "sign": 1,
-  },
-]
-`;
-
-exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (32-bit unsigned) 1`] = `
-Array [
-  Object {
-    "data": Array [
-      2546248239,
-    ],
-    "sign": 1,
   },
   Object {
     "data": Array [
@@ -229,9 +164,9 @@ Array [
   },
   Object {
     "data": Array [
-      3488238119,
+      806729177,
     ],
-    "sign": 1,
+    "sign": -1,
   },
   Object {
     "data": Array [
@@ -253,7 +188,72 @@ Array [
   },
   Object {
     "data": Array [
-      3439885489,
+      855081807,
+    ],
+    "sign": -1,
+  },
+]
+`;
+
+exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (32-bit unsigned) 1`] = `
+Array [
+  Object {
+    "data": Array [
+      398764591,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3425385047,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2391064024,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3318533516,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4199039681,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1340754471,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3834481489,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      2750285647,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      4181614691,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1292401841,
     ],
     "sign": 1,
   },
@@ -264,73 +264,73 @@ exports[`uniformArrayIntDistribution [non regression] Should not change its outp
 Array [
   Object {
     "data": Array [
-      398764591,
-      3071714933,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      441365315,
-      3684848379,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      869582248,
-      464831418,
+      1748719056,
+      3370736011,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      1991416408,
-      1171049868,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      95927614,
-      894534170,
+      1706118332,
+      2757602565,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      460485806,
-      319560027,
+      1277901399,
+      1682652230,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      156067239,
+      976433780,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      1428591347,
-      4110950085,
+      2051556033,
+      1252949478,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      1544681648,
-      558293585,
+      1686997841,
+      1827923621,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      718892300,
+      2331500859,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      2055650130,
-      2034131043,
+      602801999,
+      1589190063,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      1292401841,
-      1982038771,
+      91833517,
+      113352605,
     ],
-    "sign": 1,
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      855081806,
+      165444877,
+    ],
+    "sign": -1,
   },
 ]
 `;
@@ -339,71 +339,71 @@ exports[`uniformArrayIntDistribution [non regression] Should not change its outp
 Array [
   Object {
     "data": Array [
-      2546248239,
-      3071714933,
+      398764591,
+      924231285,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2588848963,
-      3684848379,
+      441365315,
+      1537364731,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      1277901399,
-      3830135878,
+      3425385047,
+      1682652230,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      4138900056,
-      1171049868,
+      1991416408,
+      3318533516,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2051556033,
-      3400433126,
+      4199039681,
+      1252949478,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      1686997841,
-      3975407269,
+      3834481489,
+      1827923621,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      3576074995,
-      4110950085,
+      1428591347,
+      1963466437,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      602801999,
-      3736673711,
+      2750285647,
+      1589190063,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      4203133778,
-      2034131043,
+      2055650130,
+      4181614691,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      3439885489,
-      1982038771,
+      1292401841,
+      4129522419,
     ],
     "sign": 1,
   },
@@ -414,93 +414,93 @@ exports[`uniformArrayIntDistribution [non regression] Should not change its outp
 Array [
   Object {
     "data": Array [
-      398764591,
-      3071714933,
-      3626093760,
-      2588848963,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      1991416408,
-      1171049868,
-      1646868794,
-      2051556033,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      1340754471,
-      2271586391,
-      2061486254,
-      2439732824,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      113352604,
-      862607399,
-      855081806,
-      2312928525,
+      1748719056,
+      3370736010,
+      2816357183,
+      3853601981,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      352272321,
-      615697673,
-      2308000441,
-      4057322111,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      93837855,
-      454869706,
-      1780959476,
-      2034098327,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      293921570,
-      580757632,
-      80701568,
-      1392175012,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      485603871,
-      1877037944,
-      3875557633,
-      2996303169,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      792729201,
-      1684354460,
-      2732841418,
-      2898900084,
+      156067239,
+      976433779,
+      500614853,
+      95927615,
     ],
     "sign": -1,
   },
   Object {
     "data": Array [
-      1709204539,
-      1491254224,
-      3397848448,
-      1567410188,
+      806729176,
+      4170864552,
+      85997393,
+      4002718120,
     ],
     "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2034131043,
+      1284876248,
+      1292401841,
+      4129522419,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      1795211326,
+      1531785974,
+      4134450502,
+      2385128833,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      2053645792,
+      1692613941,
+      366524171,
+      113385321,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1853562077,
+      1566726015,
+      2066782079,
+      755308636,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1661879776,
+      270445703,
+      2566893310,
+      3446147775,
+    ],
+    "sign": -1,
+  },
+  Object {
+    "data": Array [
+      1354754446,
+      463129187,
+      3709609525,
+      3543550860,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      438279108,
+      656229423,
+      3044602495,
+      580073460,
+    ],
+    "sign": 1,
   },
 ]
 `;
@@ -509,71 +509,71 @@ exports[`uniformArrayIntDistribution [non regression] Should not change its outp
 Array [
   Object {
     "data": Array [
-      2662555941,
-      678459422,
+      515072292,
+      2825943070,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      3377134830,
-      1758304943,
+      1229651181,
+      3905788591,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2894268860,
-      1817059562,
+      746785211,
+      3964543210,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2645675324,
-      1771129686,
+      498191675,
+      3918613334,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2125003394,
-      810396866,
+      4272487041,
+      2957880514,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      3079513997,
-      4078085345,
+      932030350,
+      1930601697,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2184842652,
-      3705079878,
+      3730804943,
+      4109830709,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      4135555774,
-      2670758855,
+      2696483921,
+      123627591,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      1476469764,
-      4074047273,
+      3623953413,
+      1926563625,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      2356975930,
-      1532644309,
+      1558369374,
+      3767932950,
     ],
     "sign": 1,
   },
@@ -582,24 +582,6 @@ Array [
 
 exports[`uniformArrayIntDistribution [non regression] Should not change its output in asked range except for major bumps (trailing zeros) 1`] = `
 Array [
-  Object {
-    "data": Array [
-      4,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      3,
-    ],
-    "sign": 1,
-  },
-  Object {
-    "data": Array [
-      0,
-    ],
-    "sign": 1,
-  },
   Object {
     "data": Array [
       2,
@@ -614,13 +596,19 @@ Array [
   },
   Object {
     "data": Array [
-      2,
+      5,
     ],
     "sign": 1,
   },
   Object {
     "data": Array [
-      3,
+      0,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
     ],
     "sign": 1,
   },
@@ -632,7 +620,19 @@ Array [
   },
   Object {
     "data": Array [
-      5,
+      1,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      3,
+    ],
+    "sign": 1,
+  },
+  Object {
+    "data": Array [
+      0,
     ],
     "sign": 1,
   },

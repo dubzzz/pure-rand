@@ -1,32 +1,77 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`uniformIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483646) except for major bumps 1`] = `
+Array [
+  -1937831252,
+  -1748719057,
+  -1223252363,
+  -668873536,
+  -1706118333,
+  -610118917,
+  -1954711869,
+  -656048793,
+  1819583497,
+  -1616781613,
+]
+`;
+
+exports[`uniformIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483647) except for major bumps 1`] = `
+Array [
+  -1937831252,
+  -1748719057,
+  -1223252363,
+  -668873536,
+  -1706118333,
+  -610118917,
+  -1954711869,
+  -656048793,
+  1819583497,
+  -1616781613,
+]
+`;
+
+exports[`uniformIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483648) except for major bumps 1`] = `
+Array [
+  -1748719057,
+  1277901399,
+  243580376,
+  1171049868,
+  2051556033,
+  -806729177,
+  1686997841,
+  602801999,
+  2034131043,
+  -855081807,
+]
+`;
+
 exports[`uniformIntDistribution [non regression] Should not change its output in range (-9007199254740991, 9007199254740991) except for major bumps 1`] = `
 Array [
-  8737460674931249,
-  -2631724699628351,
-  -4869445551762692,
-  8293357854227817,
-  5809860774059733,
-  -1881172549904653,
-  -7398457846580648,
-  -5844702921966119,
-  5236253499641229,
-  2596198112838337,
+  8737458527447601,
+  -2631726847111999,
+  -4869447699246340,
+  8293355706744169,
+  5809858626576085,
+  -1881170402421005,
+  -7398455699097000,
+  -5844700774482471,
+  5236255647124877,
+  2596200260321985,
 ]
 `;
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 6) except for major bumps 1`] = `
 Array [
-  4,
-  3,
-  0,
   2,
   1,
-  2,
+  5,
+  0,
+  6,
+  0,
+  4,
+  1,
   6,
   3,
-  4,
-  5,
 ]
 `;
 
@@ -47,120 +92,75 @@ Array [
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 8) except for major bumps 1`] = `
 Array [
+  6,
+  7,
+  0,
+  4,
+  5,
+  4,
+  5,
   8,
-  0,
-  2,
-  6,
+  3,
   7,
-  6,
-  7,
-  1,
-  1,
-  0,
-]
-`;
-
-exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 4294967294) except for major bumps 1`] = `
-Array [
-  2357136044,
-  2546248239,
-  3071714933,
-  3626093760,
-  2588848963,
-  3684848379,
-  2340255427,
-  3638918503,
-  1819583497,
-  2678185683,
-]
-`;
-
-exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 4294967295) except for major bumps 1`] = `
-Array [
-  2357136044,
-  2546248239,
-  3071714933,
-  3626093760,
-  2588848963,
-  3684848379,
-  2340255427,
-  3638918503,
-  1819583497,
-  2678185683,
-]
-`;
-
-exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 4294967296) except for major bumps 1`] = `
-Array [
-  2546248239,
-  1277901399,
-  243580376,
-  1171049868,
-  2051556033,
-  3488238119,
-  1686997841,
-  602801999,
-  2034131043,
-  3439885489,
 ]
 `;
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 1099511627774) except for major bumps 1`] = `
 Array [
-  741280623151,
-  506137267392,
-  291447657211,
-  841157541223,
-  41332891347,
-  91845220082,
-  155896724055,
-  300891291096,
-  379128171916,
-  251159659201,
+  739133139503,
+  503989783744,
+  289300173563,
+  839010057575,
+  39185407699,
+  93992703730,
+  158044207703,
+  303038774744,
+  381275655564,
+  253307142849,
 ]
 `;
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 1099511627775) except for major bumps 1`] = `
 Array [
-  642496375343,
-  205489556672,
-  300037591803,
-  274221858151,
-  475124588243,
-  521341949682,
-  14162803287,
-  489869852120,
-  529452027276,
-  865339982529,
+  86298110511,
+  753097886912,
+  847645922043,
+  821830188391,
+  1027027885779,
+  1073245247218,
+  570361068119,
+  1041773149656,
+  1081355324812,
+  317731652289,
 ]
 `;
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (0, 1099511627776) except for major bumps 1`] = `
 Array [
-  642496375343,
-  205489556672,
-  300037591803,
-  274221858151,
-  475124588243,
-  521341949682,
-  14162803287,
-  489869852120,
-  529452027276,
-  865339982529,
+  86298110511,
+  753097886912,
+  847645922043,
+  821830188391,
+  1027027885779,
+  1073245247218,
+  570361068119,
+  1041773149656,
+  1081355324812,
+  317731652289,
 ]
 `;
 
 exports[`uniformIntDistribution [non regression] Should not change its output in range (48, 69) except for major bumps 1`] = `
 Array [
-  58,
-  55,
-  49,
-  62,
-  67,
-  51,
-  63,
-  59,
+  56,
+  53,
+  69,
+  60,
   65,
+  49,
+  61,
+  57,
   67,
+  65,
 ]
 `;

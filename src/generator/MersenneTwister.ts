@@ -1,8 +1,8 @@
 import { RandomGenerator } from './RandomGenerator';
 
 class MersenneTwister implements RandomGenerator {
-  static readonly min: number = 0;
-  static readonly max: number = 0xffffffff;
+  static readonly min: number = -0x80000000;
+  static readonly max: number = 0x7fffffff;
 
   static readonly N = 624;
   static readonly M = 397;
@@ -79,7 +79,7 @@ class MersenneTwister implements RandomGenerator {
       this.states = MersenneTwister.twist(this.states);
       this.index = 0;
     }
-    return y >>> 0;
+    return y;
   }
 }
 
