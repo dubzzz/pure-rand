@@ -5,6 +5,9 @@ import { RandomGenerator, skipN, generateN, unsafeSkipN } from '../../../src/gen
 
 const MAX_SIZE: number = 2048;
 
+const replacer = (_key: string, value: unknown): unknown => (typeof value === 'bigint' ? String(value) + 'n' : value);
+const stringify = (value: unknown): string => JSON.stringify(value, replacer);
+
 export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const seq1 = generateN(skipN(rng_for(seed), offset), num)[0];
@@ -48,12 +51,12 @@ export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenera
     const [expectedValue, expectedNextRng] = skipN(rng_for(seed), offset).next();
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
-    const expectedRngReprAfter = JSON.stringify(expectedNextRng);
+    const rngReprBefore = stringify(rng);
+    const expectedRngReprAfter = stringify(expectedNextRng);
 
     // Act
     const value = rng.unsafeNext();
-    const rngReprAfter = JSON.stringify(rng);
+    const rngReprAfter = stringify(rng);
 
     // Assert
     expect(value).toBe(expectedValue);
@@ -68,12 +71,12 @@ export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGenera
     const expectedJumpRng = skipN(rng_for(seed), offset).jump!();
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
-    const expectedRngReprAfter = JSON.stringify(expectedJumpRng);
+    const rngReprBefore = stringify(rng);
+    const expectedRngReprAfter = stringify(expectedJumpRng);
 
     // Act
     rng.unsafeJump!();
-    const rngReprAfter = JSON.stringify(rng);
+    const rngReprAfter = stringify(rng);
 
     // Assert
     expect(rngReprAfter).not.toBe(rngReprBefore);
@@ -86,11 +89,11 @@ export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGenerator)
     // Arrange
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
+    const rngReprBefore = stringify(rng);
 
     // Act
     rng.next();
-    const rngReprAfter = JSON.stringify(rng);
+    const rngReprAfter = stringify(rng);
 
     // Assert
     expect(rngReprAfter).toBe(rngReprBefore);
@@ -102,11 +105,11 @@ export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGenerator)
     // Arrange
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
+    const rngReprBefore = stringify(rng);
 
     // Act
     rng.jump!();
-    const rngReprAfter = JSON.stringify(rng);
+    const rngReprAfter = stringify(rng);
 
     // Assert
     expect(rngReprAfter).toBe(rngReprBefore);
@@ -119,13 +122,13 @@ export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => Random
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
     const rngCloned = rng.clone();
-    const rngReprBefore = JSON.stringify(rng);
-    const rngClonedReprBefore = JSON.stringify(rngCloned);
+    const rngReprBefore = stringify(rng);
+    const rngClonedReprBefore = stringify(rngCloned);
 
     // Act
     rng.unsafeNext();
-    const rngReprAfter = JSON.stringify(rng);
-    const rngClonedReprAfter = JSON.stringify(rngCloned);
+    const rngReprAfter = stringify(rng);
+    const rngClonedReprAfter = stringify(rngCloned);
 
     // Assert
     expect(rngClonedReprBefore).toBe(rngReprBefore);
@@ -140,13 +143,13 @@ export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => Random
     const rng = rng_for(seed);
     unsafeSkipN(rng, offset);
     const rngCloned = rng.clone();
-    const rngReprBefore = JSON.stringify(rng);
-    const rngClonedReprBefore = JSON.stringify(rngCloned);
+    const rngReprBefore = stringify(rng);
+    const rngClonedReprBefore = stringify(rngCloned);
 
     // Act
     rng.unsafeJump!();
-    const rngReprAfter = JSON.stringify(rng);
-    const rngClonedReprAfter = JSON.stringify(rngCloned);
+    const rngReprAfter = stringify(rng);
+    const rngClonedReprAfter = stringify(rngCloned);
 
     // Assert
     expect(rngClonedReprBefore).toBe(rngReprBefore);
