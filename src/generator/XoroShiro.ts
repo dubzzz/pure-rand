@@ -66,8 +66,11 @@ class XoroShiro128Plus implements RandomGenerator {
   }
 }
 
+const Big32 = (BigInt(1) << BigInt(32)) - BigInt(1);
+const Big64 = (BigInt(1) << BigInt(64)) - BigInt(1);
+
 function rotl(x: bigint, k: bigint): bigint {
-  return (x << k) | (x >> (BigInt(64) - k));
+  return ((x << k) & Big64) | (x >> (BigInt(64) - k));
 }
 
 // XoroShiro128+ with a=24, b=16, c=37,
@@ -76,10 +79,10 @@ function rotl(x: bigint, k: bigint): bigint {
 class XoroShiro128PlusBigInt implements RandomGenerator {
   constructor(private s0: bigint, private s1: bigint) {}
   min(): number {
-    return -0x80000000;
+    return 0;
   }
   max(): number {
-    return 0x7fffffff;
+    return 0xffffffff;
   }
   clone(): XoroShiro128PlusBigInt {
     return new XoroShiro128PlusBigInt(this.s0, this.s1);
@@ -90,24 +93,13 @@ class XoroShiro128PlusBigInt implements RandomGenerator {
     return [out, nextRng];
   }
   unsafeNext(): number {
-    /*
-    	const uint64_t s0 = s[0];
-	uint64_t s1 = s[1];
-	const uint64_t result = s0 + s1;
-
-	s1 ^= s0;
-	s[0] = rotl(s0, 24) ^ s1 ^ (s1 << 16); // a, b
-	s[1] = rotl(s1, 37); // c
-
-	return result;
-    */
     const s0 = this.s0;
     let s1 = this.s1;
     const result = s0 + s1;
     s1 ^= s0;
-    this.s0 = rotl(s0, BigInt(24)) ^ s1 ^ (s1 << BigInt(16));
+    this.s0 = rotl(s0, BigInt(24)) ^ s1 ^ ((s1 << BigInt(16)) & Big64);
     this.s1 = rotl(s1, BigInt(37));
-    return Number(result);
+    return Number(result & Big32);
   }
   jump(): XoroShiro128PlusBigInt {
     const nextRng = new XoroShiro128PlusBigInt(this.s0, this.s1);
@@ -140,8 +132,8 @@ export const xoroshiro128plusNoBigInt = function (seed: number): RandomGenerator
 };
 
 export const xoroshiro128plusBigInt = function (seed: number): RandomGenerator {
-  const s0 = (BigInt(-1) << BigInt(32)) + BigInt(~seed);
-  const s1 = BigInt(seed | 0) << BigInt(32);
+  const s0 = BigInt.asUintN(64, (BigInt(-1) << BigInt(32)) + BigInt(~seed));
+  const s1 = BigInt.asUintN(64, BigInt(seed | 0) << BigInt(32));
   return new XoroShiro128PlusBigInt(s0, s1);
 };
 
