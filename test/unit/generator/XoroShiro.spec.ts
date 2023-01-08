@@ -15,7 +15,7 @@ describe.each([{ withBigInt: true }, { withBigInt: false }])(
       for (let idx = 0; idx !== 100; ++idx) {
         const [v, nextG] = g.next();
         if (withBigInt) {
-          data.push(v - 0x80000000);
+          data.push(v | 0);
         } else {
           data.push(v);
         }
@@ -59,7 +59,7 @@ describe.each([{ withBigInt: true }, { withBigInt: false }])(
       for (let idx = 0; idx !== 100; ++idx) {
         const [v, nextG] = g.next();
         if (withBigInt) {
-          data.push(v - 0x80000000);
+          data.push(v | 0);
         } else {
           data.push(v);
         }
