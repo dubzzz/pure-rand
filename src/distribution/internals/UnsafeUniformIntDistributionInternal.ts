@@ -11,7 +11,7 @@ export function unsafeUniformIntDistributionInternal(rangeSize: number, rng: Ran
   if (rangeSize === 1) {
     return 0;
   }
-  const MaxAllowed = rangeSize !== 1 ? ~~(0x100000000 / rangeSize) * rangeSize : 0x100000000;
+  const MaxAllowed = rangeSize !== 2 ? ~~(0x100000000 / rangeSize) * rangeSize : 0x100000000;
   let deltaV = rng.unsafeNext() + 0x80000000;
   while (deltaV >= MaxAllowed) {
     deltaV = rng.unsafeNext() + 0x80000000;
