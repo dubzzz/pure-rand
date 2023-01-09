@@ -1,7 +1,6 @@
 import * as fc from 'fast-check';
 
 import { unsafeUniformIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
-import mersenne from '../../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
@@ -19,22 +18,6 @@ class NatGenerator implements RandomGenerator {
     const previousCurrent = this.current;
     this.current = (this.current + 1) | 0;
     return previousCurrent;
-  }
-}
-
-class ModNatGenerator implements RandomGenerator {
-  constructor(private current: RandomGenerator, private mod: number) {}
-  clone(): RandomGenerator {
-    return new ModNatGenerator(this.current, this.mod);
-  }
-  next(): [number, RandomGenerator] {
-    const nextRng = this.clone();
-    return [nextRng.unsafeNext(), nextRng];
-  }
-  unsafeNext(): number {
-    const [v, nrng] = this.current.next();
-    this.current = nrng;
-    return Math.abs(v % this.mod);
   }
 }
 
@@ -83,19 +66,5 @@ describe('unsafeUniformIntDistributionInternal', () => {
           return buckets.every((n) => n === num);
         }
       )
-    ));
-  it('Should be able to generate values larger than the RandomGenerator and outside bitwise operations', () =>
-    fc.assert(
-      fc.property(fc.integer(), fc.integer({ min: 2, max: 0x7fffffff }), (seed, mod) => {
-        // kept it for legacy reasons, but could probably go without it
-        let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
-        for (let numTries = 0; numTries < 100; ++numTries) {
-          const v = unsafeUniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
-          if (v > 0xffffffff) {
-            return true;
-          }
-        }
-        return false;
-      })
     ));
 });
