@@ -21,7 +21,7 @@ export function unsafeUniformBigIntDistribution(from: bigint, to: bigint, rng: R
   // Number of iterations required to have enough random
   // to build uniform entries in the asked range
   let FinalNumValues = NumValues;
-  let NumIterations = SBigInt(1);
+  let NumIterations = 1; // NumValues being large enough no need for bigint on NumIterations
   while (FinalNumValues < diff) {
     FinalNumValues *= NumValues;
     ++NumIterations;
@@ -31,7 +31,7 @@ export function unsafeUniformBigIntDistribution(from: bigint, to: bigint, rng: R
   while (true) {
     // Aggregate mutiple calls to next() into a single random value
     let value = SBigInt(0);
-    for (let num = SBigInt(0); num !== NumIterations; ++num) {
+    for (let num = 0; num !== NumIterations; ++num) {
       const out = rng.unsafeNext();
       value = NumValues * value + (SBigInt(out) - MinRng);
     }
