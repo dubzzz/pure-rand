@@ -26,8 +26,8 @@ export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rng = rng_for(seed);
     const value = skipN(rng, offset).next()[0];
-    assert.ok(value >= rng.min());
-    assert.ok(value <= rng.max());
+    assert.ok(value >= -0x80000000);
+    assert.ok(value <= 0x7fffffff);
   });
 }
 

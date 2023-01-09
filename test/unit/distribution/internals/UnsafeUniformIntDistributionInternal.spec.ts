@@ -6,7 +6,7 @@ import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
   constructor(private current: number) {
-    this.current = current % 0x80000000;
+    this.current = current | 0;
   }
   clone(): RandomGenerator {
     return new NatGenerator(this.current);
@@ -17,14 +17,8 @@ class NatGenerator implements RandomGenerator {
   }
   unsafeNext(): number {
     const previousCurrent = this.current;
-    this.current = (this.current + 1) % 0x80000000;
+    this.current = (this.current + 1) | 0;
     return previousCurrent;
-  }
-  min(): number {
-    return 0;
-  }
-  max(): number {
-    return 0x7fffffff;
   }
 }
 
@@ -41,12 +35,6 @@ class ModNatGenerator implements RandomGenerator {
     const [v, nrng] = this.current.next();
     this.current = nrng;
     return Math.abs(v % this.mod);
-  }
-  min(): number {
-    return 0;
-  }
-  max(): number {
-    return this.mod - 1;
   }
 }
 
@@ -96,24 +84,10 @@ describe('unsafeUniformIntDistributionInternal', () => {
         }
       )
     ));
-  it('Should be able to generate values larger than the RandomGenerator', () =>
+  it('Should be able to generate values larger than the RandomGenerator and outside bitwise operations', () =>
     fc.assert(
       fc.property(fc.integer(), fc.integer({ min: 2, max: 0x7fffffff }), (seed, mod) => {
-        let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
-        expect(rng.max() - rng.min() + 1).toBeLessThan(Number.MAX_SAFE_INTEGER);
-
-        for (let numTries = 0; numTries < 100; ++numTries) {
-          const v = unsafeUniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);
-          if (v > rng.max()) {
-            return true;
-          }
-        }
-        return false;
-      })
-    ));
-  it('Should be able to generate values outside bitwise operations', () =>
-    fc.assert(
-      fc.property(fc.integer(), fc.integer({ min: 2, max: 0x7fffffff }), (seed, mod) => {
+        // kept it for legacy reasons, but could probably go without it
         let rng: RandomGenerator = new ModNatGenerator(mersenne(seed), mod);
         for (let numTries = 0; numTries < 100; ++numTries) {
           const v = unsafeUniformIntDistributionInternal(Number.MAX_SAFE_INTEGER, rng);

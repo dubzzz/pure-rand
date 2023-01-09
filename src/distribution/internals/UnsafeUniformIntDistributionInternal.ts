@@ -5,8 +5,8 @@ import { RandomGenerator } from '../../generator/RandomGenerator';
  * @internal
  */
 export function unsafeUniformIntDistributionInternal(rangeSize: number, rng: RandomGenerator): number {
-  const MinRng = rng.min();
-  const NumValues = rng.max() - rng.min() + 1;
+  const MinRng = -0x80000000;
+  const NumValues = 0x100000000;
 
   // Range provided by the RandomGenerator is large enough
   if (rangeSize <= NumValues) {

@@ -15,8 +15,8 @@ const SBigInt: typeof BigInt = typeof BigInt !== 'undefined' ? BigInt : undefine
  */
 export function unsafeUniformBigIntDistribution(from: bigint, to: bigint, rng: RandomGenerator): bigint {
   const diff = to - from + SBigInt(1);
-  const MinRng = SBigInt(rng.min());
-  const NumValues = SBigInt(rng.max() - rng.min() + 1);
+  const MinRng = SBigInt(-0x80000000);
+  const NumValues = SBigInt(0x100000000);
 
   // Number of iterations required to have enough random
   // to build uniform entries in the asked range

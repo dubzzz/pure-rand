@@ -9,12 +9,6 @@ import { RandomGenerator } from './RandomGenerator';
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
 class XorShift128Plus implements RandomGenerator {
   constructor(private s01: number, private s00: number, private s11: number, private s10: number) {}
-  min(): number {
-    return -0x80000000;
-  }
-  max(): number {
-    return 0x7fffffff;
-  }
   clone(): XorShift128Plus {
     return new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
   }

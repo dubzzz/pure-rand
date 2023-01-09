@@ -16,18 +16,7 @@ const computeValueFromNextSeed = function (nextseed: number) {
 };
 
 class LinearCongruential32 implements RandomGenerator {
-  static readonly min: number = -0x80000000;
-  static readonly max: number = 0x7fffffff;
-
   constructor(private seed: number) {}
-
-  min(): number {
-    return LinearCongruential32.min;
-  }
-
-  max(): number {
-    return LinearCongruential32.max;
-  }
 
   clone(): LinearCongruential32 {
     return new LinearCongruential32(this.seed);
