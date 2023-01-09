@@ -5,9 +5,6 @@ import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigI
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
 import mersenne from '../../../src/generator/MersenneTwister';
 
-const MERSENNE_MIN = mersenne(0).min();
-const MERSENNE_MAX = mersenne(0).max();
-
 const bigIntArbitrary = fc
   .tuple(fc.boolean(), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff))
   .map(([sign, a3, a2, a1, a0]) => {
@@ -38,8 +35,8 @@ describe('uniformBigIntDistribution', () => {
       fc.assert(
         fc.property(
           fc.integer().noShrink(),
-          fc.integer({ min: MERSENNE_MIN, max: MERSENNE_MAX }),
-          fc.integer({ min: MERSENNE_MIN, max: MERSENNE_MAX }),
+          fc.integer({ min: -0x80000000, max: 0x7fffffff }),
+          fc.integer({ min: -0x80000000, max: 0x7fffffff }),
           (seed, a, b) => {
             const minV = a < b ? a : b;
             const maxV = a < b ? b : a;

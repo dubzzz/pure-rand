@@ -1,9 +1,6 @@
 import { RandomGenerator } from './RandomGenerator';
 
 class MersenneTwister implements RandomGenerator {
-  static readonly min: number = -0x80000000;
-  static readonly max: number = 0x7fffffff;
-
   static readonly N = 624;
   static readonly M = 397;
   static readonly R = 31;
@@ -49,14 +46,6 @@ class MersenneTwister implements RandomGenerator {
 
   static from(seed: number): MersenneTwister {
     return new MersenneTwister(MersenneTwister.twist(MersenneTwister.seeded(seed)), 0);
-  }
-
-  min(): number {
-    return MersenneTwister.min;
-  }
-
-  max(): number {
-    return MersenneTwister.max;
   }
 
   clone(): MersenneTwister {

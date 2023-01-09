@@ -2,9 +2,6 @@ import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigI
 import mersenne from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/generator/RandomGenerator';
 
-const MERSENNE_MIN = mersenne(0).min();
-const MERSENNE_MAX = mersenne(0).max();
-
 describe('uniformBigIntDistribution [non regression]', () => {
   if (typeof BigInt === 'undefined') {
     it('no test', () => {
@@ -19,9 +16,9 @@ describe('uniformBigIntDistribution [non regression]', () => {
       ${0}                       | ${2 ** 3 - 2}              | ${"range of size divisor of mersenne's one minus one"}
       ${0}                       | ${2 ** 3}                  | ${"range of size divisor of mersenne's one plus one"}
       ${48}                      | ${69}                      | ${'random range'}
-      ${MERSENNE_MIN}            | ${MERSENNE_MAX}            | ${"mersenne's range"}
-      ${MERSENNE_MIN}            | ${MERSENNE_MAX - 1}        | ${"mersenne's range minus one"}
-      ${MERSENNE_MIN}            | ${MERSENNE_MAX + 1}        | ${"mersenne's range plus one"}
+      ${-0x80000000}             | ${0x7fffffff}              | ${"mersenne's range"}
+      ${-0x80000000}             | ${0x7fffffff - 1}          | ${"mersenne's range minus one"}
+      ${-0x80000000}             | ${0x7fffffff + 1}          | ${"mersenne's range plus one"}
       ${0}                       | ${2 ** 40 - 1}             | ${"range of size multiple of mersenne's one"}
       ${0}                       | ${2 ** 40 - 2}             | ${"range of size multiple of mersenne's one minus one"}
       ${0}                       | ${2 ** 40}                 | ${"range of size multiple of mersenne's one plus one"}

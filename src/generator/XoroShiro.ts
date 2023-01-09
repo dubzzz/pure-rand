@@ -5,12 +5,6 @@ import { RandomGenerator } from './RandomGenerator';
 // - http://prng.di.unimi.it/xoroshiro128plus.c
 class XoroShiro128Plus implements RandomGenerator {
   constructor(private s01: number, private s00: number, private s11: number, private s10: number) {}
-  min(): number {
-    return -0x80000000;
-  }
-  max(): number {
-    return 0x7fffffff;
-  }
   clone(): XoroShiro128Plus {
     return new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
   }
