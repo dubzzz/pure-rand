@@ -1,0 +1,28 @@
+name: Benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      numIterations:
+        description: 'Number of iterations'
+        default: '1000'
+        required: true
+      numPerRun:
+        description: 'Number per run'
+        default: '100'
+        required: true
+jobs:
+  benchmark:
+    name: 'Benchmark'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Using Node v16.x
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '16.x'
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build benchmark package
+        run: yarn build:bench:new
+      - name: Benchmark
+        run: yarn bench self ${{github.event.inputs.numIterations}} ${{github.event.inputs.numPerRun}}
