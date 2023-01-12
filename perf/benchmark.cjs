@@ -21,7 +21,7 @@ const NUM_RUNS = process.argv[3] || '';
 const NUM_INTS = process.argv[4] || '';
 
 const numIterations = Number.isNaN(+NUM_RUNS) ? 1_000 : +NUM_RUNS;
-const numInts = Number.isNaN(+NUM_INTS) ? 100 : +NUM_RUNS;
+const numInts = Number.isNaN(+NUM_INTS) ? 100 : +NUM_INTS;
 
 console.info(`Generator      : ${PROF_GEN}`);
 console.info(`Iterations     : ${numIterations}`);
