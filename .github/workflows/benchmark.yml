@@ -33,4 +33,4 @@ jobs:
       - name: Build benchmark package
         run: yarn build:bench:new
       - name: Benchmark
-        run: yarn bench self ${{github.event.inputs.numIterations}} ${{github.event.inputs.numPerRun}}
+        run: yarn bench ${{github.event.inputs.benchType}} ${{github.event.inputs.numIterations}} ${{github.event.inputs.numPerRun}}
