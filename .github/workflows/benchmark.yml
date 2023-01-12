@@ -2,6 +2,14 @@ name: Benchmark
 on:
   workflow_dispatch:
     inputs:
+      benchType:
+        type: choice
+        description: 'Type (self: all generators, alone: all algorithms)'
+        default: 'self'
+        options:
+          - self
+          - alone
+        required: true
       numIterations:
         description: 'Number of iterations'
         default: '1000'
