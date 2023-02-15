@@ -45,7 +45,7 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^18.13.0",
     "cross-env": "^7.0.3",
-    "fast-check": "^3.6.2",
+    "fast-check": "^3.6.3",
     "jest": "^26.6.3",
     "prettier": "2.8.4",
     "replace-in-file": "^6.3.5",
