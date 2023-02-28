@@ -128,3 +128,17 @@ For the moment, available `Distribution` are:
 \*Requires your JavaScript interpreter to support bigint
 
 \*\*ArrayInt is an object having the structure `{sign, data}` with sign being either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
+
+## Comparison
+
+**How does it compare to other random libraries?** Here is what we measured against an algorithm consisting into shuffling an array containing 1,000,000 items (see [code](https://github.com/dubzzz/pure-rand/blob/81860b79cfb5c6d8b7f04494d93bc7ba0ec22a39/perf/compare.cjs)).
+
+| Library                 | Algorithm          | Mean time | Comparison to pure-rand |
+| ----------------------- | ------------------ | --------- | ----------------------- |
+| native \(node 16.19.1\) | Xor Shift 128+     | 44.78     | 1.7x faster             |
+| **pure-rand @6.0.0**    | **Xor Shift 128+** | **76.56** | —                       |
+| @faker-js/faker @7.6.0  | —                  | 150.33    | 2x slower               |
+| random-js @2.1.0        | Mersenne Twister   | 168.54    | 2.2x slower             |
+| chance @1.1.10          | —                  | 193.18    | 2.5x slower             |
+
+_The measurments above have been done using default runners provided by GitHub Actions. It's important to note that in the context of pure-rand as in most of the libraries dealing with random, in addition to generate random values based on rock-solid random number generators, we also make sure to generate them out of uniform distributions which is not the case for the native case._
