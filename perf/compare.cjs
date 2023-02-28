@@ -32,8 +32,29 @@ async function run() {
     };
     fisherYates(data, rand);
   });
-  bench.add('pure-rand', () => {
+  bench.add('pure-rand (xorshift128plus)', () => {
     const g = prand.xorshift128plus(seed);
+    const rand = (min, max) => {
+      return prand.unsafeUniformIntDistribution(min, max, g);
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (xoroshiro128plus)', () => {
+    const g = prand.xoroshiro128plus(seed);
+    const rand = (min, max) => {
+      return prand.unsafeUniformIntDistribution(min, max, g);
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (mersenne)', () => {
+    const g = prand.mersenne(seed);
+    const rand = (min, max) => {
+      return prand.unsafeUniformIntDistribution(min, max, g);
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (congruential32)', () => {
+    const g = prand.congruential32(seed);
     const rand = (min, max) => {
       return prand.unsafeUniformIntDistribution(min, max, g);
     };
