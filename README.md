@@ -137,8 +137,8 @@ For the moment, available `Distribution` are:
 | ----------------------- | ------------------ | --------- | ----------------------- |
 | native \(node 16.19.1\) | Xor Shift 128+     | 44.78     | 1.7x faster             |
 | **pure-rand @6.0.0**    | **Xor Shift 128+** | **76.56** | —                       |
-| @faker-js/faker @7.6.0  | —                  | 150.33    | 2x slower               |
+| @faker-js/faker @7.6.0  | Mersenne Twister   | 150.33    | 2x slower               |
 | random-js @2.1.0        | Mersenne Twister   | 168.54    | 2.2x slower             |
-| chance @1.1.10          | —                  | 193.18    | 2.5x slower             |
+| chance @1.1.10          | Mersenne Twister   | 193.18    | 2.5x slower             |
 
 _The measurements above have been done using default runners provided by GitHub Actions. It's important to note that in the context of pure-rand as in most of the libraries dealing with random, in addition to generate random values based on rock-solid random number generators, we also make sure to generate them out of uniform distributions which is not the case for the native case._
