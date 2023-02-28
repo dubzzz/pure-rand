@@ -1,0 +1,20 @@
+name: Compare
+on: workflow_dispatch
+jobs:
+  compare:
+    name: 'Compare'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.6.0
+      - name: Using Node v16.x
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: '16.x'
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Install extra libraries
+        run: yarn add chance@1.1.10 @faker-js/faker@7.6.0 random-js@2.1.0 --exact --dev
+      - name: Build package
+        run: yarn build:prod
+      - name: Benchmark
+        run: node perf/compare.cjs

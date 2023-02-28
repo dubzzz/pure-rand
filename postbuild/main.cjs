@@ -1,4 +1,6 @@
 // eslint-disable-next-line
+const { execSync } = require('child_process');
+// eslint-disable-next-line
 const fs = require('fs');
 // eslint-disable-next-line
 const path = require('path');
