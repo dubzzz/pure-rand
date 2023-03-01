@@ -32,6 +32,38 @@ async function run() {
     };
     fisherYates(data, rand);
   });
+  bench.add('pure-rand (xorshift128plus) (not uniform)', () => {
+    const g = prand.xorshift128plus(seed);
+    const rand = (min, max) => {
+      const out = g.unsafeNext() >>> 0;
+      return min + (out % (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (xoroshiro128plus) (not uniform)', () => {
+    const g = prand.xoroshiro128plus(seed);
+    const rand = (min, max) => {
+      const out = g.unsafeNext() >>> 0;
+      return min + (out % (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (mersenne) (not uniform)', () => {
+    const g = prand.mersenne(seed);
+    const rand = (min, max) => {
+      const out = g.unsafeNext() >>> 0;
+      return min + (out % (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('pure-rand (congruential32) (not uniform)', () => {
+    const g = prand.congruential32(seed);
+    const rand = (min, max) => {
+      const out = g.unsafeNext() >>> 0;
+      return min + (out % (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
   bench.add('pure-rand (xorshift128plus)', () => {
     const g = prand.xorshift128plus(seed);
     const rand = (min, max) => {
@@ -61,13 +93,14 @@ async function run() {
     fisherYates(data, rand);
   });
   bench.add('chance', () => {
-    const chance = new Chance();
+    const chance = new Chance(seed);
     const rand = (min, max) => {
       return chance.integer({ min, max });
     };
     fisherYates(data, rand);
   });
   bench.add('faker', () => {
+    faker.seed(seed);
     const rand = (min, max) => {
       return faker.datatype.number({ min, max });
     };
