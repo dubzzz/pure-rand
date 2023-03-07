@@ -4346,7 +4346,7 @@ __metadata:
     prettier: 2.8.4
     replace-in-file: ^6.3.5
     source-map-support: ^0.5.21
-    tinybench: ^2.3.1
+    tinybench: ^2.4.0
     ts-jest: ^26.5.6
     ts-node: ^10.9.1
     typescript: ^4.9.5
@@ -5110,10 +5110,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinybench@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "tinybench@npm:2.3.1"
-  checksum: 74d45fa546d964a8123f98847fc59550945ed7f0d3e5a4ce0f9596d836b51c1d340c2ae0277a8023c15dc9ea3d7cb948a79173bfc46338c9b367c6323ea1eaf3
+"tinybench@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "tinybench@npm:2.4.0"
+  checksum: cfbe90f75755488653dde256019cc810f65e90f63fdd962e71e8b209b49598c5fc90c2227d2087eb807944895fafe7f12fe9ecae2b5e89db5adde66415e9b836
   languageName: node
   linkType: hard
 
