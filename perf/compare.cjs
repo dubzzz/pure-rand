@@ -36,32 +36,32 @@ async function run() {
   bench.add('pure-rand (xorshift128plus) (not uniform)', () => {
     const g = prand.xorshift128plus(seed);
     const rand = (min, max) => {
-      const out = g.unsafeNext() >>> 0;
-      return min + (out % (max - min + 1));
+      const out = (g.unsafeNext() >>> 0) / 0x1_0000_0000;
+      return min + Math.floor(out * (max - min + 1));
     };
     fisherYates(data, rand);
   });
   bench.add('pure-rand (xoroshiro128plus) (not uniform)', () => {
     const g = prand.xoroshiro128plus(seed);
     const rand = (min, max) => {
-      const out = g.unsafeNext() >>> 0;
-      return min + (out % (max - min + 1));
+      const out = (g.unsafeNext() >>> 0) / 0x1_0000_0000;
+      return min + Math.floor(out * (max - min + 1));
     };
     fisherYates(data, rand);
   });
   bench.add('pure-rand (mersenne) (not uniform)', () => {
     const g = prand.mersenne(seed);
     const rand = (min, max) => {
-      const out = g.unsafeNext() >>> 0;
-      return min + (out % (max - min + 1));
+      const out = (g.unsafeNext() >>> 0) / 0x1_0000_0000;
+      return min + Math.floor(out * (max - min + 1));
     };
     fisherYates(data, rand);
   });
   bench.add('pure-rand (congruential32) (not uniform)', () => {
     const g = prand.congruential32(seed);
     const rand = (min, max) => {
-      const out = g.unsafeNext() >>> 0;
-      return min + (out % (max - min + 1));
+      const out = (g.unsafeNext() >>> 0) / 0x1_0000_0000;
+      return min + Math.floor(out * (max - min + 1));
     };
     fisherYates(data, rand);
   });
