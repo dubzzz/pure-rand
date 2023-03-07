@@ -4,6 +4,7 @@ const prand = require('../lib/pure-rand');
 const Chance = require('chance');
 const { faker } = require('@faker-js/faker');
 const { Random, MersenneTwister19937 } = require('random-js');
+var seedrandom = require('seedrandom');
 
 // Algorithms under tests
 function fisherYates(data, rand) {
@@ -113,6 +114,48 @@ async function run() {
     };
     fisherYates(data, rand);
   });
+  bench.add('seedrandom (alea)', () => {
+    const random = seedrandom.alea(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('seedrandom (xor128)', () => {
+    const random = seedrandom.xor128(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('seedrandom (tychei)', () => {
+    const random = seedrandom.tychei(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('seedrandom (xorwow)', () => {
+    const random = seedrandom.xorwow(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('seedrandom (xor4096)', () => {
+    const random = seedrandom.xor4096(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
+  bench.add('seedrandom (xorshift7)', () => {
+    const random = seedrandom.xorshift7(String(seed));
+    const rand = (min, max) => {
+      return min + Math.floor(random() * (max - min + 1));
+    };
+    fisherYates(data, rand);
+  });
 
   // Run the benchmark
   await bench.warmup();
@@ -121,13 +164,7 @@ async function run() {
   // Log the results
   console.table(
     bench.tasks.map(({ name, result }) => {
-      return {
-        Library: name,
-        Mean: result?.mean,
-        P75: result?.p75,
-        P99: result?.p99,
-        RME: result?.rme,
-      };
+      return { Library: name, Mean: result?.mean };
     })
   );
 }
