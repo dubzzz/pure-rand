@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483646) except for major bumps 1`] = `
-Array [
+[
   -1937831252n,
   -1748719057n,
   -1223252363n,
@@ -16,7 +16,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483647) except for major bumps 1`] = `
-Array [
+[
   -1937831252n,
   -1748719057n,
   -1223252363n,
@@ -31,7 +31,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (-2147483648, 2147483648) except for major bumps 1`] = `
-Array [
+[
   -1958371453n,
   -1593104821n,
   -1051484232n,
@@ -46,7 +46,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (-9007199254740991, 9007199254740991) except for major bumps 1`] = `
-Array [
+[
   8737458527447649n,
   -2631726847111779n,
   -4869447699246235n,
@@ -61,7 +61,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 6) except for major bumps 1`] = `
-Array [
+[
   2n,
   1n,
   5n,
@@ -76,7 +76,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 7) except for major bumps 1`] = `
-Array [
+[
   4n,
   7n,
   5n,
@@ -91,7 +91,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 8) except for major bumps 1`] = `
-Array [
+[
   6n,
   7n,
   0n,
@@ -106,7 +106,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 1099511627774) except for major bumps 1`] = `
-Array [
+[
   739133958457n,
   503993394022n,
   289301897646n,
@@ -121,7 +121,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 1099511627775) except for major bumps 1`] = `
-Array [
+[
   739133139503n,
   503989783744n,
   289300173563n,
@@ -136,7 +136,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (0, 1099511627776) except for major bumps 1`] = `
-Array [
+[
   739132320549n,
   503986173466n,
   289298449480n,
@@ -151,7 +151,7 @@ Array [
 `;
 
 exports[`uniformBigIntDistribution [non regression] Should not change its output in range (48, 69) except for major bumps 1`] = `
-Array [
+[
   56n,
   53n,
   69n,

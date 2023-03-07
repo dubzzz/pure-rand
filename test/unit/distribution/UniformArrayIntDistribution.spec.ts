@@ -1,5 +1,5 @@
 import * as fc from 'fast-check';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from '../../__test-helpers__/mocked';
 
 import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
 import { RandomGenerator } from '../../../src/generator/RandomGenerator';

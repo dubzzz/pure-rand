@@ -1,5 +1,5 @@
 import * as fc from 'fast-check';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from '../../../__test-helpers__/mocked';
 
 import { unsafeUniformArrayIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
