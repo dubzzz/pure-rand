@@ -131,14 +131,94 @@ For the moment, available `Distribution` are:
 
 ## Comparison
 
-**How does it compare to other random libraries?** Here is what we measured against an algorithm consisting into shuffling an array containing 1,000,000 items (see [code](https://github.com/dubzzz/pure-rand/blob/81860b79cfb5c6d8b7f04494d93bc7ba0ec22a39/perf/compare.cjs)).
+### Summary
 
-| Library                 | Algorithm          | Mean time | Comparison to pure-rand |
-| ----------------------- | ------------------ | --------- | ----------------------- |
-| native \(node 16.19.1\) | Xor Shift 128+     | 44.78     | 1.7x faster             |
-| **pure-rand @6.0.0**    | **Xor Shift 128+** | **76.56** | —                       |
-| @faker-js/faker @7.6.0  | Mersenne Twister   | 150.33    | 2x slower               |
-| random-js @2.1.0        | Mersenne Twister   | 168.54    | 2.2x slower             |
-| chance @1.1.10          | Mersenne Twister   | 193.18    | 2.5x slower             |
+The chart has been split into three sections:
 
-_The measurements above have been done using default runners provided by GitHub Actions. It's important to note that in the context of pure-rand as in most of the libraries dealing with random, in addition to generate random values based on rock-solid random number generators, we also make sure to generate them out of uniform distributions which is not the case for the native case._
+- section 1: native `Math.random()`
+- section 2: without uniform distribution of values
+- section 3: with uniform distribution of values (not supported by all libraries)
+
+<img src="https://raw.githubusercontent.com/dubzzz/fast-check/main/perf/comparison.svg" alt="Comparison against other libraries" />
+
+### Key points
+
+Here are some key points to have in mind when comparing libraries dealing with random number generators.
+
+**Random vs Random**
+
+In computer science most random number generators<sup>(1)</sup> are [pseudorandom number generators](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) (abbreviated: PRNG). In other words, they are fully deterministic and given the original seed one can rebuild the whole sequence.
+
+Each PRNG algorithm had to deal with tradeoffs in terms of randomness quality, speed, length of the sequence... In other words, it's important to compare relative speed of libraries with that in mind. Indeed, a Mersenne Twister PRNG will not have the same strenghts and weaknesses as a Xoroshiro PRNG, so depending on what you need exactly you might prefer one PRNG over another even if it will be slower.
+
+4 PRNGs come with pure-rand:
+
+- `congruential32` — \[[more](https://en.wikipedia.org/wiki/Linear_congruential_generator)\]
+- `mersenne` — \[[more](https://en.wikipedia.org/wiki/Mersenne_Twister)\]
+- `xorshift128plus` — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
+- `xoroshiro128plus` — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
+
+But no cyprographic PRNG so far.
+
+**Uniform or not**
+
+Once you are able to generate random values, next step is to scale them into the range you want. Indeed, you probably don't want a floating point value between 0 (included) and 1 (excluded) but rather an integer value between 1 and 6 if you emulate a dice or any other range based on your needs.
+
+At this point, simple way would be to do `min + floor(random() * (max - min + 1))` but actually it will not generate the values with equal probabilities even if you use the best PRNG in the world to back `random()`. In order to have equal probabilities you need to rely on uniform distributions<sup>(2)</sup> which comes built-in in some PNRG libraries.
+
+### Process
+
+In order to compare the performance of the libraries, we aked them to shuffle an array containing 1,000,000 items (see [code](https://github.com/dubzzz/pure-rand/blob/556ec331c68091c5d56e9da1266112e8ea222b2e/perf/compare.cjs)).
+
+We then split the measurements into two sections:
+
+- one for non-uniform distributions — _known to be slower as it implies re-asking for other values to the PRNG until the produced value fall into the acceptable range of values_
+- one for uniform distributions
+
+The recommended setup for pure-rand is to rely on our Xoroshiro128+. It provides a long enough sequence of random values, has built-in support for jump, is really efficient while providing a very good quality of randomness.
+
+### Performance
+
+**Non-Uniform**
+
+| Library                  | Algorithm         | Mean time (ms) | Compared to pure-rand |
+| ------------------------ | ----------------- | -------------- | --------------------- |
+| native \(node 16.19.1\)  | Xorshift128+      | 33.3           | 1.4x slower           |
+| **pure-rand _@6.0.0_**   | **Xoroshiro128+** | **24.5**       | **reference**         |
+| pure-rand _@6.0.0_       | Xorshift128+      | 25.0           | similar               |
+| pure-rand _@6.0.0_       | Mersenne Twister  | 30.8           | 1.3x slower           |
+| pure-rand _@6.0.0_       | Congruential‍     | 22.6           | 1.1x faster           |
+| seedrandom _@3.0.5_      | Alea              | 28.1           | 1.1x slower           |
+| seedrandom _@3.0.5_      | Xorshift128       | 28.8           | 1.2x slower           |
+| seedrandom _@3.0.5_      | Tyche-i           | 28.6           | 1.2x slower           |
+| seedrandom _@3.0.5_      | Xorwow            | 32.0           | 1.3x slower           |
+| seedrandom _@3.0.5_      | Xor4096           | 32.2           | 1.3x slower           |
+| seedrandom _@3.0.5_      | Xorshift7         | 33.5           | 1.4x slower           |
+| @faker-js/faker _@7.6.0_ | Mersenne Twister  | 109.1          | 4.5x slower           |
+| chance _@1.1.10_         | Mersenne Twister  | 142.9          | 5.8x slower           |
+
+**Uniform**
+
+| Library                | Algorithm         | Mean time (ms) | Compared to pure-rand |
+| ---------------------- | ----------------- | -------------- | --------------------- |
+| **pure-rand _@6.0.0_** | **Xoroshiro128+** | **53.5**       | **reference**         |
+| pure-rand _@6.0.0_     | Xorshift128+      | 52.2           | similar               |
+| pure-rand _@6.0.0_     | Mersenne Twister  | 61.6           | 1.2x slower           |
+| pure-rand _@6.0.0_     | Congruential‍     | 57.6           | 1.1x slower           |
+| random-js @2.1.0       | Mersenne Twister  | 119.6          | 2.2x slower           |
+
+> System details:
+>
+> - OS: Linux 5.15 Ubuntu 22.04.2 LTS 22.04.2 LTS (Jammy Jellyfish)
+> - CPU: (2) x64 Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+> - Memory: 5.88 GB / 6.78 GB
+> - Container: Yes
+> - Node: 16.19.1 - /opt/hostedtoolcache/node/16.19.1/x64/bin/node
+>
+> _Executed on default runners provided by GitHub Actions_
+
+---
+
+(1) — Not all as there are also [hardware-based random number generator](https://en.wikipedia.org/wiki/Hardware_random_number_generator).
+
+(2) — While most users don't really think of it, uniform distribution is key! Without it entries might be biased towards some values and make some others less probable. The naive `rand() % numValues` is a good example of biased version as if `rand()` is uniform in `0, 1, 2` and `numValues` is `2`, the probabilities are: `P(0) = 67%`, `P(1) = 33%` causing `1` to be less probable than `0`
