@@ -56,8 +56,13 @@
     "typescript": "^4.9.5"
   },
   "keywords": [
-    "pure random",
-    "random number generator"
+    "seed",
+    "random",
+    "prng",
+    "generator",
+    "pure",
+    "rand",
+    "mersenne"
   ],
   "funding": [
     {
