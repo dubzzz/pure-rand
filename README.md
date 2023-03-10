@@ -1,5 +1,5 @@
 <h1>
-  <img src="https://raw.githubusercontent.com/dubzzz/pure-rand/assets/logo.svg" alt="pure-rand logo" />
+  <img src="https://raw.githubusercontent.com/dubzzz/pure-rand/main/assets/logo.svg" alt="pure-rand logo" />
 </h1>
 
 Fast Pseudorandom number generators (aka PRNG) with purity in mind!
