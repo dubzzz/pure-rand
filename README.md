@@ -1,14 +1,20 @@
-# pure-rand
+<h1>
+  <img src="https://raw.githubusercontent.com/dubzzz/pure-rand/assets/logo.svg" alt="pure-rand logo" />
+</h1>
 
-#### Pure random number generator written in TypeScript
+Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 
 [![Build Status](https://github.com/dubzzz/pure-rand/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/dubzzz/pure-rand/actions)
-[![npm version](https://badge.fury.io/js/pure-rand.svg)](https://badge.fury.io/js/pure-rand)
-[![dependencies Status](https://david-dm.org/dubzzz/pure-rand/status.svg)](https://david-dm.org/dubzzz/pure-rand)
-[![devDependencies Status](https://david-dm.org/dubzzz/pure-rand/dev-status.svg)](https://david-dm.org/dubzzz/pure-rand?type=dev)
+[![NPM Version](https://badge.fury.io/js/pure-rand.svg)](https://badge.fury.io/js/pure-rand)
+[![Monthly Downloads](https://img.shields.io/npm/dm/pure-rand)](https://www.npmjs.com/package/pure-rand)
 
-[![codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/main/graph/badge.svg?token=KYN5IQCGE5)](https://codecov.io/gh/dubzzz/pure-rand)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7cb8cb395740446a3108/maintainability)](https://codeclimate.com/github/dubzzz/pure-rand/maintainability)
+[![Codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/main/graph/badge.svg)](https://codecov.io/gh/dubzzz/pure-rand)
+[![Package Quality](https://packagequality.com/shield/pure-rand.svg)](https://packagequality.com/#?package=pure-rand)
+[![Snyk Package Quality](https://snyk.io/advisor/npm-package/pure-rand/badge.svg)](https://snyk.io/advisor/npm-package/pure-rand)
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/dubzzz/pure-rand/labels/good%20first%20issue)
+[![License](https://img.shields.io/npm/l/pure-rand.svg)](https://github.com/dubzzz/pure-rand/blob/main/LICENSE)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/dubzzz/pure-rand.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20pure-rand%20by%20%40ndubien%20https%3A%2F%2Fgithub.com%2Fdubzzz%2Fpure-rand%20%F0%9F%91%8D)
 
 ## Getting started
 
