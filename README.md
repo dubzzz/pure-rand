@@ -35,9 +35,9 @@ import prand from 'pure-rand';
 
 const seed = 42;
 const rng = prand.xoroshiro128plus(seed);
-const firstDiceValue = unsafeUniformIntDistribution(1, 6, rng);  // value in {1..6}, here: 2
+const firstDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 2
 const secondDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 4
-const thirdDiceValue = unsafeUniformIntDistribution(1, 6, rng);  // value in {1..6}, here: 6
+const thirdDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 6
 ```
 
 **Pure usage**
@@ -49,9 +49,9 @@ import prand from 'pure-rand';
 
 const seed = 42;
 const rng1 = prand.xoroshiro128plus(seed);
-const [firstDiceValue, rng2] = prand.uniformIntDistribution(1, 6, rng1);  // value in {1..6}, here: 2
+const [firstDiceValue, rng2] = prand.uniformIntDistribution(1, 6, rng1); // value in {1..6}, here: 2
 const [secondDiceValue, rng3] = prand.uniformIntDistribution(1, 6, rng2); // value in {1..6}, here: 4
-const [thirdDiceValue, rng4] = prand.uniformIntDistribution(1, 6, rng3);  // value in {1..6}, here: 6
+const [thirdDiceValue, rng4] = prand.uniformIntDistribution(1, 6, rng3); // value in {1..6}, here: 6
 
 // You can call: prand.uniformIntDistribution(1, 6, rng1);
 // over and over it will always give you back the same value along with a new rng (always producing the same values too).
