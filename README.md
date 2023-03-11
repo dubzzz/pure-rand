@@ -35,9 +35,9 @@ import prand from 'pure-rand';
 
 const seed = 42;
 const rng = prand.xoroshiro128plus(seed);
-const firstDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 2
-const secondDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 4
-const thirdDiceValue = unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 6
+const firstDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 2
+const secondDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 4
+const thirdDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 6
 ```
 
 **Pure usage**
