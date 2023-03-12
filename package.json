@@ -62,7 +62,10 @@
     "generator",
     "pure",
     "rand",
-    "mersenne"
+    "mersenne",
+    "random number generator",
+    "fastest",
+    "fast"
   ],
   "funding": [
     {
