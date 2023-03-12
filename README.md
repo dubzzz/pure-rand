@@ -59,7 +59,7 @@ const [thirdDiceValue, rng4] = prand.uniformIntDistribution(1, 6, rng3); // valu
 
 **Independent simulations**
 
-In order to produce independent simulations it can be tempting to instanciate several PRNG based on totally different seeds. While it would produce distinct set of values, the best way to ensure fully unrelated sequences is rather to use jumps. Jump just consists into moving far away from the current position in the generator (eg.: jumping in Xoroshiro 128+ will move you 2<sup>64</sup> generations awayt from the current one on a generator having a sequence of 2<sup>128</sup> elements).
+In order to produce independent simulations it can be tempting to instanciate several PRNG based on totally different seeds. While it would produce distinct set of values, the best way to ensure fully unrelated sequences is rather to use jumps. Jump just consists into moving far away from the current position in the generator (eg.: jumping in Xoroshiro 128+ will move you 2<sup>64</sup> generations away from the current one on a generator having a sequence of 2<sup>128</sup> elements).
 
 ```javascript
 import prand from 'pure-rand';
@@ -76,7 +76,7 @@ const diceSim3Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation3); 
 
 **Non-uniform usage**
 
-While not recommended as non-uniform distribution implies that one or several values from the range will be more likely than others, it might be tempting for people wanting the maximal throughput.
+While not recommended as non-uniform distribution implies that one or several values from the range will be more likely than others, it might be tempting for people wanting to maximize the throughput.
 
 ```javascript
 import prand from 'pure-rand';
