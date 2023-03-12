@@ -1,5 +1,31 @@
 # CHANGELOG 6.X
 
+## 6.0.1
+
+### Fixes
+
+- [05421f2](https://github.com/dubzzz/pure-rand/commit/05421f2) 🚨 Reformat README.md (#563)
+- [ffacfbd](https://github.com/dubzzz/pure-rand/commit/ffacfbd) 📝 Give simple seed computation example (#562)
+- [e432d59](https://github.com/dubzzz/pure-rand/commit/e432d59) 📝 Add extra keywords (#561)
+- [f5b18d4](https://github.com/dubzzz/pure-rand/commit/f5b18d4) 🐛 Declare types first for package (#560)
+- [a5b30db](https://github.com/dubzzz/pure-rand/commit/a5b30db) 📝 Final clean-up of the README (#559)
+- [5254ee0](https://github.com/dubzzz/pure-rand/commit/5254ee0) 📝 Fix simple examples not fully working (#558)
+- [8daf460](https://github.com/dubzzz/pure-rand/commit/8daf460) 📝 Clarify the README (#556)
+- [a915b6a](https://github.com/dubzzz/pure-rand/commit/a915b6a) 📝 Fix url error in README for logo (#554)
+- [f94885c](https://github.com/dubzzz/pure-rand/commit/f94885c) 📝 Rework README header with logo (#553)
+- [5f7645e](https://github.com/dubzzz/pure-rand/commit/5f7645e) 📝 Typo in link to comparison SVG (#551)
+- [61726af](https://github.com/dubzzz/pure-rand/commit/61726af) 📝 Better keywords for NPM (#550)
+- [6001e5a](https://github.com/dubzzz/pure-rand/commit/6001e5a) 📝 Update performance section with recent stats (#549)
+- [556ec33](https://github.com/dubzzz/pure-rand/commit/556ec33) ⚗️ Rewrite not uniform of pure-rand (#547)
+- [b3dfea5](https://github.com/dubzzz/pure-rand/commit/b3dfea5) ⚗️ Add more libraries to the experiment (#546)
+- [ac8b85d](https://github.com/dubzzz/pure-rand/commit/ac8b85d) ⚗️ Add some more non-uniform versions (#543)
+- [44af2ad](https://github.com/dubzzz/pure-rand/commit/44af2ad) ⚗️ Add some more self comparisons (#542)
+- [6d3342d](https://github.com/dubzzz/pure-rand/commit/6d3342d) 📝 Add some more details on the algorithms in compare (#541)
+- [359e214](https://github.com/dubzzz/pure-rand/commit/359e214) 📝 Fix some typos in README (#540)
+- [28a7bfe](https://github.com/dubzzz/pure-rand/commit/28a7bfe) 📝 Document some performance stats (#539)
+- [81860b7](https://github.com/dubzzz/pure-rand/commit/81860b7) ⚗️ Measure performance against other libraries (#538)
+- [114c2c7](https://github.com/dubzzz/pure-rand/commit/114c2c7) 📝 Publish changelogs from 3.X to 6.X (#537)
+
 ## 6.0.0
 
 ### Breaking Changes
