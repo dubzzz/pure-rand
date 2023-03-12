@@ -57,37 +57,76 @@ const [thirdDiceValue, rng4] = prand.uniformIntDistribution(1, 6, rng3); // valu
 // over and over it will always give you back the same value along with a new rng (always producing the same values too).
 ```
 
+**Independent simulations**
+
+In order to produce independent simulations it can be tempting to instanciate several PRNG based on totally different seeds. While it would produce distinct set of values, the best way to ensure fully unrelated sequences is rather to use jumps. Jump just consists into moving far away from the current position in the generator (eg.: jumping in Xoroshiro 128+ will move you 2<sup>64</sup> generations away from the current one on a generator having a sequence of 2<sup>128</sup> elements).
+
+```javascript
+import prand from 'pure-rand';
+
+const seed = 42;
+const rngSimulation1 = prand.xoroshiro128plus(seed);
+const rngSimulation2 = rngSimulation1.jump(); // not in-place, creates a new instance
+const rngSimulation3 = rngSimulation2.jump(); // not in-place, creates a new instance
+
+const diceSim1Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation1); // value in {1..6}, here: 2
+const diceSim2Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation2); // value in {1..6}, here: 5
+const diceSim3Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation3); // value in {1..6}, here: 6
+```
+
+**Non-uniform usage**
+
+While not recommended as non-uniform distribution implies that one or several values from the range will be more likely than others, it might be tempting for people wanting to maximize the throughput.
+
+```javascript
+import prand from 'pure-rand';
+
+const seed = 42;
+const rng = prand.xoroshiro128plus(seed);
+const rand = (min, max) => {
+  const out = (rng.unsafeNext() >>> 0) / 0x100000000;
+  return min + Math.floor(out * (max - min + 1));
+};
+const firstDiceValue = rand(1, 6); // value in {1..6}, here: 6
+```
+
 ## Documentation
 
-### Random number generators
+### Pseudorandom number generators
 
-All the [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/) provided by `pure-rand` derive from the interface [RandomGenerator](https://github.com/dubzzz/pure-rand/blob/main/src/generator/RandomGenerator.ts) and are pure and seeded as described above.
+In computer science most random number generators<sup>(1)</sup> are [pseudorandom number generators](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) (abbreviated: PRNG). In other words, they are fully deterministic and given the original seed one can rebuild the whole sequence.
 
-The following generators are available:
+Each PRNG algorithm has to deal with tradeoffs in terms of randomness quality, speed, length of the sequence<sup>(2)</sup>... In other words, it's important to compare relative speed of libraries with that in mind. Indeed, a Mersenne Twister PRNG will not have the same strenghts and weaknesses as a Xoroshiro PRNG, so depending on what you need exactly you might prefer one PRNG over another even if it will be slower.
 
-- `prand.xorshift128plus(seed: number)`: Xorshift 128+ generator
-- `prand.xoroshiro128plus(seed: number)`: Xoroshiro 128+ generator
-- `prand.mersenne(seed: number)`: Mersenne Twister generator
-- `prand.congruential32(seed: number)`: Linear Congruential generator
+4 PRNGs come with pure-rand:
+
+- `congruential32`: Linear Congruential generator — \[[more](https://en.wikipedia.org/wiki/Linear_congruential_generator)\]
+- `mersenne`: Mersenne Twister generator — \[[more](https://en.wikipedia.org/wiki/Mersenne_Twister)\]
+- `xorshift128plus`: Xorshift 128+ generator — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
+- `xoroshiro128plus`: Xoroshiro 128+ generator — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
+
+Our recommendation is `xoroshiro128plus`. But if you want to use another one, you can replace it by any other PRNG provided by pure-rand in the examples above.
+
+### Distributions
+
+Once you are able to generate random values, next step is to scale them into the range you want. Indeed, you probably don't want a floating point value between 0 (included) and 1 (excluded) but rather an integer value between 1 and 6 if you emulate a dice or any other range based on your needs.
+
+At this point, simple way would be to do `min + floor(random() * (max - min + 1))` but actually it will not generate the values with equal probabilities even if you use the best PRNG in the world to back `random()`. In order to have equal probabilities you need to rely on uniform distributions<sup>(3)</sup> which comes built-in in some PNRG libraries.
+
+pure-rand provides 3 built-in functions for uniform distributions of values:
+
+- `uniformIntDistribution(min, max, rng)`
+- `uniformBigIntDistribution(min, max, rng)` - with `min` and `max` being `bigint`
+- `uniformArrayIntDistribution(min, max, rng)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
+
+And their unsafe equivalents to change the PRNG in-place.
+
+### Extra helpers
 
 Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
 
 - `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
 - `prand.skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
-
-### Distributions
-
-All the [Distribution](https://github.com/dubzzz/pure-rand/tree/main/src/distribution) take a `RandomGenerator` as input and produce a couple `(n: number, nextGenerator: RandomGenerator)`. A `Distribution` is defined as `type Distribution<T> = (rng: RandomGenerator) => [T, RandomGenerator];`.
-
-For the moment, available `Distribution` are:
-
-- `prand.uniformIntDistribution(from: number, to: number): Distribution<number>`
-- `prand.uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigint>`\*
-- `prand.uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt): Distribution<ArrayInt>`\*\*
-
-\*Requires your JavaScript interpreter to support bigint
-
-\*\*ArrayInt is an object having the structure `{sign, data}` with sign being either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
 
 ## Comparison
 
@@ -100,31 +139,6 @@ The chart has been split into three sections:
 - section 3: with uniform distribution of values (not supported by all libraries)
 
 <img src="https://raw.githubusercontent.com/dubzzz/pure-rand/main/perf/comparison.svg" alt="Comparison against other libraries" />
-
-### Key points
-
-Here are some key points to have in mind when comparing libraries dealing with random number generators.
-
-**Random vs Random**
-
-In computer science most random number generators<sup>(1)</sup> are [pseudorandom number generators](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) (abbreviated: PRNG). In other words, they are fully deterministic and given the original seed one can rebuild the whole sequence.
-
-Each PRNG algorithm had to deal with tradeoffs in terms of randomness quality, speed, length of the sequence... In other words, it's important to compare relative speed of libraries with that in mind. Indeed, a Mersenne Twister PRNG will not have the same strenghts and weaknesses as a Xoroshiro PRNG, so depending on what you need exactly you might prefer one PRNG over another even if it will be slower.
-
-4 PRNGs come with pure-rand:
-
-- `congruential32` — \[[more](https://en.wikipedia.org/wiki/Linear_congruential_generator)\]
-- `mersenne` — \[[more](https://en.wikipedia.org/wiki/Mersenne_Twister)\]
-- `xorshift128plus` — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
-- `xoroshiro128plus` — \[[more](https://en.wikipedia.org/wiki/Xorshift)\]
-
-But no cyprographic PRNG so far.
-
-**Uniform or not**
-
-Once you are able to generate random values, next step is to scale them into the range you want. Indeed, you probably don't want a floating point value between 0 (included) and 1 (excluded) but rather an integer value between 1 and 6 if you emulate a dice or any other range based on your needs.
-
-At this point, simple way would be to do `min + floor(random() * (max - min + 1))` but actually it will not generate the values with equal probabilities even if you use the best PRNG in the world to back `random()`. In order to have equal probabilities you need to rely on uniform distributions<sup>(2)</sup> which comes built-in in some PNRG libraries.
 
 ### Process
 
@@ -181,4 +195,6 @@ The recommended setup for pure-rand is to rely on our Xoroshiro128+. It provides
 
 (1) — Not all as there are also [hardware-based random number generator](https://en.wikipedia.org/wiki/Hardware_random_number_generator).
 
-(2) — While most users don't really think of it, uniform distribution is key! Without it entries might be biased towards some values and make some others less probable. The naive `rand() % numValues` is a good example of biased version as if `rand()` is uniform in `0, 1, 2` and `numValues` is `2`, the probabilities are: `P(0) = 67%`, `P(1) = 33%` causing `1` to be less probable than `0`
+(2) — How long it takes to reapeat itself?
+
+(3) — While most users don't really think of it, uniform distribution is key! Without it entries might be biased towards some values and make some others less probable. The naive `rand() % numValues` is a good example of biased version as if `rand()` is uniform in `0, 1, 2` and `numValues` is `2`, the probabilities are: `P(0) = 67%`, `P(1) = 33%` causing `1` to be less probable than `0`
