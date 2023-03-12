@@ -95,7 +95,7 @@ const firstDiceValue = rand(1, 6); // value in {1..6}, here: 6
 While not perfect, here is a rather simple way to generate a seed for your PNRG.
 
 ```javascript
-const seed = Date.now() ^ (Math.random() * 0x100000000)
+const seed = Date.now() ^ (Math.random() * 0x100000000);
 ```
 
 ## Documentation
