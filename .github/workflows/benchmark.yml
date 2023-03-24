@@ -24,10 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.5.0
-      - name: Using Node v16.x
+      - name: Using Node v18.x
         uses: actions/setup-node@v3.6.0
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build benchmark package
