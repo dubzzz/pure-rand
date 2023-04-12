@@ -19,7 +19,7 @@ jobs:
     name: 'Warm up Yarn cache'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node v18.x
         uses: actions/setup-node@v3
         id: yarn-cache
@@ -37,7 +37,7 @@ jobs:
     needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node v18.x
         uses: actions/setup-node@v3
         with:
@@ -55,7 +55,7 @@ jobs:
       matrix:
         node-version: [14.x, 16.x, 18.x]
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node v${{matrix.node-version}}
         uses: actions/setup-node@v3
         with:
@@ -78,7 +78,7 @@ jobs:
     name: 'Test package quality'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node v18.x
         uses: actions/setup-node@v3
         with:
@@ -91,7 +91,7 @@ jobs:
     needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node v18.x
         uses: actions/setup-node@v3
         with:
@@ -115,7 +115,7 @@ jobs:
     needs: production_package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.1
       - name: Using Node 0.12
         shell: bash -l {0}
         run: nvm install 0.12
