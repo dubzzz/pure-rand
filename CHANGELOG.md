@@ -1,5 +1,12 @@
 # CHANGELOG 6.X
 
+## 6.0.2
+
+### Fixes
+
+- [6d05e8f](https://github.com/dubzzz/pure-rand/commit/6d05e8f) 🔐 Sign published packages (#591)
+- [8b4e165](https://github.com/dubzzz/pure-rand/commit/8b4e165) 👷 Switch default to Node 18 in CI (#578)
+
 ## 6.0.1
 
 ### Fixes
