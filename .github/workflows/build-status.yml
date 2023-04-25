@@ -139,17 +139,22 @@ jobs:
       - test_package_quality
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Using Node v18.x
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
+      - name: Install latest npm version
+        run: npm install -g npm
       - name: Download production package
         uses: actions/download-artifact@v3
         with:
           name: bundle
       - name: Publish package
-        run: npm publish --access public package.tgz
+        run: npm publish --provenance --access public package.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
