@@ -18,7 +18,7 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "yarn@3.6.0",
+  "packageManager": "yarn@3.6.1",
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
