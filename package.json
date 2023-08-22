@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
-    "@types/jest": "^29.5.3",
+    "@types/jest": "^29.5.4",
     "@types/node": "^18.17.5",
     "cross-env": "^7.0.3",
     "fast-check": "^3.12.0",
