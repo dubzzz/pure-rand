@@ -910,10 +910,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.17.5":
-  version: 18.17.5
-  resolution: "@types/node@npm:18.17.5"
-  checksum: b8c658a99234b99425243c324b641ed7b9ceb6bee6b06421fdc9bb7c58f9a5552e353225cc549e6982462ac384abe1985022ed76e2e4728797f59b21f659ca2b
+"@types/node@npm:*, @types/node@npm:^18.17.9":
+  version: 18.17.9
+  resolution: "@types/node@npm:18.17.9"
+  checksum: 0d5835710e49a654a1ca34167e7cd504cc709c006006ebe9b23c360dac5637c6c4f1b4f3aff33df1b7f9debfb9ad8bd81da2fc4540970d2ad56eb479cda77613
   languageName: node
   linkType: hard
 
@@ -3086,7 +3086,7 @@ __metadata:
   resolution: "pure-rand@workspace:."
   dependencies:
     "@types/jest": ^29.5.4
-    "@types/node": ^18.17.5
+    "@types/node": ^18.17.9
     cross-env: ^7.0.3
     fast-check: ^3.12.0
     jest: ^29.6.2
