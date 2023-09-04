@@ -23,7 +23,7 @@ jobs:
     name: 'Benchmark'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
       - name: Using Node v18.x
         uses: actions/setup-node@v3.8.1
         with:
