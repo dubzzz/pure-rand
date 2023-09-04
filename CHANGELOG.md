@@ -1,5 +1,11 @@
 # CHANGELOG 6.X
 
+## 6.0.3
+
+### Fixes
+
+- [9aca792](https://github.com/dubzzz/pure-rand/commit/9aca792) 🏷️ Better declare ESM's types (#634)
+
 ## 6.0.2
 
 ### Fixes
