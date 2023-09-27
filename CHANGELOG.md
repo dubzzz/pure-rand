@@ -1,5 +1,11 @@
 # CHANGELOG 6.X
 
+## 6.0.4
+
+### Fixes
+
+- [716e073](https://github.com/dubzzz/pure-rand/commit/716e073) 🐛 Fix typings for node native esm (#649)
+
 ## 6.0.3
 
 ### Fixes
