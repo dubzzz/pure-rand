@@ -23,7 +23,7 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@3.7.0",
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
