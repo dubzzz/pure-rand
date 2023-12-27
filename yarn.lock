@@ -3122,7 +3122,7 @@ __metadata:
     fast-check: ^3.15.0
     jest: ^29.7.0
     prettier: 2.8.8
-    replace-in-file: ^7.0.2
+    replace-in-file: ^7.1.0
     source-map-support: ^0.5.21
     tinybench: ^2.5.1
     ts-jest: ^29.1.1
@@ -3149,16 +3149,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"replace-in-file@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "replace-in-file@npm:7.0.2"
+"replace-in-file@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "replace-in-file@npm:7.1.0"
   dependencies:
     chalk: ^4.1.2
     glob: ^8.1.0
     yargs: ^17.7.2
   bin:
     replace-in-file: bin/cli.js
-  checksum: f958cfc88e58036a227d7d45d08bdc3fa4e2487c4ff8033f614bb9221233d9746c7f303e26ed664754564a1f7ecd69c6b55183bcd962a04c3f2836b9078d7547
+  checksum: 2ed61bd0cf0752b18775b52342ad36f4ee6c806f7eca0b0d085c23bafe0cb4828e4ec8f59058bde6b67d2ed5ac51e1681284f586089b58b966e2489712830db0
   languageName: node
   linkType: hard
 
