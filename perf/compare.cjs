@@ -165,7 +165,7 @@ async function run() {
   console.table(
     bench.tasks.map(({ name, result }) => {
       return { Library: name, Mean: result?.mean };
-    })
+    }),
   );
 }
 run();

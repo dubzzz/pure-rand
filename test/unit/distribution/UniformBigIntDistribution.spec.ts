@@ -29,7 +29,7 @@ describe('uniformBigIntDistribution', () => {
           const maxV = a < b ? b : a;
           const [v, nrng] = uniformBigIntDistribution(minV, maxV)(mersenne(seed));
           return v >= minV && v <= maxV;
-        })
+        }),
       ));
     it('Should be equivalent to uniformIntDistribution integers within generator range', () =>
       fc.assert(
@@ -44,8 +44,8 @@ describe('uniformBigIntDistribution', () => {
             const [vBigInt, nrngBigInt] = uniformBigIntDistribution(BigInt(minV), BigInt(maxV))(mersenne(seed));
             assert.strictEqual(Number(vBigInt), vInt); // same values
             assert.strictEqual(nrngBigInt.next()[0], nrngInt.next()[0]); // same generator
-          }
-        )
+          },
+        ),
       ));
   }
 });

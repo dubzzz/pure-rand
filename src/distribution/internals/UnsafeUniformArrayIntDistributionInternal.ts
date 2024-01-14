@@ -14,7 +14,7 @@ import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistribu
 export function unsafeUniformArrayIntDistributionInternal(
   out: ArrayInt['data'],
   rangeSize: ArrayInt['data'],
-  rng: RandomGenerator
+  rng: RandomGenerator,
 ): ArrayInt['data'] {
   const rangeLength = rangeSize.length;
 

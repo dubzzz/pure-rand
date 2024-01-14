@@ -47,7 +47,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
         const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
         const vBigInt = arrayIntToBigInt(v);
         return vBigInt >= arrayIntToBigInt(from) && vBigInt <= arrayIntToBigInt(to);
-      })
+      }),
     ));
 
   it('Should always trim the zeros from the resulting value', () =>
@@ -61,7 +61,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
         } else if (v.data[0] === 0) {
           expect(v.sign).toBe(1); // zero has sign=1
         }
-      })
+      }),
     ));
 
   it('Should always produce valid ArrayInt', () =>
@@ -76,7 +76,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
           expect(d).toBeGreaterThanOrEqual(0);
           expect(d).toBeLessThanOrEqual(0xffffffff);
         }
-      })
+      }),
     ));
 });
 

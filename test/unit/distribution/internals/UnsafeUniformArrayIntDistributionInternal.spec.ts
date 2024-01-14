@@ -112,8 +112,8 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
                   rejectedValues: fc.array(fc.bigInt({ min: rangeSize })),
                   validValue: fc.bigInt({ min: BigInt(0), max: rangeSize - BigInt(1) }),
                 },
-                { withDeletedKeys: false }
-              )
+                { withDeletedKeys: false },
+              ),
             )
             .map(({ rangeSize, rejectedValues, validValue }) => {
               let rangeSizeArrayIntData = fromBigUintToArrayIntData(rangeSize);
@@ -154,14 +154,14 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
             const g = unsafeUniformArrayIntDistributionInternal(
               arrayIntBuffer(rangeSize.length).data,
               rangeSize,
-              initialRng
+              initialRng,
             );
 
             // Assert
             expect(g).toEqual(validValue);
-          }
+          },
         )
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 });
 

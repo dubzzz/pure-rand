@@ -45,7 +45,7 @@ describe('uniformArrayIntDistribution', () => {
           expect(arrayIntToBigInt({ sign: 1, data: rangeSize })).toBe(expectedRangeSize);
           expect(rng).toBe(expectedRng);
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 
   it('Should call unsafeUniformArrayIntDistributionInternal with non-empty range', () =>
@@ -62,7 +62,7 @@ describe('uniformArrayIntDistribution', () => {
           const { rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
           expect(rangeSize.length).toBeGreaterThanOrEqual(1);
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 
   it('Should call unsafeUniformArrayIntDistributionInternal with trimmed range (no trailing zeros)', () =>
@@ -79,7 +79,7 @@ describe('uniformArrayIntDistribution', () => {
           const { rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
           expect(rangeSize[0]).not.toBe(0); // rangeSize >= 1
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 
   it('Should call unsafeUniformArrayIntDistributionInternal with out having same length as range', () =>
@@ -96,7 +96,7 @@ describe('uniformArrayIntDistribution', () => {
           const { out, rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
           expect(out).toHaveLength(rangeSize.length);
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 });
 
@@ -127,13 +127,13 @@ function mockInternals(a: ArrayInt, b: ArrayInt) {
 function extractParams(
   unsafeUniformArrayIntDistributionInternal: ReturnType<
     typeof mockInternals
-  >['unsafeUniformArrayIntDistributionInternal']
+  >['unsafeUniformArrayIntDistributionInternal'],
 ) {
   expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
   expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
     expect.any(Array),
     expect.any(Array),
-    expect.anything()
+    expect.anything(),
   );
   const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
   const [out, rangeSize, rng] = params;

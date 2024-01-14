@@ -44,6 +44,6 @@ describe('uniformIntDistribution [non regression]', () => {
         const [from, to] = a < b ? [a, b] : [b, a];
         const [v, _nrng] = uniformIntDistribution(from, to)(mersenne(seed));
         return v >= from && v <= to;
-      })
+      }),
     ));
 });

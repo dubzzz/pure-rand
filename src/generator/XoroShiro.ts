@@ -4,7 +4,12 @@ import { RandomGenerator } from './RandomGenerator';
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
 class XoroShiro128Plus implements RandomGenerator {
-  constructor(private s01: number, private s00: number, private s11: number, private s10: number) {}
+  constructor(
+    private s01: number,
+    private s00: number,
+    private s11: number,
+    private s10: number,
+  ) {}
   clone(): XoroShiro128Plus {
     return new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
   }
