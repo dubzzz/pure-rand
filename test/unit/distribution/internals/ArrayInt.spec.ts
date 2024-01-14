@@ -21,7 +21,7 @@ describe('ArrayInt', () => {
         fc.property(arrayIntArb(), arrayIntArb(), (a, b) => {
           const r = addArrayIntToNew(a, b);
           expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + arrayIntToBigInt(b));
-        })
+        }),
       ));
   });
 
@@ -36,7 +36,7 @@ describe('ArrayInt', () => {
           const r = { sign: a.sign, data: a.data.slice(0) };
           addOneToPositiveArrayInt(r);
           expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + BigInt(1));
-        })
+        }),
       ));
   });
 
@@ -49,7 +49,7 @@ describe('ArrayInt', () => {
         fc.property(arrayIntArb(), arrayIntArb(), (a, b) => {
           const r = substractArrayIntToNew(a, b);
           expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) - arrayIntToBigInt(b));
-        })
+        }),
       ));
   });
 
@@ -63,7 +63,7 @@ describe('ArrayInt', () => {
       ${{ sign: -1, data: [0] }}
       ${{ sign: -1, data: [0, 0, 0, 0, 0] }}
     `('Should build a unique representation for zero (including $zero}', ({ zero }) =>
-      expect(trimArrayIntInplace(zero)).toEqual({ sign: 1, data: [0] })
+      expect(trimArrayIntInplace(zero)).toEqual({ sign: 1, data: [0] }),
     );
 
     // Skip next tests if BigInt is not supported
@@ -80,7 +80,7 @@ describe('ArrayInt', () => {
             expect(r.data[0]).not.toBe(0);
           }
           expect(arrayIntToBigInt(r)).toEqual(originalValue);
-        })
+        }),
       ));
   });
 
@@ -90,7 +90,7 @@ describe('ArrayInt', () => {
         fc.property(fc.integer({ min: 0, max: 0xffffffff }), (value) => {
           const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), value);
           expect(arrayInt).toEqual({ sign: 1, data: [0, value] });
-        })
+        }),
       ));
 
     it('Should be able to convert any 32 bits negative integer to an ArrayInt64', () =>
@@ -98,7 +98,7 @@ describe('ArrayInt', () => {
         fc.property(fc.integer({ min: 1, max: 0xffffffff }), (value) => {
           const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), -value);
           expect(arrayInt).toEqual({ sign: -1, data: [0, value] });
-        })
+        }),
       ));
 
     it('Should be able to convert any safe integer to an ArrayInt64', () =>
@@ -113,7 +113,7 @@ describe('ArrayInt', () => {
             arrayInt.data[0].toString(16).padStart(8, '0') + arrayInt.data[1].toString(16).padStart(8, '0');
           const valueHexaRepr = Math.abs(value).toString(16).padStart(16, '0');
           expect(arrayIntHexaRepr).toBe(valueHexaRepr);
-        })
+        }),
       ));
 
     it('Should be able to read back itself using toNumber', () =>
@@ -121,7 +121,7 @@ describe('ArrayInt', () => {
         fc.property(fc.maxSafeInteger(), (value) => {
           const arrayInt = fromNumberToArrayInt64(arrayInt64Buffer(), value);
           expect(toNumber(arrayInt)).toBe(value);
-        })
+        }),
       ));
   });
 
@@ -149,7 +149,7 @@ describe('ArrayInt', () => {
           const maxArrayInt = fromBigIntToArrayInt64(max);
           const resultArrayInt = fromBigIntToArrayInt64(result);
           expect(substractArrayInt64(arrayInt64Buffer(), maxArrayInt, minArrayInt)).toEqual(resultArrayInt);
-        })
+        }),
       ));
   });
 });

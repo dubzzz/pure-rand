@@ -41,7 +41,7 @@ describe('uniformIntDistribution', () => {
             expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledTimes(1);
             expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledWith(to - from + 1, clonedRng);
           })
-          .beforeEach(clean)
+          .beforeEach(clean),
       ));
 
     it('Should offset by "from" the value produced by unsafeUniformIntDistributionInternal', () =>
@@ -57,7 +57,7 @@ describe('uniformIntDistribution', () => {
             // Assert
             expect(v).toBe(outputs[0] + from);
           })
-          .beforeEach(clean)
+          .beforeEach(clean),
       ));
   });
 
@@ -78,13 +78,13 @@ describe('uniformIntDistribution', () => {
             expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
               expect.any(Array),
               expect.any(Array),
-              clonedRng
+              clonedRng,
             );
             const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
             const rangeSize = params[1];
             expect(rangeSize[0] * 2 ** 32 + rangeSize[1]).toBe(to - from + 1);
           })
-          .beforeEach(clean)
+          .beforeEach(clean),
       ));
 
     it('Should offset by "from" the value produced by unsafeUniformIntDistributionInternal', () =>
@@ -100,7 +100,7 @@ describe('uniformIntDistribution', () => {
             // Assert
             expect(v).toBe(outputs[0][0] * 2 ** 32 + outputs[0][1] + from);
           })
-          .beforeEach(clean)
+          .beforeEach(clean),
       ));
   });
 
@@ -117,7 +117,7 @@ describe('uniformIntDistribution', () => {
           // Assert
           expect(nrng).toBe(clonedRng);
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 
   it('Should be equivalent to call the 2-parameter and 3-parameter', () =>
@@ -134,7 +134,7 @@ describe('uniformIntDistribution', () => {
           // Assert
           expect(v1).toBe(v2);
         })
-        .beforeEach(clean)
+        .beforeEach(clean),
     ));
 });
 
@@ -148,7 +148,7 @@ const settingsArbitrary = fc
       rangeRandom: fc.nat().noShrink(),
       ctx: fc.context(),
     },
-    { withDeletedKeys: false }
+    { withDeletedKeys: false },
   )
   .filter(({ from, gap }) => Number.isSafeInteger(from + gap));
 
@@ -180,7 +180,7 @@ const settingsLargeArbitrary = fc
       rangeRandom: fc.nat().noShrink(),
       ctx: fc.context(),
     },
-    { withDeletedKeys: false }
+    { withDeletedKeys: false },
   )
   .filter(({ from, gap }) => Number.isSafeInteger(from + gap));
 

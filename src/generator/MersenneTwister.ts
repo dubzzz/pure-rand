@@ -40,7 +40,10 @@ class MersenneTwister implements RandomGenerator {
     return out;
   }
 
-  private constructor(private states: number[], private index: number) {
+  private constructor(
+    private states: number[],
+    private index: number,
+  ) {
     // states: between -0x80000000 and 0x7fffffff
   }
 

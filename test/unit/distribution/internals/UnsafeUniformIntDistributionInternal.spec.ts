@@ -29,7 +29,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
       fc.property(fc.nat(), fc.integer({ min: 1, max: MAX_RANGE }), (offset, rangeSize) => {
         const v = unsafeUniformIntDistributionInternal(rangeSize, new NatGenerator(offset));
         return v >= 0 && v < rangeSize;
-      })
+      }),
     ));
   it('Should be able to generate all values of the range [0 ; rangeSize[', () =>
     fc.assert(
@@ -43,7 +43,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
           }
         }
         return false; //twice the length should always be enough (+1 to avoid length = 0)
-      })
+      }),
     ));
   it('Should be evenly distributed over the range [0 ; rangeSize[', () =>
     // NOTE:
@@ -64,7 +64,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
             buckets[v] += 1;
           }
           return buckets.every((n) => n === num);
-        }
-      )
+        },
+      ),
     ));
 });

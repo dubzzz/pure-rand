@@ -52,11 +52,11 @@ function fillBench(bench) {
         { libName: 'test', generator: 'xoroshiro128plus' },
       ]
     : PROF_GEN === 'alone'
-    ? [{ libName: 'test', generator: 'xoroshiro128plus' }]
-    : [
-        { libName: 'reference', generator: PROF_GEN },
-        { libName: 'test', generator: PROF_GEN },
-      ];
+      ? [{ libName: 'test', generator: 'xoroshiro128plus' }]
+      : [
+          { libName: 'reference', generator: PROF_GEN },
+          { libName: 'test', generator: PROF_GEN },
+        ];
 
   const safeBench = (details, fn) => {
     const name = JSON.stringify(details);
@@ -203,7 +203,7 @@ async function runner() {
         P99: result?.p99,
         RME: result?.rme,
       };
-    })
+    }),
   );
 }
 runner();
