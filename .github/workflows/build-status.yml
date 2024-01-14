@@ -76,6 +76,7 @@ jobs:
           verbose: false # default: false
   test_package_quality:
     name: 'Test package quality'
+    needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
