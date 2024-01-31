@@ -910,12 +910,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.11.0":
-  version: 20.11.0
-  resolution: "@types/node@npm:20.11.0"
+"@types/node@npm:*, @types/node@npm:^20.11.14":
+  version: 20.11.14
+  resolution: "@types/node@npm:20.11.14"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 560aa850dfccb83326f9cba125459f6c3fb0c71ec78f22c61e4d248f1df78bd25fd6792cef573dfbdc49c882f8e38bb1a82ca87e0e28ff2513629c704c2b02af
+  checksum: 81a55ddf68811439e58bdc2e4b8e501c6c6ea3d5351aa6362a36f5829055f58195bc201b0992ffda306fcd848c84b1eca327befb71f12f24e0d356e997e17add
   languageName: node
   linkType: hard
 
@@ -3117,7 +3117,7 @@ __metadata:
   resolution: "pure-rand@workspace:."
   dependencies:
     "@types/jest": "npm:^29.5.11"
-    "@types/node": "npm:^20.11.0"
+    "@types/node": "npm:^20.11.14"
     cross-env: "npm:^7.0.3"
     fast-check: "npm:^3.15.0"
     jest: "npm:^29.7.0"
