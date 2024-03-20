@@ -43,8 +43,23 @@ class LinearCongruential32 implements RandomGenerator {
     const vnext = v3 + ((v2 + (v1 << 15)) << 15);
     return vnext | 0;
   }
+
+  getState(): readonly number[] {
+    return [this.seed];
+  }
 }
 
-export const congruential32 = function (seed: number): RandomGenerator {
-  return new LinearCongruential32(seed);
-};
+function fromState(state: readonly number[]): RandomGenerator {
+  const valid = state.length === 1;
+  if (!valid) {
+    throw new Error('The state must have been produced by a congruential32 RandomGenerator');
+  }
+  return new LinearCongruential32(state[0]);
+}
+
+export const congruential32 = Object.assign(
+  function (seed: number): RandomGenerator {
+    return new LinearCongruential32(seed);
+  },
+  { fromState },
+);

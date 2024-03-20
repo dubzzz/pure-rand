@@ -131,6 +131,8 @@ describe('congruential32', () => {
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(congruential32)));
+  it('Should return the same sequence when built from state', () =>
+    fc.assert(p.clonedFromStateSameSequences(congruential32)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential32)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(congruential32)));
   it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(congruential32)));
