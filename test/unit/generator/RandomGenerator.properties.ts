@@ -154,3 +154,17 @@ export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => Random
     expect(rngClonedReprAfter).not.toBe(rngReprAfter);
   });
 }
+
+export function clonedFromStateSameSequences(
+  rng_for: ((seed: number) => RandomGenerator) & { fromState: (state: readonly number[]) => RandomGenerator },
+) {
+  return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
+    const source = skipN(rng_for(seed), offset);
+    assert.notEqual(source.getState, undefined);
+    const state = source.getState!();
+    const clonedFromState = rng_for.fromState(state);
+    const seq1 = generateN(source, num)[0];
+    const seq2 = generateN(clonedFromState, num)[0];
+    assert.deepEqual(seq1, seq2);
+  });
+}
