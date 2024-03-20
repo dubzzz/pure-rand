@@ -136,6 +136,8 @@ describe('mersenne', () => {
     );
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
+  it('Should return the same sequence when built from state', () =>
+    fc.assert(p.clonedFromStateSameSequences(mersenne)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
   it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(mersenne)));
