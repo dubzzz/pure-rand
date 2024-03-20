@@ -73,8 +73,27 @@ class MersenneTwister implements RandomGenerator {
     }
     return y;
   }
+
+  getState(): readonly number[] {
+    return [this.index, ...this.states];
+  }
+
+  public static fromState(state: readonly number[]): MersenneTwister {
+    const valid = state.length === MersenneTwister.N + 1 && state[0] >= 0 && state[0] < MersenneTwister.N;
+    if (!valid) {
+      throw new Error('The state must have been produced by a mersenne RandomGenerator');
+    }
+    return new MersenneTwister(state.slice(1), state[0]);
+  }
 }
 
-export default function (seed: number): RandomGenerator {
-  return MersenneTwister.from(seed);
+function fromState(state: readonly number[]): RandomGenerator {
+  return MersenneTwister.fromState(state);
 }
+
+export default Object.assign(
+  function (seed: number): RandomGenerator {
+    return MersenneTwister.from(seed);
+  },
+  { fromState },
+);
