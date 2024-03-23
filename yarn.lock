@@ -1670,12 +1670,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^3.16.0":
-  version: 3.16.0
-  resolution: "fast-check@npm:3.16.0"
+"fast-check@npm:^3.17.0":
+  version: 3.17.0
+  resolution: "fast-check@npm:3.17.0"
   dependencies:
-    pure-rand: "npm:^6.0.0"
-  checksum: 10c0/8949f246e8a3f1f7e5f1f69e48e9086408f4f4b7ad3d23b2fdb3da8ab17a8d962926797f045a455d8ca5f5d925f0ebe1c762ba803e1ea53eba389373e1c3cfe8
+    pure-rand: "npm:^6.1.0"
+  checksum: 10c0/768f09ccf50dad846fdb96bbbcfd761750e451a9a8373d3fd09755912069bdac18222d5fd2e41e4cc52df13ea79805aea58d069a6b3e63c69d2aae1fd8e79459
   languageName: node
   linkType: hard
 
@@ -3105,10 +3105,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pure-rand@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "pure-rand@npm:6.0.0"
-  checksum: 10c0/7617efe9773890e05ccb826ecd030b7fb76d307177945e8a96ab7d42a58372fbbc410eedbb4a73ec95c90ead9051ad5e835588cb196d468faac46c6d94066d88
+"pure-rand@npm:^6.0.0, pure-rand@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "pure-rand@npm:6.1.0"
+  checksum: 10c0/1abe217897bf74dcb3a0c9aba3555fe975023147b48db540aa2faf507aee91c03bf54f6aef0eb2bf59cc259a16d06b28eca37f0dc426d94f4692aeff02fb0e65
   languageName: node
   linkType: hard
 
@@ -3119,7 +3119,7 @@ __metadata:
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.11.30"
     cross-env: "npm:^7.0.3"
-    fast-check: "npm:^3.16.0"
+    fast-check: "npm:^3.17.0"
     jest: "npm:^29.7.0"
     prettier: "npm:3.2.5"
     replace-in-file: "npm:^7.1.0"
