@@ -206,3 +206,46 @@ The recommended setup for pure-rand is to rely on our Xoroshiro128+. It provides
 (2) — How long it takes to reapeat itself?
 
 (3) — While most users don't really think of it, uniform distribution is key! Without it entries might be biased towards some values and make some others less probable. The naive `rand() % numValues` is a good example of biased version as if `rand()` is uniform in `0, 1, 2` and `numValues` is `2`, the probabilities are: `P(0) = 67%`, `P(1) = 33%` causing `1` to be less probable than `0`
+
+## Advanced patterns
+
+### Generate 32-bit floating point numbers
+
+The following snippet is responsible for generating 32-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
+
+```js
+import prand from 'pure-rand';
+
+function generateFloat32(rng) {
+  const g1 = prand.unsafeUniformIntDistribution(0, (1 << 24) - 1, rng);
+  const value = g1 / (1 << 24);
+  return value;
+}
+
+const seed = 42;
+const rng = prand.xoroshiro128plus(seed);
+
+const float32Bits1 = generateFloat32(rng);
+const float32Bits2 = generateFloat32(rng);
+```
+
+### Generate 64-bit floating point numbers
+
+The following snippet is responsible for generating 64-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
+
+```js
+import prand from 'pure-rand';
+
+function generateFloat64(rng) {
+  const g1 = prand.unsafeUniformIntDistribution(0, (1 << 26) - 1, rng);
+  const g2 = prand.unsafeUniformIntDistribution(0, (1 << 27) - 1, rng);
+  const value = (g1 * Math.pow(2, 27) + g2) * Math.pow(2, -53);
+  return value;
+}
+
+const seed = 42;
+const rng = prand.xoroshiro128plus(seed);
+
+const float64Bits1 = generateFloat64(rng);
+const float64Bits2 = generateFloat64(rng);
+```
