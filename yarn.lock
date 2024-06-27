@@ -3124,7 +3124,7 @@ __metadata:
     prettier: "npm:3.3.2"
     replace-in-file: "npm:^7.2.0"
     source-map-support: "npm:^0.5.21"
-    tinybench: "npm:^2.7.0"
+    tinybench: "npm:^2.8.0"
     ts-jest: "npm:^29.1.5"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.2"
@@ -3520,10 +3520,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinybench@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "tinybench@npm:2.7.0"
-  checksum: 10c0/1963312e9ff7b8d79a89f3d62241a7f774cb752a08fe611f4860d15fb47d20b43ae6c2876c8bdb4e18e2a70116e7c1e13db3cf4cf5759e145c78f0d50d59f976
+"tinybench@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "tinybench@npm:2.8.0"
+  checksum: 10c0/5a9a642351fa3e4955e0cbf38f5674be5f3ba6730fd872fd23a5c953ad6c914234d5aba6ea41ef88820180a81829ceece5bd8d3967c490c5171bca1141c2f24d
   languageName: node
   linkType: hard
 
@@ -3650,11 +3650,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.5.2#optional!builtin<compat/typescript>":
   version: 5.5.2
-  resolution: "typescript@patch:typescript@npm%3A5.5.2#optional!builtin<compat/typescript>::version=5.5.2&hash=5adc0c"
+  resolution: "typescript@patch:typescript@npm%3A5.5.2#optional!builtin<compat/typescript>::version=5.5.2&hash=379a07"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/6721ac8933a70c252d7b640b345792e103d881811ff660355617c1836526dbb71c2044e2e77a8823fb3570b469f33276875a4cab6d3c4de4ae7d7ee1c3074ae4
+  checksum: 10c0/a7b7ede75dc7fc32a76d0d0af6b91f5fbd8620890d84c906f663d8783bf3de6d7bd50f0430b8bb55eac88a38934af847ff709e7156e5138b95ae94cbd5f73e5b
   languageName: node
   linkType: hard
 
