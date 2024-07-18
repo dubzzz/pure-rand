@@ -11,6 +11,7 @@ Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 [![Codecov](https://codecov.io/gh/dubzzz/pure-rand/branch/main/graph/badge.svg)](https://codecov.io/gh/dubzzz/pure-rand)
 [![Package Quality](https://packagequality.com/shield/pure-rand.svg)](https://packagequality.com/#?package=pure-rand)
 [![Snyk Package Quality](https://snyk.io/advisor/npm-package/pure-rand/badge.svg)](https://snyk.io/advisor/npm-package/pure-rand)
+[![Tested with fast-check](https://img.shields.io/badge/tested%20with-fast%E2%80%91check%20%F0%9F%90%92-%23282ea9?style=flat&logoSize=auto&labelColor=%231b1b1d)](https://fast-check.dev/)
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/dubzzz/pure-rand/labels/good%20first%20issue)
 [![License](https://img.shields.io/npm/l/pure-rand.svg)](https://github.com/dubzzz/pure-rand/blob/main/LICENSE)
