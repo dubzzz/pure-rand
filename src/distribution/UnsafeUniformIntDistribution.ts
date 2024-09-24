@@ -1,7 +1,7 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
 import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformIntDistributionInternal';
-import type { ArrayInt64 } from './internals/ArrayInt';
-import { fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
+import type { ArrayInt64 } from './internals/ArrayInt64';
+import { fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt64';
 import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
 
 const safeNumberMaxSafeInteger = Number.MAX_SAFE_INTEGER;
