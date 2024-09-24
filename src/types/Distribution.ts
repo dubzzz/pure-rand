@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../generator/RandomGenerator';
+import { RandomGenerator } from './RandomGenerator';
 
 /**
  * Generate random value based on a given RandomGenerator.

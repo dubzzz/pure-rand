@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../generator/RandomGenerator';
+import { RandomGenerator } from '../types/RandomGenerator';
 
 // We are capturing the reference to BigInt so that it cannot be altered
 // by any external code after that point.

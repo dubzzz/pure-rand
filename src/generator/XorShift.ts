@@ -1,4 +1,4 @@
-import { RandomGenerator } from './RandomGenerator';
+import { RandomGenerator } from '../types/RandomGenerator';
 
 // XorShift128+ with a=23, b=18, c=5
 // - http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf
