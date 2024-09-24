@@ -19,6 +19,9 @@ class NatGenerator implements RandomGenerator {
     this.current = (this.current + 1) | 0;
     return previousCurrent;
   }
+  getState(): readonly number[] {
+    throw new Error('Method not implemented.');
+  }
 }
 
 const MAX_RANGE: number = 1000;
