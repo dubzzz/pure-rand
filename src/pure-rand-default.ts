@@ -1,6 +1,6 @@
 import type { RandomGenerator } from './types/RandomGenerator';
 import { congruential32 } from './generator/LinearCongruential';
-import mersenne from './generator/MersenneTwister';
+import { mersenne } from './generator/MersenneTwister';
 import { xorshift128plus } from './generator/XorShift';
 import { xoroshiro128plus } from './generator/XoroShiro';
 

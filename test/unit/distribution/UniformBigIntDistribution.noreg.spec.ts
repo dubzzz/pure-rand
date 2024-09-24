@@ -1,5 +1,5 @@
 import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigIntDistribution';
-import mersenne from '../../../src/generator/MersenneTwister';
+import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformBigIntDistribution [non regression]', () => {

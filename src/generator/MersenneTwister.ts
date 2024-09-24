@@ -91,7 +91,7 @@ function fromState(state: readonly number[]): RandomGenerator {
   return MersenneTwister.fromState(state);
 }
 
-export default Object.assign(
+export const mersenne = Object.assign(
   function (seed: number): RandomGenerator {
     return MersenneTwister.from(seed);
   },
