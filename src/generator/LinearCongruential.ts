@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 
 // Inspired from java.util.Random implementation
 // http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/util/Random.java#Random.next%28int%29

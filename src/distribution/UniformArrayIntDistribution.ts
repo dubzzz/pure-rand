@@ -1,6 +1,6 @@
-import { Distribution } from '../types/Distribution';
-import { RandomGenerator } from '../types/RandomGenerator';
-import { ArrayInt } from './internals/ArrayInt';
+import type { Distribution } from '../types/Distribution';
+import type { RandomGenerator } from '../types/RandomGenerator';
+import type { ArrayInt } from './internals/ArrayInt';
 import { unsafeUniformArrayIntDistribution } from './UnsafeUniformArrayIntDistribution';
 
 /**

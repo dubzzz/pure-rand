@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
