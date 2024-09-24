@@ -1,7 +1,7 @@
 import * as fc from 'fast-check';
 
 import { unsafeUniformIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
-import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../../src/types/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
   constructor(private current: number) {

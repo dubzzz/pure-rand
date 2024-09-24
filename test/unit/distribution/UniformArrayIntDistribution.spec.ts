@@ -2,7 +2,7 @@ import * as fc from 'fast-check';
 import { mocked } from '../../__test-helpers__/mocked';
 
 import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
-import { RandomGenerator } from '../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 import * as UnsafeUniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
