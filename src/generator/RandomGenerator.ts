@@ -16,7 +16,7 @@ export interface RandomGenerator {
   /** Jump current generator */
   unsafeJump?(): void;
   /** Access to the internal state of a RandomGenerator in a read-only fashion */
-  getState?(): readonly number[];
+  getState(): readonly number[];
 }
 
 export function unsafeGenerateN(rng: RandomGenerator, num: number): number[] {
