@@ -17,6 +17,36 @@
       }
     }
   },
+  "./distribution/*": {
+    "require": {
+      "types": "./lib/types/distribution/*.d.ts",
+      "default": "./lib/distribution/*.js"
+    },
+    "import": {
+      "types": "./lib/esm/types/distribution/*.d.ts",
+      "default": "./lib/esm/distribution/*.js"
+    }
+  },
+  "./generator/*": {
+    "require": {
+      "types": "./lib/types/generator/*.d.ts",
+      "default": "./lib/generator/*.js"
+    },
+    "import": {
+      "types": "./lib/esm/types/generator/*.d.ts",
+      "default": "./lib/esm/generator/*.js"
+    }
+  },
+  "./types/*": {
+    "require": {
+      "types": "./lib/types/types/*.d.ts",
+      "default": "./lib/types/*.js"
+    },
+    "import": {
+      "types": "./lib/esm/types/types/*.d.ts",
+      "default": "./lib/esm/types/*.js"
+    }
+  },
   "module": "lib/esm/pure-rand.js",
   "types": "lib/types/pure-rand.d.ts",
   "files": [
