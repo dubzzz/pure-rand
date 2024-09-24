@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
-import mersenne from '../../../src/generator/MersenneTwister';
+import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformIntDistribution [non regression]', () => {
