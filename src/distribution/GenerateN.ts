@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 import { unsafeGenerateN } from './UnsafeGenerateN';
 
 export function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {

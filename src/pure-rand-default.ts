@@ -1,10 +1,10 @@
-import { RandomGenerator } from './types/RandomGenerator';
+import type { RandomGenerator } from './types/RandomGenerator';
 import { congruential32 } from './generator/LinearCongruential';
 import mersenne from './generator/MersenneTwister';
 import { xorshift128plus } from './generator/XorShift';
 import { xoroshiro128plus } from './generator/XoroShiro';
 
-import { Distribution } from './types/Distribution';
+import type { Distribution } from './types/Distribution';
 import { uniformArrayIntDistribution } from './distribution/UniformArrayIntDistribution';
 import { uniformBigIntDistribution } from './distribution/UniformBigIntDistribution';
 import { uniformIntDistribution } from './distribution/UniformIntDistribution';

@@ -1,8 +1,8 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
+import type { ArrayInt } from './internals/ArrayInt';
 import {
   addArrayIntToNew,
   addOneToPositiveArrayInt,
-  ArrayInt,
   substractArrayIntToNew,
   trimArrayIntInplace,
 } from './internals/ArrayInt';

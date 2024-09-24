@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 
 class MersenneTwister implements RandomGenerator {
   static readonly N = 624;
