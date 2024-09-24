@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../../generator/RandomGenerator';
+import { RandomGenerator } from '../../types/RandomGenerator';
 
 /**
  * Uniformly generate number in range [0 ; rangeSize[

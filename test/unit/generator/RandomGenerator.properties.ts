@@ -1,7 +1,10 @@
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { RandomGenerator, skipN, generateN, unsafeSkipN } from '../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import { skipN } from '../../../src/distribution/SkipN';
+import { generateN } from '../../../src/distribution/GenerateN';
+import { unsafeSkipN } from '../../../src/distribution/UnsafeSkipN';
 
 const MAX_SIZE: number = 2048;
 

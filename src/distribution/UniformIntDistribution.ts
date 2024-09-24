@@ -1,5 +1,5 @@
-import { Distribution } from './Distribution';
-import { RandomGenerator } from '../generator/RandomGenerator';
+import { Distribution } from '../types/Distribution';
+import { RandomGenerator } from '../types/RandomGenerator';
 import { unsafeUniformIntDistribution } from './UnsafeUniformIntDistribution';
 
 /**

@@ -3,7 +3,7 @@ import fc from 'fast-check';
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
 import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
 import mersenne from '../../../src/generator/MersenneTwister';
-import { RandomGenerator } from '../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformArrayIntDistribution [non regression]', () => {
   it.each`

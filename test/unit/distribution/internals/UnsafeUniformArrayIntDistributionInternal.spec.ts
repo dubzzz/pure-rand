@@ -3,7 +3,7 @@ import { mocked } from '../../../__test-helpers__/mocked';
 
 import { unsafeUniformArrayIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
-import { RandomGenerator } from '../../../../src/generator/RandomGenerator';
+import { RandomGenerator } from '../../../../src/types/RandomGenerator';
 
 import * as UnsafeUniformIntDistributionInternalMock from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
 jest.mock('../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal');

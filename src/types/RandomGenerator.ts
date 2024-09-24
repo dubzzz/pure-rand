@@ -18,29 +18,3 @@ export interface RandomGenerator {
   /** Access to the internal state of a RandomGenerator in a read-only fashion */
   getState(): readonly number[];
 }
-
-export function unsafeGenerateN(rng: RandomGenerator, num: number): number[] {
-  const out: number[] = [];
-  for (let idx = 0; idx != num; ++idx) {
-    out.push(rng.unsafeNext());
-  }
-  return out;
-}
-
-export function generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator] {
-  const nextRng = rng.clone();
-  const out = unsafeGenerateN(nextRng, num);
-  return [out, nextRng];
-}
-
-export function unsafeSkipN(rng: RandomGenerator, num: number): void {
-  for (let idx = 0; idx != num; ++idx) {
-    rng.unsafeNext();
-  }
-}
-
-export function skipN(rng: RandomGenerator, num: number): RandomGenerator {
-  const nextRng = rng.clone();
-  unsafeSkipN(nextRng, num);
-  return nextRng;
-}

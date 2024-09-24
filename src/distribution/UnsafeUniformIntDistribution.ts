@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../generator/RandomGenerator';
+import { RandomGenerator } from '../types/RandomGenerator';
 import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformIntDistributionInternal';
 import { ArrayInt64, fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt';
 import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
