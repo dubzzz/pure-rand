@@ -3,6 +3,9 @@ import type { RandomGenerator } from '../types/RandomGenerator';
 // We are capturing the reference to BigInt so that it cannot be altered
 // by any external code after that point.
 const SBigInt: typeof BigInt = typeof BigInt !== 'undefined' ? BigInt : undefined!;
+const One: bigint = typeof BigInt !== 'undefined' ? BigInt(1) : undefined!;
+const ThirtyTwo: bigint = typeof BigInt !== 'undefined' ? BigInt(32) : undefined!;
+const NumValues: bigint = typeof BigInt !== 'undefined' ? BigInt(0x100000000) : undefined!;
 
 /**
  * Uniformly generate random bigint values between `from` (included) and `to` (included)
@@ -13,31 +16,38 @@ const SBigInt: typeof BigInt = typeof BigInt !== 'undefined' ? BigInt : undefine
  *
  * @public
  */
-export function unsafeUniformBigIntDistribution(from: bigint, to: bigint, rng: RandomGenerator): bigint {
-  const diff = to - from + SBigInt(1);
-  const MinRng = SBigInt(-0x80000000);
-  const NumValues = SBigInt(0x100000000);
+export function option9(from: bigint, to: bigint, rng: RandomGenerator): bigint {
+  const diff = to - from + One;
 
   // Number of iterations required to have enough random
   // to build uniform entries in the asked range
   let FinalNumValues = NumValues;
   let NumIterations = 1; // NumValues being large enough no need for bigint on NumIterations
   while (FinalNumValues < diff) {
-    FinalNumValues *= NumValues;
+    FinalNumValues <<= ThirtyTwo; // equivalent to: *=NumValues
     ++NumIterations;
   }
 
-  const MaxAcceptedRandom = FinalNumValues - (FinalNumValues % diff);
-  while (true) {
-    // Aggregate mutiple calls to next() into a single random value
-    let value = SBigInt(0);
-    for (let num = 0; num !== NumIterations; ++num) {
-      const out = rng.unsafeNext();
-      value = NumValues * value + (SBigInt(out) - MinRng);
-    }
-    if (value < MaxAcceptedRandom) {
-      const inDiff = value % diff;
-      return inDiff + from;
-    }
+  let value = generateNext(NumIterations, rng);
+  if (value < diff) {
+    return value + from;
   }
+  if (value + diff < FinalNumValues) {
+    return (value % diff) + from;
+  }
+  const MaxAcceptedRandom = FinalNumValues - (FinalNumValues % diff);
+  while (value >= MaxAcceptedRandom) {
+    value = generateNext(NumIterations, rng);
+  }
+  return (value % diff) + from;
+}
+
+function generateNext(NumIterations: number, rng: RandomGenerator): bigint {
+  // Aggregate mutiple calls to next() into a single random value
+  let value = SBigInt(rng.unsafeNext() + 0x80000000);
+  for (let num = 1; num < NumIterations; ++num) {
+    const out = rng.unsafeNext();
+    value = (value << ThirtyTwo) + SBigInt(out + 0x80000000); // <<ThirtyTwo is equivalent to *NumValues
+  }
+  return value;
 }
