@@ -1,11 +1,10 @@
-// eslint-disable-next-line
-const { execSync } = require('child_process');
-// eslint-disable-next-line
-const fs = require('fs');
-// eslint-disable-next-line
-const path = require('path');
-// eslint-disable-next-line
-const replace = require('replace-in-file');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { replaceInFileSync } from 'replace-in-file';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Append *.js file extension on all local imports
 
@@ -15,7 +14,7 @@ const options = {
   to: ["from '.$1.js'", 'from ".$1.js"'],
 };
 
-const results = replace.sync(options);
+const results = replaceInFileSync(options);
 for (const { file, hasChanged } of results) {
   if (hasChanged) {
     // eslint-disable-next-line
@@ -38,7 +37,7 @@ fs.readFile(path.join(__dirname, '../package.json'), (err, data) => {
 
   const packageVersion = JSON.parse(data.toString()).version;
 
-  const commonJsReplacement = replace.sync({
+  const commonJsReplacement = replaceInFileSync({
     files: 'lib/pure-rand-default.js',
     from: [/__PACKAGE_TYPE__/g, /__PACKAGE_VERSION__/g, /__COMMIT_HASH__/g],
     to: ['commonjs', packageVersion, commitHash],
@@ -48,7 +47,7 @@ fs.readFile(path.join(__dirname, '../package.json'), (err, data) => {
     console.info(`Package details added onto commonjs version`);
   }
 
-  const moduleReplacement = replace.sync({
+  const moduleReplacement = replaceInFileSync({
     files: 'lib/esm/pure-rand-default.js',
     from: [/__PACKAGE_TYPE__/g, /__PACKAGE_VERSION__/g, /__COMMIT_HASH__/g],
     to: ['module', packageVersion, commitHash],

@@ -59,7 +59,7 @@
     "format": "prettier --write .",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && tsc -p ./tsconfig.declaration.json --outDir lib/esm/types && cp package.esm-template.json lib/esm/package.json",
-    "build:prod": "yarn build && yarn build:esm && node postbuild/main.cjs",
+    "build:prod": "yarn build && yarn build:esm && node postbuild/main.mjs",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true yarn build:prod",
     "test": "jest --config jest.config.js --coverage",
     "build:bench:old": "tsc --outDir lib-reference/",
