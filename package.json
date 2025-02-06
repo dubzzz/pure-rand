@@ -85,7 +85,7 @@
     "prettier": "3.4.2",
     "replace-in-file": "^7.2.0",
     "source-map-support": "^0.5.21",
-    "tinybench": "^2.9.0",
+    "tinybench": "^3.1.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
