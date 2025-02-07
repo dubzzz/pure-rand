@@ -1,5 +1,11 @@
 # CHANGELOG 7.X
 
+## 7.0.1
+
+### Fixes
+
+- [c24bc93](https://github.com/dubzzz/pure-rand/commit/c24bc93) 🐛 Properly define exports in package.json (#758)
+
 ## 7.0.0
 
 ### Breaking Changes
