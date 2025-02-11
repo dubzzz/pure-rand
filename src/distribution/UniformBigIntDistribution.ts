@@ -22,7 +22,7 @@ function uniformBigIntDistribution(from: bigint, to: bigint): Distribution<bigin
  */
 function uniformBigIntDistribution(from: bigint, to: bigint, rng: RandomGenerator): [bigint, RandomGenerator];
 function uniformBigIntDistribution(from: bigint, to: bigint, rng?: RandomGenerator) {
-  if (rng != null) {
+  if (rng !== undefined) {
     const nextRng = rng.clone();
     return [unsafeUniformBigIntDistribution(from, to, nextRng), nextRng];
   }
