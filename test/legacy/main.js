@@ -12,7 +12,7 @@ for (var idx = 0; idx !== 1000; ++idx) gMersenne = gMersenne.next()[1]; // 1k lo
 var gc = prand.congruential32(seed);
 gc = gc.next()[1];
 gc = gc.next()[1];
-gc = gc.jump();
+// gc = gc.jump(); // not implemented
 
 // xorshift128plus
 
