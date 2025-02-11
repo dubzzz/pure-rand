@@ -23,7 +23,7 @@ function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt): Distribution
  */
 function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): [ArrayInt, RandomGenerator];
 function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng?: RandomGenerator) {
-  if (rng != null) {
+  if (rng !== undefined) {
     const nextRng = rng.clone();
     return [unsafeUniformArrayIntDistribution(from, to, nextRng), nextRng];
   }
