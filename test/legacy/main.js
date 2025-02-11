@@ -12,6 +12,18 @@ var gc = prand.congruential32(seed);
 gc = gc.next()[1];
 gc = gc.next()[1];
 
+// xorshift128plus
+
+var gXor = prand.xorshift128plus(seed);
+gXor = gXor.next()[1];
+gXor = gXor.next()[1];
+
+// xoroshiro128plus
+
+var gXoro = prand.xoroshiro128plus(seed);
+gXoro = gXoro.next()[1];
+gXoro = gXoro.next()[1];
+
 // uniform distribution
 
 gc = prand.uniformIntDistribution(0, 9)(gc)[1];
