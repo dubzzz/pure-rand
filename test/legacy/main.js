@@ -17,4 +17,8 @@ gc = gc.next()[1];
 gc = prand.uniformIntDistribution(0, 9)(gc)[1];
 gc = prand.uniformIntDistribution(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)(gc)[1];
 
-prand.uniformIntDistribution(0, 9, gc);
+// uniform distribution via array int
+
+var from = { sign: -1, data: [5, 21] };
+var to = { sign: 1, data: [999, 999] };
+gc = prand.uniformArrayIntDistribution(from, to)(gc)[1];
