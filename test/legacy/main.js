@@ -5,24 +5,28 @@ var prand = require('../../lib/pure-rand');
 var seed = 42;
 var gMersenne = prand.mersenne(seed);
 for (var idx = 0; idx !== 1000; ++idx) gMersenne = gMersenne.next()[1]; // 1k loops to force a twist call
+gMersenne = gMersenne.jump();
 
 // congruential32
 
 var gc = prand.congruential32(seed);
 gc = gc.next()[1];
 gc = gc.next()[1];
+gc = gc.jump();
 
 // xorshift128plus
 
 var gXor = prand.xorshift128plus(seed);
 gXor = gXor.next()[1];
 gXor = gXor.next()[1];
+gXor = gXor.jump();
 
 // xoroshiro128plus
 
 var gXoro = prand.xoroshiro128plus(seed);
 gXoro = gXoro.next()[1];
 gXoro = gXoro.next()[1];
+gXoro = gXoro.jump();
 
 // uniform distribution
 
