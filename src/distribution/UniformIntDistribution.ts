@@ -22,7 +22,7 @@ function uniformIntDistribution(from: number, to: number): Distribution<number>;
  */
 function uniformIntDistribution(from: number, to: number, rng: RandomGenerator): [number, RandomGenerator];
 function uniformIntDistribution(from: number, to: number, rng?: RandomGenerator) {
-  if (rng != null) {
+  if (rng !== undefined) {
     const nextRng = rng.clone();
     return [unsafeUniformIntDistribution(from, to, nextRng), nextRng];
   }
