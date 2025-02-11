@@ -5,7 +5,7 @@ var prand = require('../../lib/pure-rand');
 var seed = 42;
 var gMersenne = prand.mersenne(seed);
 for (var idx = 0; idx !== 1000; ++idx) gMersenne = gMersenne.next()[1]; // 1k loops to force a twist call
-gMersenne = gMersenne.jump();
+// gMersenne = gMersenne.jump(); // not implemented
 
 // congruential32
 
