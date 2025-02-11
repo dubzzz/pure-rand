@@ -11,7 +11,7 @@
     "downlevelIteration": true,
     "moduleResolution": "node",
     "module": "commonjs",
-    "target": "es3",
+    "target": "es5",
     "ignoreDeprecations": "5.0",
     "lib": ["es6", "esnext.bigint"],
     "outDir": "lib/"
