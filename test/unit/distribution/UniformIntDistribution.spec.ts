@@ -141,15 +141,12 @@ describe('uniformIntDistribution', () => {
 // Helpers
 
 const settingsArbitrary = fc
-  .record(
-    {
-      from: fc.maxSafeInteger(),
-      gap: fc.integer({ min: 0, max: 0xffffffff }),
-      rangeRandom: fc.noShrink(fc.nat()),
-      ctx: fc.context(),
-    },
-    { withDeletedKeys: false },
-  )
+  .record({
+    from: fc.maxSafeInteger(),
+    gap: fc.integer({ min: 0, max: 0xffffffff }),
+    rangeRandom: fc.noShrink(fc.nat()),
+    ctx: fc.context(),
+  })
   .filter(({ from, gap }) => Number.isSafeInteger(from + gap));
 
 type SettingsType = typeof settingsArbitrary extends fc.Arbitrary<infer U> ? U : never;
@@ -173,15 +170,12 @@ function mockInternals(settings: SettingsType) {
 }
 
 const settingsLargeArbitrary = fc
-  .record(
-    {
-      from: fc.maxSafeInteger(),
-      gap: fc.integer({ min: 0x100000000, max: Number.MAX_SAFE_INTEGER }),
-      rangeRandom: fc.noShrink(fc.nat()),
-      ctx: fc.context(),
-    },
-    { withDeletedKeys: false },
-  )
+  .record({
+    from: fc.maxSafeInteger(),
+    gap: fc.integer({ min: 0x100000000, max: Number.MAX_SAFE_INTEGER }),
+    rangeRandom: fc.noShrink(fc.nat()),
+    ctx: fc.context(),
+  })
   .filter(({ from, gap }) => Number.isSafeInteger(from + gap));
 
 type SettingsLargeType = typeof settingsLargeArbitrary extends fc.Arbitrary<infer U> ? U : never;
