@@ -6,11 +6,7 @@
   "packageRules": [
     {
       "matchFileNames": ["**/package.json"],
-      "matchDepTypes": [
-        "dependencies",
-        "peerDependencies",
-        "optionalDependencies"
-      ],
+      "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
       "rangeStrategy": "update-lockfile"
     },
     {
