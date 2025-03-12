@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Using Node v18.x
+      - name: Using Node v22.x
         uses: actions/setup-node@v4
         id: yarn-cache
         with:
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Using Node v18.x
+      - name: Using Node v22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Using Node v18.x
+      - name: Using Node v22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Using Node v18.x
+      - name: Using Node v22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
@@ -144,7 +144,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - name: Using Node v18.x
+      - name: Using Node v22.x
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
