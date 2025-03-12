@@ -106,14 +106,11 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
           fc
             .bigInt({ min: BigInt(1) })
             .chain((rangeSize) =>
-              fc.record(
-                {
-                  rangeSize: fc.constant(rangeSize),
-                  rejectedValues: fc.array(fc.bigInt({ min: rangeSize })),
-                  validValue: fc.bigInt({ min: BigInt(0), max: rangeSize - BigInt(1) }),
-                },
-                { withDeletedKeys: false },
-              ),
+              fc.record({
+                rangeSize: fc.constant(rangeSize),
+                rejectedValues: fc.array(fc.bigInt({ min: rangeSize })),
+                validValue: fc.bigInt({ min: BigInt(0), max: rangeSize - BigInt(1) }),
+              }),
             )
             .map(({ rangeSize, rejectedValues, validValue }) => {
               let rangeSizeArrayIntData = fromBigUintToArrayIntData(rangeSize);
