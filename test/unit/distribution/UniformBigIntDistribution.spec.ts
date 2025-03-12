@@ -24,7 +24,7 @@ describe('uniformBigIntDistribution', () => {
   if (typeof BigInt !== 'undefined') {
     it('Should always generate values within the range', () =>
       fc.assert(
-        fc.property(fc.integer().noShrink(), bigIntArbitrary, bigIntArbitrary, (seed, a, b) => {
+        fc.property(fc.noShrink(fc.integer()), bigIntArbitrary, bigIntArbitrary, (seed, a, b) => {
           const minV = a < b ? a : b;
           const maxV = a < b ? b : a;
           const [v, nrng] = uniformBigIntDistribution(minV, maxV)(mersenne(seed));
@@ -34,7 +34,7 @@ describe('uniformBigIntDistribution', () => {
     it('Should be equivalent to uniformIntDistribution integers within generator range', () =>
       fc.assert(
         fc.property(
-          fc.integer().noShrink(),
+          fc.noShrink(fc.integer()),
           fc.integer({ min: -0x80000000, max: 0x7fffffff }),
           fc.integer({ min: -0x80000000, max: 0x7fffffff }),
           (seed, a, b) => {

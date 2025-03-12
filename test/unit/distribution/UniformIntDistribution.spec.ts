@@ -145,7 +145,7 @@ const settingsArbitrary = fc
     {
       from: fc.maxSafeInteger(),
       gap: fc.integer({ min: 0, max: 0xffffffff }),
-      rangeRandom: fc.nat().noShrink(),
+      rangeRandom: fc.noShrink(fc.nat()),
       ctx: fc.context(),
     },
     { withDeletedKeys: false },
@@ -177,7 +177,7 @@ const settingsLargeArbitrary = fc
     {
       from: fc.maxSafeInteger(),
       gap: fc.integer({ min: 0x100000000, max: Number.MAX_SAFE_INTEGER }),
-      rangeRandom: fc.nat().noShrink(),
+      rangeRandom: fc.noShrink(fc.nat()),
       ctx: fc.context(),
     },
     { withDeletedKeys: false },
