@@ -40,7 +40,7 @@ describe('uniformIntDistribution [non regression]', () => {
 
   it('Should always generate values within the range [from ; to]', () =>
     fc.assert(
-      fc.property(fc.integer().noShrink(), fc.maxSafeInteger(), fc.maxSafeInteger(), (seed, a, b) => {
+      fc.property(fc.noShrink(fc.integer()), fc.maxSafeInteger(), fc.maxSafeInteger(), (seed, a, b) => {
         const [from, to] = a < b ? [a, b] : [b, a];
         const [v, _nrng] = uniformIntDistribution(from, to)(mersenne(seed));
         return v >= from && v <= to;

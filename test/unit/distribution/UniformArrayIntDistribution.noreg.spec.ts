@@ -42,7 +42,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
 
   it('Should always generate values within the range [from ; to]', () =>
     fc.assert(
-      fc.property(fc.integer().noShrink(), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
+      fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
         const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
         const vBigInt = arrayIntToBigInt(v);
@@ -52,7 +52,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
 
   it('Should always trim the zeros from the resulting value', () =>
     fc.assert(
-      fc.property(fc.integer().noShrink(), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
+      fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
         const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
         expect(v.data).not.toHaveLength(0);
@@ -66,7 +66,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
 
   it('Should always produce valid ArrayInt', () =>
     fc.assert(
-      fc.property(fc.integer().noShrink(), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
+      fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
         const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
         expect([-1, 1]).toContainEqual(v.sign); // sign is either 1 or -1
