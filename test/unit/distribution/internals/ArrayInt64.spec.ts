@@ -62,7 +62,7 @@ describe('ArrayInt64', () => {
 
     it('Should be able to substract two non-overflowing ArrayInt64', () =>
       fc.assert(
-        fc.property(fc.bigIntN(64), fc.bigIntN(64), (a, b) => {
+        fc.property(bigInt64(), bigInt64(), (a, b) => {
           const min = a < b ? a : b;
           const max = a < b ? b : a;
           const result = max - min;
@@ -91,4 +91,8 @@ function toNumber(arrayInt: ArrayInt64): number {
     current += arrayInt.data[index];
   }
   return current * (arrayInt.sign || 1);
+}
+
+function bigInt64() {
+  return fc.bigInt({ min: -(BigInt(2) ** BigInt(63)), max: BigInt(2) ** BigInt(63) - BigInt(1) });
 }
