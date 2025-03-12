@@ -94,5 +94,6 @@ function toNumber(arrayInt: ArrayInt64): number {
 }
 
 function bigInt64() {
-  return fc.bigInt({ min: -(BigInt(2) ** BigInt(63)), max: BigInt(2) ** BigInt(63) - BigInt(1) });
+  // @ts-ignore
+  return fc.bigInt({ min: -(BigInt(1) << BigInt(63)), max: (BigInt(1) << BigInt(63)) - BigInt(1) });
 }
