@@ -27,7 +27,7 @@ jobs:
       - name: Using Node v22.x
         uses: actions/setup-node@v4.2.0
         with:
-          node-version: '22.14.0'
+          node-version: '22.15.0'
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build benchmark package
