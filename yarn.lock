@@ -1734,12 +1734,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-check@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "fast-check@npm:4.1.1"
+"fast-check@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "fast-check@npm:4.2.0"
   dependencies:
     pure-rand: "npm:^7.0.0"
-  checksum: 10c0/7bee9cc031d3b746dd7967314d8d33e094c77ed70d343747209575ef76deb63e6458b9a70cb86a94dc84baad26a7a99a74c231a19090d3173fbc070d8dbab8f0
+  checksum: 10c0/bd945fa1e88e544b669fc9c7bf6d8609ab4546b611b7a861602cfa00992b316921d66a729217babe1ebdd107b05f63dd872bfc27e28c5f157868148c376efd64
   languageName: node
   linkType: hard
 
@@ -3292,7 +3292,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@types/node": "npm:^22.15.3"
     cross-env: "npm:^10.0.0"
-    fast-check: "npm:^4.1.1"
+    fast-check: "npm:^4.2.0"
     jest: "npm:^29.7.0"
     prettier: "npm:3.6.2"
     replace-in-file: "npm:^8.3.0"
