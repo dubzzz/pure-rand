@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Using Node v22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         id: yarn-cache
         with:
           node-version: '22.18.0'
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Using Node v22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22.18.0'
           cache: 'yarn'
@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Using Node v${{matrix.node-version}}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{matrix.node-version}}
           cache: 'yarn'
@@ -81,7 +81,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Using Node v22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22.18.0'
           cache: 'yarn'
@@ -94,7 +94,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Using Node v22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22.18.0'
           cache: 'yarn'
@@ -145,7 +145,7 @@ jobs:
       id-token: write
     steps:
       - name: Using Node v22.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22.18.0'
           registry-url: 'https://registry.npmjs.org'
