@@ -105,7 +105,7 @@ jobs:
       - name: Create bundle
         run: yarn pack
       - name: Upload production package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bundle
           path: package.tgz
@@ -121,7 +121,7 @@ jobs:
         shell: bash -l {0}
         run: nvm install 0.12
       - name: Download production package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: bundle
       - name: Untar the published package
@@ -152,7 +152,7 @@ jobs:
       - name: Install latest npm version
         run: npm install -g npm
       - name: Download production package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: bundle
       - name: Publish package
