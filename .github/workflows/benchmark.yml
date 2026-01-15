@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5.0.1
       - name: Using Node v22.x
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version: '22.21.1'
       - name: Install dependencies
