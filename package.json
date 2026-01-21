@@ -82,7 +82,7 @@
     "cross-env": "^10.1.0",
     "fast-check": "^4.3.0",
     "jest": "^30.0.5",
-    "prettier": "3.7.2",
+    "prettier": "3.8.1",
     "replace-in-file": "^8.3.0",
     "source-map-support": "^0.5.21",
     "tinybench": "^3.1.1",
