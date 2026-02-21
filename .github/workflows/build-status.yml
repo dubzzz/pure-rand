@@ -19,7 +19,7 @@ jobs:
     name: 'Warm up Yarn cache'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node v22.x
         uses: actions/setup-node@v6
         id: yarn-cache
@@ -37,7 +37,7 @@ jobs:
     needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node v22.x
         uses: actions/setup-node@v6
         with:
@@ -55,7 +55,7 @@ jobs:
       matrix:
         node-version: [18.x, 20.x]
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node v${{matrix.node-version}}
         uses: actions/setup-node@v6
         with:
@@ -79,7 +79,7 @@ jobs:
     needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node v22.x
         uses: actions/setup-node@v6
         with:
@@ -92,7 +92,7 @@ jobs:
     needs: warmup_yarn_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node v22.x
         uses: actions/setup-node@v6
         with:
@@ -116,7 +116,7 @@ jobs:
     needs: production_package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Using Node 0.12
         shell: bash -l {0}
         run: nvm install 0.12
