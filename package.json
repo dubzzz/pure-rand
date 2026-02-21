@@ -81,7 +81,7 @@
     "@types/node": "^22.19.11",
     "cross-env": "^10.1.0",
     "fast-check": "^4.5.3",
-    "jest": "^30.0.5",
+    "jest": "^30.2.0",
     "prettier": "3.8.1",
     "replace-in-file": "^8.3.0",
     "source-map-support": "^0.5.21",
