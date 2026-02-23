@@ -61,7 +61,7 @@
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && tsc -p ./tsconfig.declaration.json --outDir lib/esm/types && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "yarn build && yarn build:esm && node postbuild/main.mjs",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true yarn build:prod",
-    "test": "jest --config jest.config.js --coverage",
+    "test": "vitest",
     "build:bench:old": "tsc --outDir lib-reference/",
     "build:bench:new": "tsc --outDir lib-test/",
     "bench": "node perf/benchmark.cjs"
@@ -77,18 +77,16 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.10.13",
     "cross-env": "^10.1.0",
     "fast-check": "^4.5.3",
-    "jest": "^30.0.5",
     "prettier": "3.8.1",
     "replace-in-file": "^8.3.0",
     "source-map-support": "^0.5.21",
     "tinybench": "^6.0.0",
-    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
   "keywords": [
     "seed",

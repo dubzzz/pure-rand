@@ -1,12 +1,12 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
-import { mocked } from '../../__test-helpers__/mocked';
 
 import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 import * as UnsafeUniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
-jest.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
+vi.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
 
 function buildUniqueRng(clonedRng?: RandomGenerator): RandomGenerator {
   return {
@@ -19,8 +19,8 @@ function buildUniqueRng(clonedRng?: RandomGenerator): RandomGenerator {
   } as RandomGenerator;
 }
 function clean() {
-  jest.resetAllMocks();
-  jest.clearAllMocks();
+  vi.resetAllMocks();
+  vi.clearAllMocks();
 }
 
 beforeEach(clean);
@@ -118,7 +118,7 @@ function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
 }
 
 function mockInternals(a: ArrayInt, b: ArrayInt) {
-  const { unsafeUniformArrayIntDistributionInternal } = mocked(UnsafeUniformArrayIntDistributionInternalMock);
+  const { unsafeUniformArrayIntDistributionInternal } = vi.mocked(UnsafeUniformArrayIntDistributionInternalMock);
   unsafeUniformArrayIntDistributionInternal.mockImplementation((out, _rangeSize, _rng) => out);
   const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
   return { unsafeUniformArrayIntDistributionInternal, from, to };

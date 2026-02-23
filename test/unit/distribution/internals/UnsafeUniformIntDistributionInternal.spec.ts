@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import * as fc from 'fast-check';
 
 import { unsafeUniformIntDistributionInternal } from '../../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
