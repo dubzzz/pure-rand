@@ -53,14 +53,14 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "pnpm@10.30.1",
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
     "build": "tsc && tsc -p ./tsconfig.declaration.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && tsc -p ./tsconfig.declaration.json --outDir lib/esm/types && cp package.esm-template.json lib/esm/package.json",
-    "build:prod": "yarn build && yarn build:esm && node postbuild/main.mjs",
-    "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true yarn build:prod",
+    "build:prod": "pnpm build && pnpm build:esm && node postbuild/main.mjs",
+    "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true pnpm build:prod",
     "test": "vitest",
     "build:bench:old": "tsc --outDir lib-reference/",
     "build:bench:new": "tsc --outDir lib-test/",

@@ -1,18 +1,18 @@
 // @ts-check
 // This file is a sample snippet to run benchmark across versions
 // Run it:
-// $:  yarn build:bench:old
-// $:  yarn build:bench:new
-// $:  yarn bench
+// $:  pnpm build:bench:old
+// $:  pnpm build:bench:new
+// $:  pnpm bench
 //
 // Or against another generator:
-// $:  yarn bench mersenne
+// $:  pnpm bench mersenne
 //
 // Or only benchmark generators against each others on new:
-// $:  yarn bench self
+// $:  pnpm bench self
 //
 // Or only benchmarks on new against default generator:
-// $:  yarn bench alone
+// $:  pnpm bench alone
 
 const { Bench } = require('tinybench');
 

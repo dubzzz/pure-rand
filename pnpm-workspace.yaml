@@ -1,0 +1,4 @@
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 20160
+
+blockExoticSubdeps: true
