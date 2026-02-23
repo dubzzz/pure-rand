@@ -1,13 +1,13 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
-import { mocked } from '../../__test-helpers__/mocked';
 
 import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 import * as UnsafeUniformIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformIntDistributionInternal';
 import * as UnsafeUniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
-jest.mock('../../../src/distribution/internals/UnsafeUniformIntDistributionInternal');
-jest.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
+vi.mock('../../../src/distribution/internals/UnsafeUniformIntDistributionInternal');
+vi.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
 
 function buildUniqueRng(clonedRng?: RandomGenerator) {
   if (clonedRng !== undefined) {
@@ -20,8 +20,8 @@ function buildUniqueRng(clonedRng?: RandomGenerator) {
   return {} as RandomGenerator;
 }
 function clean() {
-  jest.resetAllMocks();
-  jest.clearAllMocks();
+  vi.resetAllMocks();
+  vi.clearAllMocks();
 }
 
 beforeEach(clean);
@@ -152,7 +152,7 @@ const settingsArbitrary = fc
 type SettingsType = typeof settingsArbitrary extends fc.Arbitrary<infer U> ? U : never;
 
 function mockInternals(settings: SettingsType) {
-  const { unsafeUniformIntDistributionInternal } = mocked(UnsafeUniformIntDistributionInternalMock);
+  const { unsafeUniformIntDistributionInternal } = vi.mocked(UnsafeUniformIntDistributionInternalMock);
 
   const { from, gap, rangeRandom, ctx } = settings;
   const to = from + gap;
@@ -181,7 +181,7 @@ const settingsLargeArbitrary = fc
 type SettingsLargeType = typeof settingsLargeArbitrary extends fc.Arbitrary<infer U> ? U : never;
 
 function mockLargeInternals(settings: SettingsLargeType) {
-  const { unsafeUniformArrayIntDistributionInternal } = mocked(UnsafeUniformArrayIntDistributionInternalMock);
+  const { unsafeUniformArrayIntDistributionInternal } = vi.mocked(UnsafeUniformArrayIntDistributionInternalMock);
 
   const { from, gap, rangeRandom, ctx } = settings;
   const to = from + gap;

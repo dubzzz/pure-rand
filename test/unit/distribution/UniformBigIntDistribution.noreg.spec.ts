@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigIntDistribution';
 import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
