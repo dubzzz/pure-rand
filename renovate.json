@@ -19,5 +19,5 @@
       "rangeStrategy": "bump"
     }
   ],
-  "postUpdateOptions": ["yarnDedupeHighest"]
+  "postUpdateOptions": ["pnpmDedupe"]
 }
