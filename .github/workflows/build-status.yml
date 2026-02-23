@@ -115,7 +115,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: bundle
-          path: package.tgz
+          path: pure-rand.tgz
           if-no-files-found: error
           retention-days: 1
   test_legacy:
@@ -133,7 +133,7 @@ jobs:
           name: bundle
       - name: Untar the published package
         run: |
-          tar -zxvf package.tgz
+          tar -zxvf pure-rand.tgz
           mv package/lib lib
       - name: Test
         run: node test/legacy/main.js
@@ -163,6 +163,6 @@ jobs:
         with:
           name: bundle
       - name: Publish package
-        run: npm publish --provenance --access public package.tgz
+        run: npm publish --provenance --access public pure-rand.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
