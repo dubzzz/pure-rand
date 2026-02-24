@@ -1,99 +1,81 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
 
+const N = 624;
+const M = 397;
+const R = 31;
+const A = 0x9908b0df;
+const F = 1812433253;
+const U = 11;
+const S = 7;
+const B = 0x9d2c5680;
+const T = 15;
+const C = 0xefc60000;
+const L = 18;
+const MASK_LOWER = 2 ** R - 1;
+const MASK_UPPER = 2 ** R;
+
 class MersenneTwister implements RandomGenerator {
-  static readonly N = 624;
-  static readonly M = 397;
-  static readonly R = 31;
-  static readonly A = 0x9908b0df;
-  static readonly F = 1812433253;
-  static readonly U = 11;
-  static readonly S = 7;
-  static readonly B = 0x9d2c5680;
-  static readonly T = 15;
-  static readonly C = 0xefc60000;
-  static readonly L = 18;
-  static readonly MASK_LOWER = 2 ** MersenneTwister.R - 1;
-  static readonly MASK_UPPER = 2 ** MersenneTwister.R;
-
-  private static twist(prev: number[]): number[] {
-    const mt = prev.slice();
-    for (let idx = 0; idx !== MersenneTwister.N - MersenneTwister.M; ++idx) {
-      const y = (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[idx + 1] & MersenneTwister.MASK_LOWER);
-      mt[idx] = mt[idx + MersenneTwister.M] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
-    }
-    for (let idx = MersenneTwister.N - MersenneTwister.M; idx !== MersenneTwister.N - 1; ++idx) {
-      const y = (mt[idx] & MersenneTwister.MASK_UPPER) + (mt[idx + 1] & MersenneTwister.MASK_LOWER);
-      mt[idx] = mt[idx + MersenneTwister.M - MersenneTwister.N] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
-    }
-    const y = (mt[MersenneTwister.N - 1] & MersenneTwister.MASK_UPPER) + (mt[0] & MersenneTwister.MASK_LOWER);
-    mt[MersenneTwister.N - 1] = mt[MersenneTwister.M - 1] ^ (y >>> 1) ^ (-(y & 1) & MersenneTwister.A);
-    return mt;
-  }
-
-  private static seeded(seed: number): number[] {
-    const out = Array(MersenneTwister.N);
-    out[0] = seed;
-    for (let idx = 1; idx !== MersenneTwister.N; ++idx) {
-      const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-      out[idx] = (Math.imul(MersenneTwister.F, xored) + idx) | 0;
-    }
-    return out;
-  }
-
-  private constructor(
-    private states: number[],
+  constructor(
+    private states: number[], // states: between -0x80000000 and 0x7fffffff
     private index: number,
-  ) {
-    // states: between -0x80000000 and 0x7fffffff
-  }
-
-  static from(seed: number): MersenneTwister {
-    return new MersenneTwister(MersenneTwister.twist(MersenneTwister.seeded(seed)), 0);
-  }
-
+  ) {}
   clone(): MersenneTwister {
     return new MersenneTwister(this.states, this.index);
   }
-
   next(): [number, MersenneTwister] {
     const nextRng = new MersenneTwister(this.states, this.index);
     const out = nextRng.unsafeNext();
     return [out, nextRng];
   }
-
   unsafeNext(): number {
     let y = this.states[this.index];
-    y ^= this.states[this.index] >>> MersenneTwister.U;
-    y ^= (y << MersenneTwister.S) & MersenneTwister.B;
-    y ^= (y << MersenneTwister.T) & MersenneTwister.C;
-    y ^= y >>> MersenneTwister.L;
-    if (++this.index >= MersenneTwister.N) {
-      this.states = MersenneTwister.twist(this.states);
+    y ^= this.states[this.index] >>> U;
+    y ^= (y << S) & B;
+    y ^= (y << T) & C;
+    y ^= y >>> L;
+    if (++this.index >= N) {
+      this.states = twist(this.states);
       this.index = 0;
     }
     return y;
   }
-
   getState(): readonly number[] {
     return [this.index, ...this.states];
   }
+}
 
-  public static fromState(state: readonly number[]): MersenneTwister {
-    const valid = state.length === MersenneTwister.N + 1 && state[0] >= 0 && state[0] < MersenneTwister.N;
-    if (!valid) {
-      throw new Error('The state must have been produced by a mersenne RandomGenerator');
-    }
-    return new MersenneTwister(state.slice(1), state[0]);
+function twist(prev: number[]): number[] {
+  const mt = prev.slice();
+  for (let idx = 0; idx !== N - M; ++idx) {
+    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
   }
+  for (let idx = N - M; idx !== N - 1; ++idx) {
+    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
+  }
+  const y = (mt[N - 1] & MASK_UPPER) + (mt[0] & MASK_LOWER);
+  mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
+  return mt;
 }
 
 function fromState(state: readonly number[]): RandomGenerator {
-  return MersenneTwister.fromState(state);
+  const valid = state.length === N + 1 && state[0] >= 0 && state[0] < N;
+  if (!valid) {
+    throw new Error('The state must have been produced by a mersenne RandomGenerator');
+  }
+  return new MersenneTwister(state.slice(1), state[0]);
 }
 
 export const mersenne = Object.assign(
   function (seed: number): RandomGenerator {
-    return MersenneTwister.from(seed);
+    const out = Array(N);
+    out[0] = seed;
+    for (let idx = 1; idx !== N; ++idx) {
+      const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
+      out[idx] = (Math.imul(F, xored) + idx) | 0;
+    }
+    return new MersenneTwister(twist(out), 0);
   },
   { fromState },
 );
