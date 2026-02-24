@@ -16,10 +16,10 @@ import { generateN } from './distribution/GenerateN';
 import { unsafeGenerateN } from './distribution/UnsafeGenerateN';
 import { unsafeSkipN } from './distribution/UnsafeSkipN';
 
-// Explicit cast into string to avoid to have __type: "__PACKAGE_TYPE__"
-const __type = '__PACKAGE_TYPE__' as string;
-const __version = '__PACKAGE_VERSION__' as string;
-const __commitHash = '__COMMIT_HASH__' as string;
+// Explicit cast into string to avoid to have __type: process.env.__PACKAGE_TYPE__
+const __type = process.env.__PACKAGE_TYPE__ as string;
+const __version = process.env.__PACKAGE_VERSION__ as string;
+const __commitHash = process.env.__COMMIT_HASH__ as string;
 
 export {
   __type,
