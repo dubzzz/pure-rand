@@ -8,31 +8,31 @@
     "./package.json": "./package.json",
     "./distribution/*": {
       "require": {
-        "types": "./lib/types/distribution/*.d.ts",
+        "types": "./lib/distribution/*.d.ts",
         "default": "./lib/distribution/*.js"
       },
       "import": {
-        "types": "./lib/esm/types/distribution/*.d.ts",
+        "types": "./lib/esm/distribution/*.d.ts",
         "default": "./lib/esm/distribution/*.js"
       }
     },
     "./generator/*": {
       "require": {
-        "types": "./lib/types/generator/*.d.ts",
+        "types": "./lib/generator/*.d.ts",
         "default": "./lib/generator/*.js"
       },
       "import": {
-        "types": "./lib/esm/types/generator/*.d.ts",
+        "types": "./lib/esm/generator/*.d.ts",
         "default": "./lib/esm/generator/*.js"
       }
     },
     "./types/*": {
       "require": {
-        "types": "./lib/types/types/*.d.ts",
+        "types": "./lib/types/*.d.ts",
         "default": "./lib/types/*.js"
       },
       "import": {
-        "types": "./lib/esm/types/types/*.d.ts",
+        "types": "./lib/esm/types/*.d.ts",
         "default": "./lib/esm/types/*.js"
       }
     },
@@ -42,13 +42,13 @@
         "default": "./lib/pure-rand.js"
       },
       "import": {
-        "types": "./lib/esm/types/pure-rand.d.ts",
+        "types": "./lib/esm/pure-rand.d.ts",
         "default": "./lib/esm/pure-rand.js"
       }
     }
   },
   "module": "lib/esm/pure-rand.js",
-  "types": "lib/types/pure-rand.d.ts",
+  "types": "lib/pure-rand.d.ts",
   "files": [
     "lib"
   ],
@@ -57,7 +57,8 @@
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
-    "build": "tsc && tsc -p ./tsconfig.declaration.json",
+    "typecheck": "tsc && tsc -p ./tsconfig.declaration.json",
+    "build": "rolldown -c && cp lib/esm/*.d.ts lib/ && cp lib/esm/distribution/*.d.ts lib/distribution/ && cp lib/esm/generator/*.d.ts lib/generator/ && cp lib/esm/types/*.d.ts lib/types/ && cp package.esm-template.json lib/esm/package.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && tsc -p ./tsconfig.declaration.json --outDir lib/esm/types && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "pnpm build && pnpm build:esm && node postbuild/main.mjs",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true pnpm build:prod",
@@ -77,14 +78,15 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
+    "@rollup/plugin-replace": "^6.0.3",
     "@types/node": "^24.10.13",
     "cross-env": "^10.1.0",
     "fast-check": "^4.5.3",
     "prettier": "3.8.1",
-    "replace-in-file": "^8.4.0",
+    "rolldown": "1.0.0-rc.5",
+    "rolldown-plugin-dts": "^0.22.1",
     "source-map-support": "^0.5.21",
     "tinybench": "^6.0.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
