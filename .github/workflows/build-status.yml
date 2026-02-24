@@ -159,6 +159,8 @@ jobs:
         run: |
           tar -zxvf package.tgz
           mv package/lib lib
+      - name: Print node version
+        run: node --version
       - name: Test
         run: node test/legacy/main.js
   publish_package:
