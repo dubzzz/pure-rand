@@ -57,7 +57,7 @@
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
-    "typecheck": "tsc && tsc -p ./tsconfig.declaration.json",
+    "typecheck": "tsc --noEmit",
     "build": "rolldown -c && cp lib/esm/*.d.ts lib/ && cp lib/esm/distribution/*.d.ts lib/distribution/ && cp lib/esm/generator/*.d.ts lib/generator/ && cp lib/esm/types/*.d.ts lib/types/ && cp package.esm-template.json lib/esm/package.json",
     "build:esm": "tsc --module es2015 --outDir lib/esm --moduleResolution node && tsc -p ./tsconfig.declaration.json --outDir lib/esm/types && cp package.esm-template.json lib/esm/package.json",
     "build:prod": "pnpm build && pnpm build:esm && node postbuild/main.mjs",
