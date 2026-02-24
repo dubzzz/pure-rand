@@ -53,7 +53,7 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "pnpm@10.30.1",
+  "packageManager": "pnpm@10.30.2",
   "scripts": {
     "format:check": "prettier --list-different .",
     "format": "prettier --write .",
