@@ -12,9 +12,9 @@ import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistribu
  * @internal
  */
 export function unsafeUniformArrayIntDistributionInternal(
+  rng: RandomGenerator,
   out: ArrayInt['data'],
   rangeSize: ArrayInt['data'],
-  rng: RandomGenerator,
 ): ArrayInt['data'] {
   const rangeLength = rangeSize.length;
 
@@ -23,7 +23,7 @@ export function unsafeUniformArrayIntDistributionInternal(
     // We compute a new value for arrayInt
     for (let index = 0; index !== rangeLength; ++index) {
       const indexRangeSize = index === 0 ? rangeSize[0] + 1 : 0x100000000;
-      const g = unsafeUniformIntDistributionInternal(indexRangeSize, rng);
+      const g = unsafeUniformIntDistributionInternal(rng, indexRangeSize);
       out[index] = g;
     }
 

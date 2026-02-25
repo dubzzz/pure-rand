@@ -10,13 +10,13 @@ const NumValues: bigint = typeof BigInt !== 'undefined' ? BigInt(0x100000000) : 
 /**
  * Uniformly generate random bigint values between `from` (included) and `to` (included)
  *
+ * @param rng - Instance of RandomGenerator to extract random values from
  * @param from - Lower bound of the range (included)
  * @param to - Upper bound of the range (included)
- * @param rng - Instance of RandomGenerator to extract random values from
  *
  * @public
  */
-export function unsafeUniformBigIntDistribution(from: bigint, to: bigint, rng: RandomGenerator): bigint {
+export function unsafeUniformBigIntDistribution(rng: RandomGenerator, from: bigint, to: bigint): bigint {
   const diff = to - from + One;
 
   // Number of iterations required to have enough random

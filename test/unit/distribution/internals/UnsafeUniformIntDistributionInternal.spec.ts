@@ -31,7 +31,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
   it('Should always generate values within the range [0 ; rangeSize[', () =>
     fc.assert(
       fc.property(fc.nat(), fc.integer({ min: 1, max: MAX_RANGE }), (offset, rangeSize) => {
-        const v = unsafeUniformIntDistributionInternal(rangeSize, new NatGenerator(offset));
+        const v = unsafeUniformIntDistributionInternal(new NatGenerator(offset), rangeSize);
         return v >= 0 && v < rangeSize;
       }),
     ));
@@ -41,7 +41,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
         const target = targetOffset % rangeSize;
         const rng: RandomGenerator = new NatGenerator(offset);
         for (let numTries = 0; numTries < 2 * rangeSize; ++numTries) {
-          const v = unsafeUniformIntDistributionInternal(rangeSize, rng);
+          const v = unsafeUniformIntDistributionInternal(rng, rangeSize);
           if (v === target) {
             return true;
           }
@@ -64,7 +64,7 @@ describe('unsafeUniformIntDistributionInternal', () => {
           let buckets = [...Array(rangeSize)].map(() => 0);
           const rng: RandomGenerator = new NatGenerator(offset);
           for (let numTries = 0; numTries < num * rangeSize; ++numTries) {
-            const v = unsafeUniformIntDistributionInternal(rangeSize, rng);
+            const v = unsafeUniformIntDistributionInternal(rng, rangeSize);
             buckets[v] += 1;
           }
           return buckets.every((n) => n === num);
