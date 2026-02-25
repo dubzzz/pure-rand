@@ -11,7 +11,7 @@ const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedData = [0, 0];
 
-function uniformLargeIntInternal(from: number, to: number, rangeSize: number, rng: RandomGenerator): number {
+function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number, rangeSize: number): number {
   const rangeSizeArrayIntValue =
     rangeSize <= safeNumberMaxSafeInteger
       ? fromNumberToArrayInt64(sharedC, rangeSize) // no possible overflow given rangeSize is in a safe range
@@ -28,26 +28,26 @@ function uniformLargeIntInternal(from: number, to: number, rangeSize: number, rn
     rangeSizeArrayIntValue.data[1] += 1;
   }
 
-  unsafeUniformArrayIntDistributionInternal(sharedData, rangeSizeArrayIntValue.data, rng);
+  unsafeUniformArrayIntDistributionInternal(rng, sharedData, rangeSizeArrayIntValue.data);
   return sharedData[0] * 0x100000000 + sharedData[1] + from;
 }
 
 /**
  * Uniformly generate random integer values between `from` (included) and `to` (included)
  *
+ * @param rng - Instance of RandomGenerator to extract random values from
  * @param from - Lower bound of the range (included)
  * @param to - Upper bound of the range (included)
- * @param rng - Instance of RandomGenerator to extract random values from
  *
  * @public
  */
-export function unsafeUniformIntDistribution(from: number, to: number, rng: RandomGenerator): number {
+export function unsafeUniformIntDistribution(rng: RandomGenerator, from: number, to: number): number {
   const rangeSize = to - from;
   if (rangeSize <= 0xffffffff) {
     // Calling unsafeUniformIntDistributionInternal can be considered safe
     // up-to 2**32 values. Above this range it may miss values.
-    const g = unsafeUniformIntDistributionInternal(rangeSize + 1, rng);
+    const g = unsafeUniformIntDistributionInternal(rng, rangeSize + 1);
     return g + from;
   }
-  return uniformLargeIntInternal(from, to, rangeSize, rng);
+  return uniformLargeIntInternal(rng, from, to, rangeSize);
 }

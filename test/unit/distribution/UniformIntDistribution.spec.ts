@@ -159,7 +159,7 @@ function mockInternals(settings: SettingsType) {
   const clonedRng = buildUniqueRng();
   const rng = buildUniqueRng(clonedRng);
   const outputs: number[] = [];
-  unsafeUniformIntDistributionInternal.mockImplementation((rangeSize) => {
+  unsafeUniformIntDistributionInternal.mockImplementation((_rng, rangeSize) => {
     const out = rangeRandom % rangeSize;
     ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> ${out}`);
     outputs.push(out);
@@ -188,7 +188,7 @@ function mockLargeInternals(settings: SettingsLargeType) {
   const clonedRng = buildUniqueRng();
   const rng = buildUniqueRng(clonedRng);
   const outputs: number[][] = [];
-  unsafeUniformArrayIntDistributionInternal.mockImplementation((rangeSize) => {
+  unsafeUniformArrayIntDistributionInternal.mockImplementation((_rng, rangeSize) => {
     const out = rangeSize.map((r) => rangeRandom % (r || 1));
     ctx.log(`unsafeUniformArrayIntDistributionInternal(${JSON.stringify(rangeSize)}) -> ${JSON.stringify(out)}`);
     outputs.push(out);

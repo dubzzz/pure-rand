@@ -17,9 +17,9 @@ import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUni
  *
  * @public
  */
-export function unsafeUniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng: RandomGenerator): ArrayInt {
+export function unsafeUniformArrayIntDistribution(rng: RandomGenerator, from: ArrayInt, to: ArrayInt): ArrayInt {
   const rangeSize = trimArrayIntInplace(addOneToPositiveArrayInt(substractArrayIntToNew(to, from)));
   const emptyArrayIntData = rangeSize.data.slice(0);
-  const g = unsafeUniformArrayIntDistributionInternal(emptyArrayIntData, rangeSize.data, rng);
+  const g = unsafeUniformArrayIntDistributionInternal(rng, emptyArrayIntData, rangeSize.data);
   return trimArrayIntInplace(addArrayIntToNew({ sign: 1, data: g }, from));
 }

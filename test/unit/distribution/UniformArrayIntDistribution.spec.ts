@@ -119,7 +119,7 @@ function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
 
 function mockInternals(a: ArrayInt, b: ArrayInt) {
   const { unsafeUniformArrayIntDistributionInternal } = vi.mocked(UnsafeUniformArrayIntDistributionInternalMock);
-  unsafeUniformArrayIntDistributionInternal.mockImplementation((out, _rangeSize, _rng) => out);
+  unsafeUniformArrayIntDistributionInternal.mockImplementation((_rng, out, _rangeSize) => out);
   const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
   return { unsafeUniformArrayIntDistributionInternal, from, to };
 }
