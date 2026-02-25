@@ -39,7 +39,7 @@ describe('uniformIntDistribution', () => {
 
             // Assert
             expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledTimes(1);
-            expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledWith(to - from + 1, clonedRng);
+            expect(unsafeUniformIntDistributionInternal).toHaveBeenCalledWith(clonedRng, to - from + 1);
           })
           .beforeEach(clean),
       ));
@@ -76,12 +76,12 @@ describe('uniformIntDistribution', () => {
             // Assert
             expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
             expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
-              expect.any(Array),
-              expect.any(Array),
               clonedRng,
+              expect.any(Array),
+              expect.any(Array),
             );
             const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
-            const rangeSize = params[1];
+            const rangeSize = params[2];
             expect(rangeSize[0] * 2 ** 32 + rangeSize[1]).toBe(to - from + 1);
           })
           .beforeEach(clean),

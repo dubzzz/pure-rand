@@ -131,11 +131,11 @@ function extractParams(
 ) {
   expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
   expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
-    expect.any(Array),
-    expect.any(Array),
     expect.anything(),
+    expect.any(Array),
+    expect.any(Array),
   );
   const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
-  const [out, rangeSize, rng] = params;
+  const [rng, out, rangeSize] = params;
   return { out, rangeSize, rng };
 }

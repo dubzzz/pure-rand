@@ -44,7 +44,7 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
       // Values outside greater or equal to rangeSize will be rejected. We will retry until we get a valid value.
       const expectedRangeSize = idx === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = resultingArrayInt[idx];
-      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((rng, askedRangeSize) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
         expect(rng).toBe(initialRng);
         return generatedItem;
@@ -52,7 +52,7 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
     }
 
     // Act
-    const g = unsafeUniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
+    const g = unsafeUniformArrayIntDistributionInternal(initialRng, arrayIntBuffer(rangeSize.length).data, rangeSize);
 
     // Assert
     expect(g).toEqual(resultingArrayInt);
@@ -74,7 +74,7 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
       //     It will generate a full value before rejecting it.
       const expectedRangeSize = idx % rangeSize.length === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = rejections[idx];
-      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((rng, askedRangeSize) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
         expect(rng).toBe(initialRng);
         return generatedItem;
@@ -83,7 +83,7 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
     for (let idx = 0; idx !== resultingArrayInt.length; ++idx) {
       const expectedRangeSize = idx === 0 ? rangeSize[0] + 1 : 0x100000000;
       const generatedItem = resultingArrayInt[idx];
-      unsafeUniformIntDistributionInternal.mockImplementationOnce((askedRangeSize, rng) => {
+      unsafeUniformIntDistributionInternal.mockImplementationOnce((rng, askedRangeSize) => {
         expect(askedRangeSize).toBe(expectedRangeSize);
         expect(rng).toBe(initialRng);
         return generatedItem;
@@ -91,7 +91,7 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
     }
 
     // Act
-    const g = unsafeUniformArrayIntDistributionInternal(arrayIntBuffer(rangeSize.length).data, rangeSize, initialRng);
+    const g = unsafeUniformArrayIntDistributionInternal(initialRng, arrayIntBuffer(rangeSize.length).data, rangeSize);
 
     // Assert
     expect(g).toEqual(resultingArrayInt);
@@ -149,9 +149,9 @@ describe('unsafeUniformArrayIntDistributionInternal', () => {
 
             // Act
             const g = unsafeUniformArrayIntDistributionInternal(
+              initialRng,
               arrayIntBuffer(rangeSize.length).data,
               rangeSize,
-              initialRng,
             );
 
             // Assert
@@ -184,7 +184,7 @@ function padDataOfArrayInt(arrayIntData: ArrayInt['data'], length: number): Arra
 function mockResponse(arrayIntData: ArrayInt['data'], clonedRng: RandomGenerator, ctx: fc.ContextValue) {
   const { unsafeUniformIntDistributionInternal } = vi.mocked(UnsafeUniformIntDistributionInternalMock);
   for (const item of arrayIntData) {
-    unsafeUniformIntDistributionInternal.mockImplementationOnce((rangeSize, rng) => {
+    unsafeUniformIntDistributionInternal.mockImplementationOnce((rng, rangeSize) => {
       expect(rng).toBe(clonedRng);
       ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> ${item}`);
       return item;
@@ -194,8 +194,8 @@ function mockResponse(arrayIntData: ArrayInt['data'], clonedRng: RandomGenerator
 
 function mockRejectNextCalls(ctx: fc.ContextValue) {
   const { unsafeUniformIntDistributionInternal } = vi.mocked(UnsafeUniformIntDistributionInternalMock);
-  unsafeUniformIntDistributionInternal.mockImplementationOnce((rangeSize, _rng) => {
-    ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> [..., <rng>]`);
+  unsafeUniformIntDistributionInternal.mockImplementationOnce((_rng, rangeSize) => {
+    ctx.log(`unsafeUniformIntDistributionInternal(${rangeSize}) -> [<rng>, ...]`);
     throw new Error('No more calls expected');
   });
 }
