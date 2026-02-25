@@ -24,11 +24,11 @@ function uniformBigIntDistribution(from: bigint, to: bigint, rng: RandomGenerato
 function uniformBigIntDistribution(from: bigint, to: bigint, rng?: RandomGenerator) {
   if (rng !== undefined) {
     const nextRng = rng.clone();
-    return [unsafeUniformBigIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformBigIntDistribution(nextRng, from, to), nextRng];
   }
   return function (rng: RandomGenerator) {
     const nextRng = rng.clone();
-    return [unsafeUniformBigIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformBigIntDistribution(nextRng, from, to), nextRng];
   };
 }
 
