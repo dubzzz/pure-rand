@@ -36,6 +36,16 @@
         "default": "./lib/esm/types/*.js"
       }
     },
+    "./utils/*": {
+      "require": {
+        "types": "./lib/utils/*.d.ts",
+        "default": "./lib/utils/*.js"
+      },
+      "import": {
+        "types": "./lib/esm/utils/*.d.ts",
+        "default": "./lib/esm/utils/*.js"
+      }
+    },
     ".": {
       "require": {
         "types": "./lib/types/pure-rand.d.ts",
