@@ -1,6 +1,5 @@
 import { defineConfig } from 'rolldown';
 import { dts } from 'rolldown-plugin-dts';
-import replace from '@rollup/plugin-replace';
 import pkg from './package.json' with { type: 'json' };
 import { execSync } from 'child_process';
 import { globSync } from 'fs';
@@ -64,7 +63,7 @@ function buildConfigFor(pkg, dirname, replacementsFor) {
         format: 'cjs',
         dir: outputDir,
       },
-      plugins: [...sharedOptions.plugins, replace(replacementsFor(false))],
+      plugins: [...sharedOptions.plugins],
     },
     {
       ...sharedOptions,
@@ -73,18 +72,9 @@ function buildConfigFor(pkg, dirname, replacementsFor) {
         format: 'esm',
         dir: outputDir + '/esm',
       },
-      plugins: [
-        ...sharedOptions.plugins,
-        replace(replacementsFor(true)),
-        dts({ tsconfig: './tsconfig.declaration.json' }),
-      ],
+      plugins: [...sharedOptions.plugins, dts({ tsconfig: './tsconfig.declaration.json' })],
     },
   ]);
 }
 
-export default buildConfigFor(pkg, import.meta.dirname, (isESM) => ({
-  preventAssignment: true,
-  'process.env.__PACKAGE_TYPE__': isESM ? JSON.stringify('module') : JSON.stringify('commonjs'),
-  'process.env.__PACKAGE_VERSION__': JSON.stringify(pkg.version),
-  'process.env.__COMMIT_HASH__': JSON.stringify(getCommitHash()),
-}));
+export default buildConfigFor(pkg, import.meta.dirname);

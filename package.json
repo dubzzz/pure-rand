@@ -3,7 +3,6 @@
   "version": "7.0.1",
   "description": " Pure random number generator written in TypeScript",
   "type": "commonjs",
-  "main": "lib/pure-rand.js",
   "exports": {
     "./package.json": "./package.json",
     "./distribution/*": {
@@ -45,20 +44,8 @@
         "types": "./lib/esm/utils/*.d.ts",
         "default": "./lib/esm/utils/*.js"
       }
-    },
-    ".": {
-      "require": {
-        "types": "./lib/types/pure-rand.d.ts",
-        "default": "./lib/pure-rand.js"
-      },
-      "import": {
-        "types": "./lib/esm/pure-rand.d.ts",
-        "default": "./lib/esm/pure-rand.js"
-      }
     }
   },
-  "module": "lib/esm/pure-rand.js",
-  "types": "lib/pure-rand.d.ts",
   "files": [
     "lib"
   ],
@@ -87,7 +74,6 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
-    "@rollup/plugin-replace": "^6.0.3",
     "@types/node": "^24.10.13",
     "cross-env": "^10.1.0",
     "fast-check": "^4.5.3",
