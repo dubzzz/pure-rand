@@ -22,22 +22,19 @@ Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 
 `npm install pure-rand` or `yarn add pure-rand`
 
-**Use it in browser by doing:**
-
-`import * as prand from 'https://unpkg.com/pure-rand/lib/esm/pure-rand.js';`
-
 ## Usage
 
 **Simple usage**
 
 ```javascript
-import prand from 'pure-rand';
+import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
-const rng = prand.xoroshiro128plus(seed);
-const firstDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 2
-const secondDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 4
-const thirdDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 6
+const rng = xoroshiro128plus(seed);
+const firstDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 2
+const secondDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 4
+const thirdDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Pure usage**
@@ -45,15 +42,16 @@ const thirdDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value i
 Pure means that the instance `rng` will never be altered in-place. It can be called again and again and it will always return the same value. But it will also return the next `rng`. Here is an example showing how the code above can be translated into its pure version:
 
 ```javascript
-import prand from 'pure-rand';
+import { uniformIntDistribution } from 'pure-rand/distribution/UniformIntDistribution';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
-const rng1 = prand.xoroshiro128plus(seed);
-const [firstDiceValue, rng2] = prand.uniformIntDistribution(rng1, 1, 6); // value in {1..6}, here: 2
-const [secondDiceValue, rng3] = prand.uniformIntDistribution(rng2, 1, 6); // value in {1..6}, here: 4
-const [thirdDiceValue, rng4] = prand.uniformIntDistribution(rng3, 1, 6); // value in {1..6}, here: 6
+const rng1 = xoroshiro128plus(seed);
+const [firstDiceValue, rng2] = uniformIntDistribution(rng1, 1, 6); // value in {1..6}, here: 2
+const [secondDiceValue, rng3] = uniformIntDistribution(rng2, 1, 6); // value in {1..6}, here: 4
+const [thirdDiceValue, rng4] = uniformIntDistribution(rng3, 1, 6); // value in {1..6}, here: 6
 
-// You can call: prand.uniformIntDistribution(rng1, 1, 6);
+// You can call: uniformIntDistribution(rng1, 1, 6);
 // over and over it will always give you back the same value along with a new rng (always producing the same values too).
 ```
 
@@ -62,16 +60,17 @@ const [thirdDiceValue, rng4] = prand.uniformIntDistribution(rng3, 1, 6); // valu
 In order to produce independent simulations it can be tempting to instanciate several PRNG based on totally different seeds. While it would produce distinct set of values, the best way to ensure fully unrelated sequences is rather to use jumps. Jump just consists into moving far away from the current position in the generator (eg.: jumping in Xoroshiro 128+ will move you 2<sup>64</sup> generations away from the current one on a generator having a sequence of 2<sup>128</sup> elements).
 
 ```javascript
-import prand from 'pure-rand';
+import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
-const rngSimulation1 = prand.xoroshiro128plus(seed);
+const rngSimulation1 = xoroshiro128plus(seed);
 const rngSimulation2 = rngSimulation1.jump(); // not in-place, creates a new instance
 const rngSimulation3 = rngSimulation2.jump(); // not in-place, creates a new instance
 
-const diceSim1Value = prand.unsafeUniformIntDistribution(rngSimulation1, 1, 6); // value in {1..6}, here: 2
-const diceSim2Value = prand.unsafeUniformIntDistribution(rngSimulation2, 1, 6); // value in {1..6}, here: 5
-const diceSim3Value = prand.unsafeUniformIntDistribution(rngSimulation3, 1, 6); // value in {1..6}, here: 6
+const diceSim1Value = unsafeUniformIntDistribution(rngSimulation1, 1, 6); // value in {1..6}, here: 2
+const diceSim2Value = unsafeUniformIntDistribution(rngSimulation2, 1, 6); // value in {1..6}, here: 5
+const diceSim3Value = unsafeUniformIntDistribution(rngSimulation3, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Non-uniform usage**
@@ -79,10 +78,10 @@ const diceSim3Value = prand.unsafeUniformIntDistribution(rngSimulation3, 1, 6); 
 While not recommended as non-uniform distribution implies that one or several values from the range will be more likely than others, it might be tempting for people wanting to maximize the throughput.
 
 ```javascript
-import prand from 'pure-rand';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
-const rng = prand.xoroshiro128plus(seed);
+const rng = xoroshiro128plus(seed);
 const rand = (min, max) => {
   const out = (rng.unsafeNext() >>> 0) / 0x100000000;
   return min + Math.floor(out * (max - min + 1));
@@ -133,8 +132,8 @@ And their unsafe equivalents to change the PRNG in-place.
 
 Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
 
-- `prand.generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
-- `prand.skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
+- `generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
+- `skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
 
 ## Comparison
 
@@ -214,16 +213,17 @@ The recommended setup for pure-rand is to rely on our Xoroshiro128+. It provides
 The following snippet is responsible for generating 32-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
 
 ```js
-import prand from 'pure-rand';
+import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 function generateFloat32(rng) {
-  const g1 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 24) - 1);
+  const g1 = unsafeUniformIntDistribution(rng, 0, (1 << 24) - 1);
   const value = g1 / (1 << 24);
   return value;
 }
 
 const seed = 42;
-const rng = prand.xoroshiro128plus(seed);
+const rng = xoroshiro128plus(seed);
 
 const float32Bits1 = generateFloat32(rng);
 const float32Bits2 = generateFloat32(rng);
@@ -234,17 +234,18 @@ const float32Bits2 = generateFloat32(rng);
 The following snippet is responsible for generating 64-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
 
 ```js
-import prand from 'pure-rand';
+import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 function generateFloat64(rng) {
-  const g1 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 26) - 1);
-  const g2 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 27) - 1);
+  const g1 = unsafeUniformIntDistribution(rng, 0, (1 << 26) - 1);
+  const g2 = unsafeUniformIntDistribution(rng, 0, (1 << 27) - 1);
   const value = (g1 * Math.pow(2, 27) + g2) * Math.pow(2, -53);
   return value;
 }
 
 const seed = 42;
-const rng = prand.xoroshiro128plus(seed);
+const rng = xoroshiro128plus(seed);
 
 const float64Bits1 = generateFloat64(rng);
 const float64Bits2 = generateFloat64(rng);
