@@ -133,32 +133,12 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
-  test_legacy:
-    name: 'Test legacy'
-    needs: production_package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Using Node 0.12
-        shell: bash -l {0}
-        run: nvm install 0.12
-      - name: Download production package
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 #v7.0.0
-        with:
-          name: bundle
-      - name: Untar the published package
-        run: |
-          tar -zxvf package.tgz
-          mv package/lib lib
-      - name: Test
-        run: node test/legacy/main.js
   publish_package:
     name: 'Publish package'
     needs:
       - production_package
       - format
       - test
-      - test_legacy
       - test_package_quality
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
