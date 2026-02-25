@@ -24,11 +24,11 @@ function uniformIntDistribution(from: number, to: number, rng: RandomGenerator):
 function uniformIntDistribution(from: number, to: number, rng?: RandomGenerator) {
   if (rng !== undefined) {
     const nextRng = rng.clone();
-    return [unsafeUniformIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformIntDistribution(nextRng, from, to), nextRng];
   }
   return function (rng: RandomGenerator) {
     const nextRng = rng.clone();
-    return [unsafeUniformIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformIntDistribution(nextRng, from, to), nextRng];
   };
 }
 

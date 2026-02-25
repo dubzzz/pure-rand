@@ -35,9 +35,9 @@ import prand from 'pure-rand';
 
 const seed = 42;
 const rng = prand.xoroshiro128plus(seed);
-const firstDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 2
-const secondDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 4
-const thirdDiceValue = prand.unsafeUniformIntDistribution(1, 6, rng); // value in {1..6}, here: 6
+const firstDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 2
+const secondDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 4
+const thirdDiceValue = prand.unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Pure usage**
@@ -49,11 +49,11 @@ import prand from 'pure-rand';
 
 const seed = 42;
 const rng1 = prand.xoroshiro128plus(seed);
-const [firstDiceValue, rng2] = prand.uniformIntDistribution(1, 6, rng1); // value in {1..6}, here: 2
-const [secondDiceValue, rng3] = prand.uniformIntDistribution(1, 6, rng2); // value in {1..6}, here: 4
-const [thirdDiceValue, rng4] = prand.uniformIntDistribution(1, 6, rng3); // value in {1..6}, here: 6
+const [firstDiceValue, rng2] = prand.uniformIntDistribution(rng1, 1, 6); // value in {1..6}, here: 2
+const [secondDiceValue, rng3] = prand.uniformIntDistribution(rng2, 1, 6); // value in {1..6}, here: 4
+const [thirdDiceValue, rng4] = prand.uniformIntDistribution(rng3, 1, 6); // value in {1..6}, here: 6
 
-// You can call: prand.uniformIntDistribution(1, 6, rng1);
+// You can call: prand.uniformIntDistribution(rng1, 1, 6);
 // over and over it will always give you back the same value along with a new rng (always producing the same values too).
 ```
 
@@ -69,9 +69,9 @@ const rngSimulation1 = prand.xoroshiro128plus(seed);
 const rngSimulation2 = rngSimulation1.jump(); // not in-place, creates a new instance
 const rngSimulation3 = rngSimulation2.jump(); // not in-place, creates a new instance
 
-const diceSim1Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation1); // value in {1..6}, here: 2
-const diceSim2Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation2); // value in {1..6}, here: 5
-const diceSim3Value = prand.unsafeUniformIntDistribution(1, 6, rngSimulation3); // value in {1..6}, here: 6
+const diceSim1Value = prand.unsafeUniformIntDistribution(rngSimulation1, 1, 6); // value in {1..6}, here: 2
+const diceSim2Value = prand.unsafeUniformIntDistribution(rngSimulation2, 1, 6); // value in {1..6}, here: 5
+const diceSim3Value = prand.unsafeUniformIntDistribution(rngSimulation3, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Non-uniform usage**
@@ -123,9 +123,9 @@ At this point, simple way would be to do `min + floor(random() * (max - min + 1)
 
 pure-rand provides 3 built-in functions for uniform distributions of values:
 
-- `uniformIntDistribution(min, max, rng)`
-- `uniformBigIntDistribution(min, max, rng)` - with `min` and `max` being `bigint`
-- `uniformArrayIntDistribution(min, max, rng)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
+- `uniformIntDistribution(rng, min, max)`
+- `uniformBigIntDistribution(rng, min, max)` - with `min` and `max` being `bigint`
+- `uniformArrayIntDistribution(rng, min, max)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
 
 And their unsafe equivalents to change the PRNG in-place.
 
@@ -217,7 +217,7 @@ The following snippet is responsible for generating 32-bit floating point number
 import prand from 'pure-rand';
 
 function generateFloat32(rng) {
-  const g1 = prand.unsafeUniformIntDistribution(0, (1 << 24) - 1, rng);
+  const g1 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 24) - 1);
   const value = g1 / (1 << 24);
   return value;
 }
@@ -237,8 +237,8 @@ The following snippet is responsible for generating 64-bit floating point number
 import prand from 'pure-rand';
 
 function generateFloat64(rng) {
-  const g1 = prand.unsafeUniformIntDistribution(0, (1 << 26) - 1, rng);
-  const g2 = prand.unsafeUniformIntDistribution(0, (1 << 27) - 1, rng);
+  const g1 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 26) - 1);
+  const g2 = prand.unsafeUniformIntDistribution(rng, 0, (1 << 27) - 1);
   const value = (g1 * Math.pow(2, 27) + g2) * Math.pow(2, -53);
   return value;
 }

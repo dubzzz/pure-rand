@@ -25,11 +25,11 @@ function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng: RandomGe
 function uniformArrayIntDistribution(from: ArrayInt, to: ArrayInt, rng?: RandomGenerator) {
   if (rng !== undefined) {
     const nextRng = rng.clone();
-    return [unsafeUniformArrayIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformArrayIntDistribution(nextRng, from, to), nextRng];
   }
   return function (rng: RandomGenerator) {
     const nextRng = rng.clone();
-    return [unsafeUniformArrayIntDistribution(from, to, nextRng), nextRng];
+    return [unsafeUniformArrayIntDistribution(nextRng, from, to), nextRng];
   };
 }
 
