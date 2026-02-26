@@ -135,6 +135,12 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
+      - name: Preview (no comment)
+        if: github.event_name != 'pull_request'
+        run: pnpm dlx pkg-pr-new publish --compact --comment=off
+      - name: Preview
+        if: github.event_name == 'pull_request'
+        run: pnpm dlx pkg-pr-new publish --compact
   publish_package:
     name: 'Publish package'
     needs:

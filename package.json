@@ -51,6 +51,7 @@
     "@types/node": "^24.10.13",
     "fast-check": "^4.5.3",
     "oxfmt": "^0.35.0",
+    "pkg-pr-new": "^0.0.63",
     "rolldown": "1.0.0-rc.5",
     "rolldown-plugin-dts": "^0.22.1",
     "tinybench": "^6.0.0",
