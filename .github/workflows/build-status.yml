@@ -122,10 +122,10 @@ jobs:
           retention-days: 1
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
-        run: pnpm dlx pkg-pr-new publish --compact package.tgz --comment=off
+        run: pnpm dlx pkg-pr-new publish --compact --comment=off
       - name: Preview
         if: github.event_name == 'pull_request'
-        run: pnpm dlx pkg-pr-new publish --compact package.tgz
+        run: pnpm dlx pkg-pr-new publish --compact
   publish_package:
     name: 'Publish package'
     needs:
