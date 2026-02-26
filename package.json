@@ -58,7 +58,7 @@
     "format:check": "oxfmt --list-different",
     "format": "oxfmt",
     "typecheck": "tsc --noEmit",
-    "build": "rolldown -c && cp lib/esm/*.d.ts lib/ && cp lib/esm/distribution/*.d.ts lib/distribution/ && cp lib/esm/generator/*.d.ts lib/generator/ && cp lib/esm/types/*.d.ts lib/types/ && cp package.esm-template.json lib/esm/package.json",
+    "build": "rolldown -c && cd lib/esm/ && find . -type f -name '*.d.ts' -exec cp --parents {} ../ \\; && cp ../../package.esm-template.json package.json && cd ../..",
     "build:prod": "pnpm build",
     "build:prod-ci": "cross-env EXPECT_GITHUB_SHA=true pnpm build",
     "test": "vitest",
