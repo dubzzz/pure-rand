@@ -1,8 +1,8 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
-import { unsafeUniformIntDistributionInternal } from './internals/UnsafeUniformIntDistributionInternal';
+import { uniformIntInternal } from './internals/uniformIntInternal';
 import type { ArrayInt64 } from './internals/ArrayInt64';
 import { fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt64';
-import { unsafeUniformArrayIntDistributionInternal } from './internals/UnsafeUniformArrayIntDistributionInternal';
+import { uniformArrayIntInternal } from './internals/uniformArrayIntInternal';
 
 const safeNumberMaxSafeInteger = Number.MAX_SAFE_INTEGER;
 
@@ -28,7 +28,7 @@ function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number,
     rangeSizeArrayIntValue.data[1] += 1;
   }
 
-  unsafeUniformArrayIntDistributionInternal(rng, sharedData, rangeSizeArrayIntValue.data);
+  uniformArrayIntInternal(rng, sharedData, rangeSizeArrayIntValue.data);
   return sharedData[0] * 0x100000000 + sharedData[1] + from;
 }
 
@@ -41,12 +41,12 @@ function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number,
  *
  * @public
  */
-export function unsafeUniformIntDistribution(rng: RandomGenerator, from: number, to: number): number {
+export function uniformInt(rng: RandomGenerator, from: number, to: number): number {
   const rangeSize = to - from;
   if (rangeSize <= 0xffffffff) {
     // Calling unsafeUniformIntDistributionInternal can be considered safe
     // up-to 2**32 values. Above this range it may miss values.
-    const g = unsafeUniformIntDistributionInternal(rng, rangeSize + 1);
+    const g = uniformIntInternal(rng, rangeSize + 1);
     return g + from;
   }
   return uniformLargeIntInternal(rng, from, to, rangeSize);

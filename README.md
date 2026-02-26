@@ -27,14 +27,14 @@ Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 **Simple usage**
 
 ```javascript
-import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
 const rng = xoroshiro128plus(seed);
-const firstDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 2
-const secondDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 4
-const thirdDiceValue = unsafeUniformIntDistribution(rng, 1, 6); // value in {1..6}, here: 6
+const firstDiceValue = uniformInt(rng, 1, 6); // value in {1..6}, here: 2
+const secondDiceValue = uniformInt(rng, 1, 6); // value in {1..6}, here: 4
+const thirdDiceValue = uniformInt(rng, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Pure usage**
@@ -44,14 +44,17 @@ Pure means that the instance `rng` will never be altered in-place. It can be cal
 ```javascript
 import { uniformIntDistribution } from 'pure-rand/distribution/UniformIntDistribution';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { purify } from 'pure-rand/utils/purify';
+
+const uniformIntDistributionPure = purify(uniformIntDistribution);
 
 const seed = 42;
 const rng1 = xoroshiro128plus(seed);
-const [firstDiceValue, rng2] = uniformIntDistribution(rng1, 1, 6); // value in {1..6}, here: 2
-const [secondDiceValue, rng3] = uniformIntDistribution(rng2, 1, 6); // value in {1..6}, here: 4
-const [thirdDiceValue, rng4] = uniformIntDistribution(rng3, 1, 6); // value in {1..6}, here: 6
+const [firstDiceValue, rng2] = uniformIntDistributionPure(rng1, 1, 6); // value in {1..6}, here: 2
+const [secondDiceValue, rng3] = uniformIntDistributionPure(rng2, 1, 6); // value in {1..6}, here: 4
+const [thirdDiceValue, rng4] = uniformIntDistributionPure(rng3, 1, 6); // value in {1..6}, here: 6
 
-// You can call: uniformIntDistribution(rng1, 1, 6);
+// You can call: uniformIntDistributionPure(rng1, 1, 6);
 // over and over it will always give you back the same value along with a new rng (always producing the same values too).
 ```
 
@@ -60,7 +63,7 @@ const [thirdDiceValue, rng4] = uniformIntDistribution(rng3, 1, 6); // value in {
 In order to produce independent simulations it can be tempting to instanciate several PRNG based on totally different seeds. While it would produce distinct set of values, the best way to ensure fully unrelated sequences is rather to use jumps. Jump just consists into moving far away from the current position in the generator (eg.: jumping in Xoroshiro 128+ will move you 2<sup>64</sup> generations away from the current one on a generator having a sequence of 2<sup>128</sup> elements).
 
 ```javascript
-import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 const seed = 42;
@@ -68,9 +71,9 @@ const rngSimulation1 = xoroshiro128plus(seed);
 const rngSimulation2 = rngSimulation1.jump(); // not in-place, creates a new instance
 const rngSimulation3 = rngSimulation2.jump(); // not in-place, creates a new instance
 
-const diceSim1Value = unsafeUniformIntDistribution(rngSimulation1, 1, 6); // value in {1..6}, here: 2
-const diceSim2Value = unsafeUniformIntDistribution(rngSimulation2, 1, 6); // value in {1..6}, here: 5
-const diceSim3Value = unsafeUniformIntDistribution(rngSimulation3, 1, 6); // value in {1..6}, here: 6
+const diceSim1Value = uniformInt(rngSimulation1, 1, 6); // value in {1..6}, here: 2
+const diceSim2Value = uniformInt(rngSimulation2, 1, 6); // value in {1..6}, here: 5
+const diceSim3Value = uniformInt(rngSimulation3, 1, 6); // value in {1..6}, here: 6
 ```
 
 **Non-uniform usage**
@@ -114,6 +117,8 @@ Each PRNG algorithm has to deal with tradeoffs in terms of randomness quality, s
 
 Our recommendation is `xoroshiro128plus`. But if you want to use another one, you can replace it by any other PRNG provided by pure-rand in the examples above.
 
+Each of these generators come with its own import: `pure-rand/generator/<name>`.
+
 ### Distributions
 
 Once you are able to generate random values, next step is to scale them into the range you want. Indeed, you probably don't want a floating point value between 0 (included) and 1 (excluded) but rather an integer value between 1 and 6 if you emulate a dice or any other range based on your needs.
@@ -122,18 +127,24 @@ At this point, simple way would be to do `min + floor(random() * (max - min + 1)
 
 pure-rand provides 3 built-in functions for uniform distributions of values:
 
-- `uniformIntDistribution(rng, min, max)`
-- `uniformBigIntDistribution(rng, min, max)` - with `min` and `max` being `bigint`
-- `uniformArrayIntDistribution(rng, min, max)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
+- `uniformInt(rng, min, max)`
+- `uniformBigInt(rng, min, max)` - with `min` and `max` being `bigint`
+- `uniformArrayInt(rng, min, max)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
 
-And their unsafe equivalents to change the PRNG in-place.
+Each of these distributions come with its own import: `pure-rand/distribution/<name>`.
 
 ### Extra helpers
 
 Some helpers are also provided in order to ease the use of `RandomGenerator` instances:
 
-- `generateN(rng: RandomGenerator, num: number): [number[], RandomGenerator]`: generates `num` random values using `rng` and return the next `RandomGenerator`
-- `skipN(rng: RandomGenerator, num: number): RandomGenerator`: skips `num` random values and return the next `RandomGenerator`
+- `generateN(rng: RandomGenerator, num: number): number[]`: generates `num` random values using `rng` and return them
+- `skipN(rng: RandomGenerator, num: number): void`: skips `num` random values
+
+And one last helper responsible to change any function accepting an instance of `RandomGenerator` as a first argument into a pure version of it:
+
+- `purify<TArgs extends unknown[], TReturn>(action: (rng: RandomGenerator, ...args: TArgs) => TReturn): (rng: RandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator]`: purifies the action
+
+Each of these helpers come with its own import: `pure-rand/utils/<name>`.
 
 ## Comparison
 
@@ -213,11 +224,11 @@ The recommended setup for pure-rand is to rely on our Xoroshiro128+. It provides
 The following snippet is responsible for generating 32-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
 
 ```js
-import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 function generateFloat32(rng) {
-  const g1 = unsafeUniformIntDistribution(rng, 0, (1 << 24) - 1);
+  const g1 = uniformInt(rng, 0, (1 << 24) - 1);
   const value = g1 / (1 << 24);
   return value;
 }
@@ -234,12 +245,12 @@ const float32Bits2 = generateFloat32(rng);
 The following snippet is responsible for generating 64-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
 
 ```js
-import { unsafeUniformIntDistribution } from 'pure-rand/distribution/UnsafeUniformIntDistribution';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 
 function generateFloat64(rng) {
-  const g1 = unsafeUniformIntDistribution(rng, 0, (1 << 26) - 1);
-  const g2 = unsafeUniformIntDistribution(rng, 0, (1 << 27) - 1);
+  const g1 = uniformInt(rng, 0, (1 << 26) - 1);
+  const g2 = uniformInt(rng, 0, (1 << 27) - 1);
   const value = (g1 * Math.pow(2, 27) + g2) * Math.pow(2, -53);
   return value;
 }

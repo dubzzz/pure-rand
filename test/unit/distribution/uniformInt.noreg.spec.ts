@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
+import { uniformInt } from '../../../src/distribution/uniformInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
-describe('uniformIntDistribution [non regression]', () => {
+describe('uniformInt [non regression]', () => {
   it.each`
     from                       | to                         | topic
     ${0}                       | ${2 ** 3 - 1}              | ${"range of size divisor of mersenne's one"}
@@ -27,14 +27,11 @@ describe('uniformIntDistribution [non regression]', () => {
     // The values we expect in the output are just a snapshot taken at a certain time
     // in the past. They might be wrong values with bugs.
 
-    let rng: RandomGenerator = mersenne(0);
-    const distribution = uniformIntDistribution(from, to);
-
+    const rng: RandomGenerator = mersenne(0);
     const values: number[] = [];
     for (let idx = 0; idx !== 10; ++idx) {
-      const [v, nrng] = distribution(rng);
+      const v = uniformInt(rng, from, to);
       values.push(v);
-      rng = nrng;
     }
     expect(values).toMatchSnapshot();
   });
@@ -43,7 +40,7 @@ describe('uniformIntDistribution [non regression]', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), fc.maxSafeInteger(), fc.maxSafeInteger(), (seed, a, b) => {
         const [from, to] = a < b ? [a, b] : [b, a];
-        const [v, _nrng] = uniformIntDistribution(from, to)(mersenne(seed));
+        const v = uniformInt(mersenne(seed), from, to);
         return v >= from && v <= to;
       }),
     ));

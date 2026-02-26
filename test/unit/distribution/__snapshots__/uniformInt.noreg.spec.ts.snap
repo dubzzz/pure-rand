@@ -1,0 +1,166 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 6) except for major bumps 1`] = `
+[
+  2,
+  1,
+  5,
+  0,
+  6,
+  0,
+  4,
+  1,
+  6,
+  3,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 7) except for major bumps 1`] = `
+[
+  4,
+  7,
+  5,
+  0,
+  3,
+  3,
+  3,
+  7,
+  1,
+  3,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 8) except for major bumps 1`] = `
+[
+  6,
+  7,
+  0,
+  4,
+  5,
+  4,
+  5,
+  8,
+  3,
+  7,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 1099511627774) except for major bumps 1`] = `
+[
+  739133139503,
+  503989783744,
+  289300173563,
+  839010057575,
+  39185407699,
+  93992703730,
+  158044207703,
+  303038774744,
+  381275655564,
+  253307142849,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 1099511627775) except for major bumps 1`] = `
+[
+  86298110511,
+  753097886912,
+  847645922043,
+  821830188391,
+  1027027885779,
+  1073245247218,
+  570361068119,
+  1041773149656,
+  1081355324812,
+  317731652289,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (+0, 1099511627776) except for major bumps 1`] = `
+[
+  86298110511,
+  753097886912,
+  847645922043,
+  821830188391,
+  1027027885779,
+  1073245247218,
+  570361068119,
+  1041773149656,
+  1081355324812,
+  317731652289,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (-2147483648, 2147483646) except for major bumps 1`] = `
+[
+  -1937831252,
+  -1748719057,
+  -1223252363,
+  -668873536,
+  -1706118333,
+  -610118917,
+  -1954711869,
+  -656048793,
+  1819583497,
+  -1616781613,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (-2147483648, 2147483647) except for major bumps 1`] = `
+[
+  -1937831252,
+  -1748719057,
+  -1223252363,
+  -668873536,
+  -1706118333,
+  -610118917,
+  -1954711869,
+  -656048793,
+  1819583497,
+  -1616781613,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (-2147483648, 2147483648) except for major bumps 1`] = `
+[
+  -1748719057,
+  1277901399,
+  243580376,
+  1171049868,
+  2051556033,
+  -806729177,
+  1686997841,
+  602801999,
+  2034131043,
+  -855081807,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (-9007199254740991, 9007199254740991) except for major bumps 1`] = `
+[
+  8737458527447601,
+  -2631726847111999,
+  -4869447699246340,
+  8293355706744169,
+  5809858626576085,
+  -1881170402421005,
+  -7398455699097000,
+  -5844700774482471,
+  5236255647124877,
+  2596200260321985,
+]
+`;
+
+exports[`uniformInt [non regression] > Should not change its output in range (48, 69) except for major bumps 1`] = `
+[
+  56,
+  53,
+  69,
+  60,
+  65,
+  49,
+  61,
+  57,
+  67,
+  65,
+]
+`;
