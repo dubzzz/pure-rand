@@ -1,6 +1,6 @@
 import type { RandomGenerator } from '../../types/RandomGenerator';
 import type { ArrayInt } from './ArrayInt';
-import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistributionInternal';
+import { uniformIntInternal } from './uniformIntInternal';
 
 /**
  * Uniformly generate ArrayInt in range [0 ; rangeSize[
@@ -11,7 +11,7 @@ import { unsafeUniformIntDistributionInternal } from './UnsafeUniformIntDistribu
  *
  * @internal
  */
-export function unsafeUniformArrayIntDistributionInternal(
+export function uniformArrayIntInternal(
   rng: RandomGenerator,
   out: ArrayInt['data'],
   rangeSize: ArrayInt['data'],
@@ -23,7 +23,7 @@ export function unsafeUniformArrayIntDistributionInternal(
     // We compute a new value for arrayInt
     for (let index = 0; index !== rangeLength; ++index) {
       const indexRangeSize = index === 0 ? rangeSize[0] + 1 : 0x100000000;
-      const g = unsafeUniformIntDistributionInternal(rng, indexRangeSize);
+      const g = uniformIntInternal(rng, indexRangeSize);
       out[index] = g;
     }
 

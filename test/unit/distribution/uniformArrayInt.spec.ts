@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 
-import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
+import { uniformArrayInt } from '../../../src/distribution/uniformArrayInt';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
-import * as UnsafeUniformArrayIntDistributionInternalMock from '../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal';
+import * as uniformArrayIntInternalMock from '../../../src/distribution/internals/uniformArrayIntInternal';
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
-vi.mock('../../../src/distribution/internals/UnsafeUniformArrayIntDistributionInternal');
+vi.mock('../../../src/distribution/internals/uniformArrayIntInternal');
 
 function buildUniqueRng(clonedRng?: RandomGenerator): RandomGenerator {
   return {
@@ -24,76 +24,76 @@ function clean() {
 }
 
 beforeEach(clean);
-describe('uniformArrayIntDistribution', () => {
+describe('uniformArrayInt', () => {
   // Skip next tests if BigInt is not supported
   if (typeof BigInt === 'undefined') return it('no test', () => expect(true).toBe(true));
 
-  it('Should call unsafeUniformArrayIntDistributionInternal with correct range and source rng', () =>
+  it('Should call uniformArrayIntInternal with correct range and source rng', () =>
     fc.assert(
       fc
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
-          const { unsafeUniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+          const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
           const expectedRangeSize = arrayIntToBigInt(to) - arrayIntToBigInt(from) + BigInt(1);
           const expectedRng = buildUniqueRng();
 
           // Act
-          uniformArrayIntDistribution(from, to, buildUniqueRng(expectedRng));
+          uniformArrayInt(buildUniqueRng(expectedRng), from, to);
 
           // Assert
-          const { rangeSize, rng } = extractParams(unsafeUniformArrayIntDistributionInternal);
+          const { rangeSize, rng } = extractParams(uniformArrayIntInternal);
           expect(arrayIntToBigInt({ sign: 1, data: rangeSize })).toBe(expectedRangeSize);
           expect(rng).toBe(expectedRng);
         })
         .beforeEach(clean),
     ));
 
-  it('Should call unsafeUniformArrayIntDistributionInternal with non-empty range', () =>
+  it('Should call uniformArrayIntInternal with non-empty range', () =>
     fc.assert(
       fc
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
-          const { unsafeUniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+          const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
 
           // Act
-          uniformArrayIntDistribution(from, to, buildUniqueRng());
+          uniformArrayInt(buildUniqueRng(), from, to);
 
           // Assert
-          const { rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
+          const { rangeSize } = extractParams(uniformArrayIntInternal);
           expect(rangeSize.length).toBeGreaterThanOrEqual(1);
         })
         .beforeEach(clean),
     ));
 
-  it('Should call unsafeUniformArrayIntDistributionInternal with trimmed range (no trailing zeros)', () =>
+  it('Should call uniformArrayIntInternal with trimmed range (no trailing zeros)', () =>
     fc.assert(
       fc
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
-          const { unsafeUniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+          const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
 
           // Act
-          uniformArrayIntDistribution(from, to, buildUniqueRng());
+          uniformArrayInt(buildUniqueRng(), from, to);
 
           // Assert
-          const { rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
+          const { rangeSize } = extractParams(uniformArrayIntInternal);
           expect(rangeSize[0]).not.toBe(0); // rangeSize >= 1
         })
         .beforeEach(clean),
     ));
 
-  it('Should call unsafeUniformArrayIntDistributionInternal with out having same length as range', () =>
+  it('Should call uniformArrayIntInternal with out having same length as range', () =>
     fc.assert(
       fc
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
-          const { unsafeUniformArrayIntDistributionInternal, from, to } = mockInternals(a, b);
+          const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
 
           // Act
-          uniformArrayIntDistribution(from, to, buildUniqueRng());
+          uniformArrayInt(buildUniqueRng(), from, to);
 
           // Assert
-          const { out, rangeSize } = extractParams(unsafeUniformArrayIntDistributionInternal);
+          const { out, rangeSize } = extractParams(uniformArrayIntInternal);
           expect(out).toHaveLength(rangeSize.length);
         })
         .beforeEach(clean),
@@ -118,24 +118,16 @@ function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
 }
 
 function mockInternals(a: ArrayInt, b: ArrayInt) {
-  const { unsafeUniformArrayIntDistributionInternal } = vi.mocked(UnsafeUniformArrayIntDistributionInternalMock);
-  unsafeUniformArrayIntDistributionInternal.mockImplementation((_rng, out, _rangeSize) => out);
+  const { uniformArrayIntInternal } = vi.mocked(uniformArrayIntInternalMock);
+  uniformArrayIntInternal.mockImplementation((_rng, out, _rangeSize) => out);
   const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
-  return { unsafeUniformArrayIntDistributionInternal, from, to };
+  return { uniformArrayIntInternal, from, to };
 }
 
-function extractParams(
-  unsafeUniformArrayIntDistributionInternal: ReturnType<
-    typeof mockInternals
-  >['unsafeUniformArrayIntDistributionInternal'],
-) {
-  expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledTimes(1);
-  expect(unsafeUniformArrayIntDistributionInternal).toHaveBeenCalledWith(
-    expect.anything(),
-    expect.any(Array),
-    expect.any(Array),
-  );
-  const params = unsafeUniformArrayIntDistributionInternal.mock.calls[0];
+function extractParams(uniformArrayIntInternal: ReturnType<typeof mockInternals>['uniformArrayIntInternal']) {
+  expect(uniformArrayIntInternal).toHaveBeenCalledTimes(1);
+  expect(uniformArrayIntInternal).toHaveBeenCalledWith(expect.anything(), expect.any(Array), expect.any(Array));
+  const params = uniformArrayIntInternal.mock.calls[0];
   const [rng, out, rangeSize] = params;
   return { out, rangeSize, rng };
 }

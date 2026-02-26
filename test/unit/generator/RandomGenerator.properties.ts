@@ -3,25 +3,29 @@ import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
-import { skipN } from '../../../src/distribution/SkipN';
-import { generateN } from '../../../src/distribution/GenerateN';
-import { unsafeSkipN } from '../../../src/distribution/UnsafeSkipN';
+import { skipN } from '../../../src/utils/skipN';
+import { generateN } from '../../../src/utils/generateN';
+import { purify } from '../../../src/utils/purify';
+
+const pureSkipNInternal = purify(skipN);
+const pureSkipN = (rng: RandomGenerator, num: number) => pureSkipNInternal(rng, num)[1];
+const pureGenerateN = purify(generateN);
 
 const MAX_SIZE: number = 2048;
 
 export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
-    const seq1 = generateN(skipN(rng_for(seed), offset), num)[0];
-    const seq2 = generateN(skipN(rng_for(seed), offset), num)[0];
+    const seq1 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
+    const seq2 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
     assert.deepEqual(seq1, seq2);
   });
 }
 
 export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
-    const rng = skipN(rng_for(seed), offset);
-    const seq1 = generateN(rng, num)[0];
-    const seq2 = generateN(rng, num)[0];
+    const rng = pureSkipN(rng_for(seed), offset);
+    const seq1 = pureGenerateN(rng, num)[0];
+    const seq2 = pureGenerateN(rng, num)[0];
     assert.deepEqual(seq1, seq2);
   });
 }
@@ -29,7 +33,7 @@ export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenera
 export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rng = rng_for(seed);
-    const value = skipN(rng, offset).next()[0];
+    const value = pureSkipN(rng, offset).next()[0];
     assert.ok(value >= -0x80000000);
     assert.ok(value <= 0x7fffffff);
   });
@@ -39,9 +43,9 @@ export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rng = rng_for(seed);
     // rngNextFirst = rng.next.next..(offset times)..next.jump
-    const rngNextFirst = skipN(rng, offset).jump!();
+    const rngNextFirst = pureSkipN(rng, offset).jump!();
     // rngJumpFirst = rng.jump.next.next..(offset times)..next
-    const rngJumpFirst = skipN(rng.jump!(), offset);
+    const rngJumpFirst = pureSkipN(rng.jump!(), offset);
     expect(rngNextFirst.next()[0]).toBe(rngJumpFirst.next()[0]);
   });
 }
@@ -49,9 +53,9 @@ export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
 export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
-    const [expectedValue, expectedNextRng] = skipN(rng_for(seed), offset).next();
+    const [expectedValue, expectedNextRng] = pureSkipN(rng_for(seed), offset).next();
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngReprBefore = JSON.stringify(rng);
     const expectedRngReprAfter = JSON.stringify(expectedNextRng);
 
@@ -69,9 +73,9 @@ export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenera
 export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
-    const expectedJumpRng = skipN(rng_for(seed), offset).jump!();
+    const expectedJumpRng = pureSkipN(rng_for(seed), offset).jump!();
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngReprBefore = JSON.stringify(rng);
     const expectedRngReprAfter = JSON.stringify(expectedJumpRng);
 
@@ -89,7 +93,7 @@ export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGenerator)
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngReprBefore = JSON.stringify(rng);
 
     // Act
@@ -105,7 +109,7 @@ export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGenerator)
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngReprBefore = JSON.stringify(rng);
 
     // Act
@@ -121,7 +125,7 @@ export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => Random
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngCloned = rng.clone();
     const rngReprBefore = JSON.stringify(rng);
     const rngClonedReprBefore = JSON.stringify(rngCloned);
@@ -142,7 +146,7 @@ export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => Random
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
-    unsafeSkipN(rng, offset);
+    skipN(rng, offset);
     const rngCloned = rng.clone();
     const rngReprBefore = JSON.stringify(rng);
     const rngClonedReprBefore = JSON.stringify(rngCloned);
@@ -163,12 +167,12 @@ export function clonedFromStateSameSequences(
   rng_for: ((seed: number) => RandomGenerator) & { fromState: (state: readonly number[]) => RandomGenerator },
 ) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
-    const source = skipN(rng_for(seed), offset);
+    const source = pureSkipN(rng_for(seed), offset);
     assert.notEqual(source.getState, undefined);
     const state = source.getState!();
     const clonedFromState = rng_for.fromState(state);
-    const seq1 = generateN(source, num)[0];
-    const seq2 = generateN(clonedFromState, num)[0];
+    const seq1 = pureGenerateN(source, num)[0];
+    const seq2 = pureGenerateN(clonedFromState, num)[0];
     assert.deepEqual(seq1, seq2);
   });
 }
