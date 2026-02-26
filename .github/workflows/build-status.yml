@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         id: pnpm-cache
         with:
-          node-version: '24.13.1'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Update pnpm cache
         if: steps.pnpm-cache.outputs.cache-hit != 'true'
@@ -42,7 +42,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.x'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Ensure no dedupe required
         run: pnpm dedupe --check
@@ -57,7 +57,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.13.1'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -74,7 +74,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.13.1'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -118,7 +118,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.13.1'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -154,7 +154,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.x'
+          node-version: '24.14.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -182,7 +182,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: '24.13.1'
+          node-version: '24.14.0'
           registry-url: 'https://registry.npmjs.org'
       - name: Install latest npm version
         run: npm install -g npm
