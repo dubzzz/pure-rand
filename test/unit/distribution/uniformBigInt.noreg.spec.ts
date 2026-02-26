@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigIntDistribution';
+import { uniformBigInt } from '../../../src/distribution/uniformBigInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
-describe('uniformBigIntDistribution [non regression]', () => {
+describe('uniformBigInt [non regression]', () => {
   if (typeof BigInt === 'undefined') {
     it('no test', () => {
       expect(true).toBe(true);
@@ -32,14 +32,11 @@ describe('uniformBigIntDistribution [non regression]', () => {
       // The values we expect in the output are just a snapshot taken at a certain time
       // in the past. They might be wrong values with bugs.
 
-      let rng: RandomGenerator = mersenne(0);
-      const distribution = uniformBigIntDistribution(BigInt(from), BigInt(to));
-
+      const rng: RandomGenerator = mersenne(0);
       const values: bigint[] = [];
       for (let idx = 0; idx !== 10; ++idx) {
-        const [v, nrng] = distribution(rng);
+        const v = uniformBigInt(rng, BigInt(from), BigInt(to));
         values.push(v);
-        rng = nrng;
       }
       expect(values).toMatchSnapshot();
     });

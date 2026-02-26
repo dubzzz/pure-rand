@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { uniformBigIntDistribution } from '../../../src/distribution/UniformBigIntDistribution';
-import { uniformIntDistribution } from '../../../src/distribution/UniformIntDistribution';
+import { uniformBigInt } from '../../../src/distribution/uniformBigInt';
+import { uniformInt } from '../../../src/distribution/uniformInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
 
 const bigIntArbitrary = fc
@@ -15,7 +15,7 @@ const bigIntArbitrary = fc
     );
   });
 
-describe('uniformBigIntDistribution', () => {
+describe('uniformBigInt', () => {
   if (typeof BigInt === 'undefined') {
     it('no test', () => {
       expect(true).toBe(true);
@@ -28,11 +28,11 @@ describe('uniformBigIntDistribution', () => {
         fc.property(fc.noShrink(fc.integer()), bigIntArbitrary, bigIntArbitrary, (seed, a, b) => {
           const minV = a < b ? a : b;
           const maxV = a < b ? b : a;
-          const [v, nrng] = uniformBigIntDistribution(minV, maxV)(mersenne(seed));
+          const v = uniformBigInt(mersenne(seed), minV, maxV);
           return v >= minV && v <= maxV;
         }),
       ));
-    it('Should be equivalent to uniformIntDistribution integers within generator range', () =>
+    it('Should be equivalent to uniformInt integers within generator range', () =>
       fc.assert(
         fc.property(
           fc.noShrink(fc.integer()),
@@ -41,10 +41,12 @@ describe('uniformBigIntDistribution', () => {
           (seed, a, b) => {
             const minV = a < b ? a : b;
             const maxV = a < b ? b : a;
-            const [vInt, nrngInt] = uniformIntDistribution(minV, maxV)(mersenne(seed));
-            const [vBigInt, nrngBigInt] = uniformBigIntDistribution(BigInt(minV), BigInt(maxV))(mersenne(seed));
+            const rngInt = mersenne(seed);
+            const vInt = uniformInt(rngInt, minV, maxV);
+            const rngBigInt = mersenne(seed);
+            const vBigInt = uniformBigInt(rngBigInt, BigInt(minV), BigInt(maxV));
             assert.strictEqual(Number(vBigInt), vInt); // same values
-            assert.strictEqual(nrngBigInt.next()[0], nrngInt.next()[0]); // same generator
+            assert.strictEqual(rngBigInt.next()[0], rngInt.next()[0]); // same state within generators
           },
         ),
       ));

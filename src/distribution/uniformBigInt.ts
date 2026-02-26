@@ -16,7 +16,7 @@ const NumValues: bigint = typeof BigInt !== 'undefined' ? BigInt(0x100000000) : 
  *
  * @public
  */
-export function unsafeUniformBigIntDistribution(rng: RandomGenerator, from: bigint, to: bigint): bigint {
+export function uniformBigInt(rng: RandomGenerator, from: bigint, to: bigint): bigint {
   const diff = to - from + One;
 
   // Number of iterations required to have enough random

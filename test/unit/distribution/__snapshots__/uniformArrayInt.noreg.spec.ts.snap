@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('3 states [-1, 0, 1]') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('3 states [-1, 0, 1]') 1`] = `
 [
   {
     "data": [
@@ -65,7 +65,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('4 states [-2, -1, 0, 1]') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('4 states [-2, -1, 0, 1]') 1`] = `
 [
   {
     "data": [
@@ -130,7 +130,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('32-bit signed') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('32-bit signed') 1`] = `
 [
   {
     "data": [
@@ -195,7 +195,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('32-bit unsigned') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('32-bit unsigned') 1`] = `
 [
   {
     "data": [
@@ -260,7 +260,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('64-bit signed') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('64-bit signed') 1`] = `
 [
   {
     "data": [
@@ -335,7 +335,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('64-bit unsigned') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('64-bit unsigned') 1`] = `
 [
   {
     "data": [
@@ -410,7 +410,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('128-bit signed') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('128-bit signed') 1`] = `
 [
   {
     "data": [
@@ -505,7 +505,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('fuzzy') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('fuzzy') 1`] = `
 [
   {
     "data": [
@@ -580,7 +580,7 @@ exports[`uniformArrayIntDistribution [non regression] > Should not change its ou
 ]
 `;
 
-exports[`uniformArrayIntDistribution [non regression] > Should not change its output in asked range except for major bumps ('trailing zeros') 1`] = `
+exports[`uniformArrayInt [non regression] > Should not change its output in asked range except for major bumps ('trailing zeros') 1`] = `
 [
   {
     "data": [

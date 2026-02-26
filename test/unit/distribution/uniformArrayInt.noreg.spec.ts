@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
 import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
-import { uniformArrayIntDistribution } from '../../../src/distribution/UniformArrayIntDistribution';
+import { uniformArrayInt } from '../../../src/distribution/uniformArrayInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
 import { RandomGenerator } from '../../../src/types/RandomGenerator';
 
-describe('uniformArrayIntDistribution [non regression]', () => {
+describe('uniformArrayInt [non regression]', () => {
   it.each`
     from                                            | to                                                                     | topic
     ${{ sign: -1, data: [1] }}                      | ${{ sign: 1, data: [1] }}                                              | ${'3 states [-1, 0, 1]'}
@@ -26,14 +26,11 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     // The values we expect in the output are just a snapshot taken at a certain time
     // in the past. They might be wrong values with bugs.
 
-    let rng: RandomGenerator = mersenne(0);
-    const distribution = uniformArrayIntDistribution(from, to);
-
+    const rng: RandomGenerator = mersenne(0);
     const values: ArrayInt[] = [];
     for (let idx = 0; idx !== 10; ++idx) {
-      const [v, nrng] = distribution(rng);
+      const v = uniformArrayInt(rng, from, to);
       values.push(v);
-      rng = nrng;
     }
     expect(values).toMatchSnapshot();
   });
@@ -45,7 +42,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
-        const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
+        const v = uniformArrayInt(mersenne(seed), from, to);
         const vBigInt = arrayIntToBigInt(v);
         return vBigInt >= arrayIntToBigInt(from) && vBigInt <= arrayIntToBigInt(to);
       }),
@@ -55,7 +52,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
-        const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
+        const v = uniformArrayInt(mersenne(seed), from, to);
         expect(v.data).not.toHaveLength(0);
         if (v.data.length !== 1) {
           expect(v.data[0]).not.toBe(0); // do not start by zero when data has multiple values
@@ -69,7 +66,7 @@ describe('uniformArrayIntDistribution [non regression]', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
         const [from, to] = arrayIntToBigInt(a) < arrayIntToBigInt(b) ? [a, b] : [b, a];
-        const [v, _nrng] = uniformArrayIntDistribution(from, to)(mersenne(seed));
+        const v = uniformArrayInt(mersenne(seed), from, to);
         expect([-1, 1]).toContainEqual(v.sign); // sign is either 1 or -1
         expect(v.data).not.toHaveLength(0); // data is never empty
         for (const d of v.data) {
