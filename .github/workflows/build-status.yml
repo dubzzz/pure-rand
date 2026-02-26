@@ -108,7 +108,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build production package
-        run: pnpm build:prod-ci
+        run: pnpm build
+        env:
+          EXPECT_GITHUB_SHA: true
       - name: Create bundle
         run: pnpm pack --out package.tgz
       - name: Upload production package
