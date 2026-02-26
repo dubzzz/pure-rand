@@ -120,6 +120,33 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
+  preview:
+    name: 'Preview'
+    needs:
+      - warmup_pnpm_cache
+      - production_packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+      - name: Using Node v24.x
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download production packages
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: bundles
+      - name: Preview (no comment)
+        if: github.event_name != 'pull_request'
+        run: pnpm dlx pkg-pr-new publish --compact package.tgz --comment=off
+      - name: Preview
+        if: github.event_name == 'pull_request'
+        run: pnpm dlx pkg-pr-new publish --compact package.tgz
   publish_package:
     name: 'Publish package'
     needs:
