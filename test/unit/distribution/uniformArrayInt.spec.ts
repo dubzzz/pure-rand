@@ -35,15 +35,16 @@ describe('uniformArrayInt', () => {
           // Arrange
           const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
           const expectedRangeSize = arrayIntToBigInt(to) - arrayIntToBigInt(from) + BigInt(1);
-          const expectedRng = buildUniqueRng();
+          const clonedRng = buildUniqueRng();
 
           // Act
-          uniformArrayInt(buildUniqueRng(expectedRng), from, to);
+          uniformArrayInt(buildUniqueRng(clonedRng), from, to);
 
           // Assert
           const { rangeSize, rng } = extractParams(uniformArrayIntInternal);
           expect(arrayIntToBigInt({ sign: 1, data: rangeSize })).toBe(expectedRangeSize);
-          expect(rng).toBe(expectedRng);
+          expect(rng).toBe(rng); // no clone expected
+          expect(rng).not.toBe(clonedRng); // no clone expected
         })
         .beforeEach(clean),
     ));
