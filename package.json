@@ -6,44 +6,20 @@
   "exports": {
     "./package.json": "./package.json",
     "./distribution/*": {
-      "require": {
-        "types": "./lib/distribution/*.d.ts",
-        "default": "./lib/distribution/*.js"
-      },
-      "import": {
-        "types": "./lib/esm/distribution/*.d.ts",
-        "default": "./lib/esm/distribution/*.js"
-      }
+      "require": "./lib/distribution/*.js",
+      "import": "./lib/esm/distribution/*.js"
     },
     "./generator/*": {
-      "require": {
-        "types": "./lib/generator/*.d.ts",
-        "default": "./lib/generator/*.js"
-      },
-      "import": {
-        "types": "./lib/esm/generator/*.d.ts",
-        "default": "./lib/esm/generator/*.js"
-      }
+      "require": "./lib/generator/*.js",
+      "import": "./lib/esm/generator/*.js"
     },
     "./types/*": {
-      "require": {
-        "types": "./lib/types/*.d.ts",
-        "default": "./lib/types/*.js"
-      },
-      "import": {
-        "types": "./lib/esm/types/*.d.ts",
-        "default": "./lib/esm/types/*.js"
-      }
+      "require": "./lib/types/*.js",
+      "import": "./lib/esm/types/*.js"
     },
     "./utils/*": {
-      "require": {
-        "types": "./lib/utils/*.d.ts",
-        "default": "./lib/utils/*.js"
-      },
-      "import": {
-        "types": "./lib/esm/utils/*.d.ts",
-        "default": "./lib/esm/utils/*.js"
-      }
+      "require": "./lib/utils/*.js",
+      "import": "./lib/esm/utils/*.js"
     }
   },
   "files": [

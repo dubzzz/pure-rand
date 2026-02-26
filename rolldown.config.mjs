@@ -23,16 +23,9 @@ function getCommitHash() {
   return out.toString().split('\n')[0];
 }
 
-function buildConfigFor(pkg, dirname, replacementsFor) {
-  let isDual = false;
+function buildConfigFor(pkg, dirname) {
   const inputs = Object.values(pkg.exports)
-    .map((exportValue) => {
-      if (typeof exportValue === 'string') {
-        return exportValue;
-      }
-      isDual = true;
-      return exportValue.import.default;
-    })
+    .map((exportValue) => (typeof exportValue === 'string' ? exportValue : exportValue.import))
     .filter((filePath) => filePath.endsWith('.js'))
     .map((filePath) => filePath.replace(`./${outputDir}/esm/`, `./${inputDir}/`))
     .flatMap((pattern) => globSync(pattern.replace(/\.js$/, '.ts')))
