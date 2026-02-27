@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@types/node':
-        specifier: ^24.10.15
-        version: 24.10.15
       fast-check:
         specifier: ^4.5.3
         version: 4.5.3
@@ -1548,6 +1545,7 @@ snapshots:
   '@types/node@24.10.15':
     dependencies:
       undici-types: 7.16.0
+    optional: true
 
   '@vitest/expect@4.0.18':
     dependencies:
@@ -1903,7 +1901,8 @@ snapshots:
 
   ufo@1.6.3: {}
 
-  undici-types@7.16.0: {}
+  undici-types@7.16.0:
+    optional: true
 
   undici@6.23.0: {}
 

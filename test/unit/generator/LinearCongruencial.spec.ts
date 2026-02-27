@@ -1,5 +1,4 @@
-import { describe, it } from 'vitest';
-import * as assert from 'assert';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
 import { congruential32 } from '../../../src/generator/LinearCongruential';
@@ -13,8 +12,7 @@ describe('congruential32', () => {
       const v = g.next();
       data.push(v);
     }
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         3234350541, 527020623, 250494401, 2135749886, 3453847840, 1768043920, 3865977547, 3120260103, 2378176704,
         3334114947, 2265379032, 1332836779, 2062426087, 4121359587, 3757575956, 3358259829, 3704101252, 3758918454,

@@ -4,7 +4,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": ["node"],
+    "types": [],
 
     // Typechecking Options
     "exactOptionalPropertyTypes": true,

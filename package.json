@@ -48,7 +48,6 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
-    "@types/node": "^24.10.15",
     "fast-check": "^4.5.3",
     "oxfmt": "^0.35.0",
     "pkg-pr-new": "^0.0.65",

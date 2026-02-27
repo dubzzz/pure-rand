@@ -1,5 +1,4 @@
 import { expect } from 'vitest';
-import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import type { RandomGenerator } from '../../../src/types/RandomGenerator';
@@ -17,7 +16,7 @@ export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const seq1 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
     const seq2 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
-    assert.deepEqual(seq1, seq2);
+    expect(seq1).toEqual(seq2);
   });
 }
 
@@ -26,7 +25,7 @@ export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenera
     const rng = pureSkipN(rng_for(seed), offset);
     const seq1 = pureGenerateN(rng, num)[0];
     const seq2 = pureGenerateN(rng, num)[0];
-    assert.deepEqual(seq1, seq2);
+    expect(seq1).toEqual(seq2);
   });
 }
 
@@ -35,8 +34,8 @@ export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
     const rng = rng_for(seed);
     skipN(rng, offset);
     const value = rng.next();
-    assert.ok(value >= -0x80000000);
-    assert.ok(value <= 0x7fffffff);
+    expect(value).toBeGreaterThanOrEqual(-0x80000000);
+    expect(value).toBeLessThanOrEqual(0x7fffffff);
   });
 }
 
@@ -146,11 +145,11 @@ export function clonedFromStateSameSequences(
 ) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const source = pureSkipN(rng_for(seed), offset);
-    assert.notEqual(source.getState, undefined);
+    expect(source.getState).not.toBe(undefined);
     const state = source.getState!();
     const clonedFromState = rng_for.fromState(state);
     const seq1 = pureGenerateN(source, num)[0];
     const seq2 = pureGenerateN(clonedFromState, num)[0];
-    assert.deepEqual(seq1, seq2);
+    expect(seq1).toEqual(seq2);
   });
 }

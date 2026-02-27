@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import * as assert from 'assert';
 import * as fc from 'fast-check';
 
 import { uniformBigInt } from '../../../src/distribution/uniformBigInt';
@@ -45,9 +44,9 @@ describe('uniformBigInt', () => {
             const vInt = uniformInt(rngInt, minV, maxV);
             const rngBigInt = mersenne(seed);
             const vBigInt = uniformBigInt(rngBigInt, BigInt(minV), BigInt(maxV));
-            assert.strictEqual(Number(vBigInt), vInt); // same values
+            expect(Number(vBigInt)).toBe(vInt); // same values
             expect(rngBigInt.getState()).toEqual(rngInt.getState()); // same state within generators
-            assert.strictEqual(rngBigInt.next(), rngInt.next()); // same next value (this check is optional given we already checked for equal states, it just plays the role of a confirmation)
+            expect(rngBigInt.next()).toBe(rngInt.next()); // same next value (this check is optional given we already checked for equal states, it just plays the role of a confirmation)
           },
         ),
       ));
