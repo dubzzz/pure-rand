@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 
 import { uniformInt } from '../../../src/distribution/uniformInt';
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 import * as uniformIntInternalMock from '../../../src/distribution/internals/uniformIntInternal';
 import * as uniformArrayIntInternalMock from '../../../src/distribution/internals/uniformArrayIntInternal';
@@ -67,7 +67,7 @@ describe('uniformInt', () => {
         fc
           .property(settingsLargeArbitrary, (settings) => {
             // Arrange
-            const { from, to, rng, clonedRng, uniformArrayIntInternal } = mockLargeInternals(settings);
+            const { from, to, rng, uniformArrayIntInternal } = mockLargeInternals(settings);
 
             // Act
             uniformInt(rng, from, to);
@@ -147,8 +147,7 @@ function mockLargeInternals(settings: SettingsLargeType) {
 
   const { from, gap, rangeRandom, ctx } = settings;
   const to = from + gap;
-  const clonedRng = buildUniqueRng();
-  const rng = buildUniqueRng(clonedRng);
+  const rng = buildUniqueRng();
   const outputs: number[][] = [];
   uniformArrayIntInternal.mockImplementation((_rng, rangeSize) => {
     const out = rangeSize.map((r) => rangeRandom % (r || 1));
@@ -157,5 +156,5 @@ function mockLargeInternals(settings: SettingsLargeType) {
     return out;
   });
 
-  return { from, to, rng, clonedRng, outputs, uniformArrayIntInternal };
+  return { from, to, rng, outputs, uniformArrayIntInternal };
 }

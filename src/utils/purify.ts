@@ -1,4 +1,4 @@
-import { RandomGenerator } from '../types/RandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 
 /**
  * Transform an operation on a RandomGenerator into a pure version of it

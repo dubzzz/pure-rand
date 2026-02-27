@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { purify } from '../../../src/utils/purify';
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('purify', () => {
   it('should not alter the original instance', () => {

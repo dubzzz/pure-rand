@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { uniformBigInt } from '../../../src/distribution/uniformBigInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformBigInt [non regression]', () => {
   if (typeof BigInt === 'undefined') {

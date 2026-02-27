@@ -2,7 +2,7 @@ import { expect } from 'vitest';
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 import { skipN } from '../../../src/utils/skipN';
 import { generateN } from '../../../src/utils/generateN';
 import { purify } from '../../../src/utils/purify';
