@@ -8,10 +8,7 @@ import { mersenne } from '../../../src/generator/MersenneTwister';
 const bigIntArbitrary = fc
   .tuple(fc.boolean(), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff))
   .map(([sign, a3, a2, a1, a0]) => {
-    return (
-      (sign ? BigInt(-1) : BigInt(1)) *
-      ((BigInt(a3) << BigInt(96)) + (BigInt(a2) << BigInt(64)) + (BigInt(a1) << BigInt(32)) + BigInt(a0))
-    );
+    return (sign ? -1n : 1n) * ((BigInt(a3) << 96n) + (BigInt(a2) << 64n) + (BigInt(a1) << 32n) + BigInt(a0));
   });
 
 describe('uniformBigInt', () => {
