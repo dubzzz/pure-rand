@@ -33,7 +33,8 @@ export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenera
 export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rng = rng_for(seed);
-    const value = pureSkipN(rng, offset).next()[0];
+    skipN(rng, offset);
+    const value = rng.next();
     assert.ok(value >= -0x80000000);
     assert.ok(value <= 0x7fffffff);
   });
@@ -41,87 +42,64 @@ export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
 
 export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
-    const rng = rng_for(seed);
+    const rngNextFirst = rng_for(seed);
+    const rngJumpFirst = rng_for(seed);
     // rngNextFirst = rng.next.next..(offset times)..next.jump
-    const rngNextFirst = pureSkipN(rng, offset).jump!();
+    skipN(rngNextFirst, offset);
+    rngNextFirst.jump!();
     // rngJumpFirst = rng.jump.next.next..(offset times)..next
-    const rngJumpFirst = pureSkipN(rng.jump!(), offset);
-    expect(rngNextFirst.next()[0]).toBe(rngJumpFirst.next()[0]);
+    rngJumpFirst.jump!();
+    skipN(rngJumpFirst, offset);
+    // check same state and consequently same next value
+    expect(rngNextFirst.getState()).toEqual(rngJumpFirst.getState());
+    expect(rngNextFirst.next()).toBe(rngJumpFirst.next());
   });
 }
 
-export function changeSelfWithUnsafeNext(rng_for: (seed: number) => RandomGenerator) {
+export function changeSelfWithNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
-    const [expectedValue, expectedNextRng] = pureSkipN(rng_for(seed), offset).next();
+    const expectedRng = rng_for(seed);
+    skipN(expectedRng, offset);
+    const expectedValue = expectedRng.next();
     const rng = rng_for(seed);
     skipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
-    const expectedRngReprAfter = JSON.stringify(expectedNextRng);
+    const rngStateBefore = rng.getState();
+    const expectedRngStateAfter = expectedRng.getState();
 
     // Act
-    const value = rng.unsafeNext();
-    const rngReprAfter = JSON.stringify(rng);
+    const value = rng.next();
+    const rngStateAfter = rng.getState();
 
     // Assert
     expect(value).toBe(expectedValue);
-    expect(rngReprAfter).not.toBe(rngReprBefore);
-    expect(rngReprAfter).toBe(expectedRngReprAfter);
+    expect(rngStateAfter).not.toEqual(rngStateBefore);
+    expect(rngStateAfter).toEqual(expectedRngStateAfter);
   });
 }
 
-export function changeSelfWithUnsafeJump(rng_for: (seed: number) => RandomGenerator) {
+export function changeSelfWithJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
-    const expectedJumpRng = pureSkipN(rng_for(seed), offset).jump!();
+    const expectedRng = rng_for(seed);
+    skipN(expectedRng, offset);
+    expectedRng.jump!();
     const rng = rng_for(seed);
     skipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
-    const expectedRngReprAfter = JSON.stringify(expectedJumpRng);
-
-    // Act
-    rng.unsafeJump!();
-    const rngReprAfter = JSON.stringify(rng);
-
-    // Assert
-    expect(rngReprAfter).not.toBe(rngReprBefore);
-    expect(rngReprAfter).toBe(expectedRngReprAfter);
-  });
-}
-
-export function noChangeSelfWithNext(rng_for: (seed: number) => RandomGenerator) {
-  return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
-    // Arrange
-    const rng = rng_for(seed);
-    skipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
-
-    // Act
-    rng.next();
-    const rngReprAfter = JSON.stringify(rng);
-
-    // Assert
-    expect(rngReprAfter).toBe(rngReprBefore);
-  });
-}
-
-export function noChangeSelfWithJump(rng_for: (seed: number) => RandomGenerator) {
-  return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
-    // Arrange
-    const rng = rng_for(seed);
-    skipN(rng, offset);
-    const rngReprBefore = JSON.stringify(rng);
+    const rngStateBefore = rng.getState();
+    const expectedRngStateAfter = expectedRng.getState();
 
     // Act
     rng.jump!();
-    const rngReprAfter = JSON.stringify(rng);
+    const rngStateAfter = rng.getState();
 
     // Assert
-    expect(rngReprAfter).toBe(rngReprBefore);
+    expect(rngStateAfter).not.toEqual(rngStateBefore);
+    expect(rngStateAfter).toEqual(expectedRngStateAfter);
   });
 }
 
-export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => RandomGenerator) {
+export function noChangeOnClonedWithNext(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -131,7 +109,7 @@ export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => Random
     const rngClonedReprBefore = JSON.stringify(rngCloned);
 
     // Act
-    rng.unsafeNext();
+    rng.next();
     const rngReprAfter = JSON.stringify(rng);
     const rngClonedReprAfter = JSON.stringify(rngCloned);
 
@@ -142,7 +120,7 @@ export function noChangeOnClonedWithUnsafeNext(rng_for: (seed: number) => Random
   });
 }
 
-export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => RandomGenerator) {
+export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenerator) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -152,7 +130,7 @@ export function noChangeOnClonedWithUnsafeJump(rng_for: (seed: number) => Random
     const rngClonedReprBefore = JSON.stringify(rngCloned);
 
     // Act
-    rng.unsafeJump!();
+    rng.jump!();
     const rngReprAfter = JSON.stringify(rng);
     const rngClonedReprAfter = JSON.stringify(rngCloned);
 

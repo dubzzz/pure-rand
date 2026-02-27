@@ -22,12 +22,7 @@ class MersenneTwister implements RandomGenerator {
   clone(): MersenneTwister {
     return new MersenneTwister(this.states, this.index);
   }
-  next(): [number, MersenneTwister] {
-    const nextRng = new MersenneTwister(this.states, this.index);
-    const out = nextRng.unsafeNext();
-    return [out, nextRng];
-  }
-  unsafeNext(): number {
+  next(): number {
     let y = this.states[this.index];
     y ^= this.states[this.index] >>> U;
     y ^= (y << S) & B;

@@ -13,12 +13,7 @@ class LinearCongruential32 implements RandomGenerator {
   clone(): LinearCongruential32 {
     return new LinearCongruential32(this.seed);
   }
-  next(): [number, LinearCongruential32] {
-    const nextRng = new LinearCongruential32(this.seed);
-    const out = nextRng.unsafeNext();
-    return [out, nextRng];
-  }
-  unsafeNext(): number {
+  next(): number {
     const s1 = computeNextSeed(this.seed);
     const v1 = computeValueFromNextSeed(s1);
     const s2 = computeNextSeed(s1);

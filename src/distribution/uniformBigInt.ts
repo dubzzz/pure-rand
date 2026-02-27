@@ -44,9 +44,9 @@ export function uniformBigInt(rng: RandomGenerator, from: bigint, to: bigint): b
 
 function generateNext(NumIterations: number, rng: RandomGenerator): bigint {
   // Aggregate mutiple calls to next() into a single random value
-  let value = SBigInt(rng.unsafeNext() + 0x80000000);
+  let value = SBigInt(rng.next() + 0x80000000);
   for (let num = 1; num < NumIterations; ++num) {
-    const out = rng.unsafeNext();
+    const out = rng.next();
     value = (value << ThirtyTwo) + SBigInt(out + 0x80000000); // <<ThirtyTwo is equivalent to *NumValues
   }
   return value;

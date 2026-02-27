@@ -46,7 +46,8 @@ describe('uniformBigInt', () => {
             const rngBigInt = mersenne(seed);
             const vBigInt = uniformBigInt(rngBigInt, BigInt(minV), BigInt(maxV));
             assert.strictEqual(Number(vBigInt), vInt); // same values
-            assert.strictEqual(rngBigInt.next()[0], rngInt.next()[0]); // same state within generators
+            expect(rngBigInt.getState()).toEqual(rngInt.getState()); // same state within generators
+            assert.strictEqual(rngBigInt.next(), rngInt.next()); // same next value (this check is optional given we already checked for equal states, it just plays the role of a confirmation)
           },
         ),
       ));

@@ -7,12 +7,11 @@ import * as p from './RandomGenerator.properties';
 
 describe('mersenne', () => {
   it('Should produce the right sequence for seed=42', () => {
-    let g = mersenne(42);
+    const g = mersenne(42);
     const data = [];
     for (let idx = 0; idx !== 1000; ++idx) {
-      const [v, nextG] = g.next();
+      const v = g.next();
       data.push(v);
-      g = nextG;
     }
     // should be equivalent to the following Python code:
     // from numpy.random import MT19937
@@ -141,8 +140,6 @@ describe('mersenne', () => {
     fc.assert(p.clonedFromStateSameSequences(mersenne)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
-  it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(mersenne)));
-  it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(mersenne)));
-  it('Should not impact clones when impacting itself on unsafeNext', () =>
-    fc.assert(p.noChangeOnClonedWithUnsafeNext(mersenne)));
+  it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(mersenne)));
+  it('Should not impact clones when impacting itself on next', () => fc.assert(p.noChangeOnClonedWithNext(mersenne)));
 });

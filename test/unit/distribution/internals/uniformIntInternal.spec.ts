@@ -11,11 +11,7 @@ class NatGenerator implements RandomGenerator {
   clone(): RandomGenerator {
     return new NatGenerator(this.current);
   }
-  next(): [number, RandomGenerator] {
-    const nextRng = this.clone();
-    return [nextRng.unsafeNext(), nextRng];
-  }
-  unsafeNext(): number {
+  next(): number {
     const previousCurrent = this.current;
     this.current = (this.current + 1) | 0;
     return previousCurrent;

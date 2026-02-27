@@ -7,12 +7,11 @@ import * as p from './RandomGenerator.properties';
 
 describe('congruential32', () => {
   it('Should produce the right sequence for seed=42', () => {
-    let g = congruential32(42);
+    const g = congruential32(42);
     const data = [];
     for (let idx = 0; idx !== 1000; ++idx) {
-      const [v, nextG] = g.next();
+      const v = g.next();
       data.push(v);
-      g = nextG;
     }
     assert.deepEqual(
       data,
@@ -136,8 +135,7 @@ describe('congruential32', () => {
     fc.assert(p.clonedFromStateSameSequences(congruential32)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential32)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(congruential32)));
-  it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(congruential32)));
-  it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(congruential32)));
-  it('Should not impact clones when impacting itself on unsafeNext', () =>
-    fc.assert(p.noChangeOnClonedWithUnsafeNext(congruential32)));
+  it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(congruential32)));
+  it('Should not impact clones when impacting itself on next', () =>
+    fc.assert(p.noChangeOnClonedWithNext(congruential32)));
 });

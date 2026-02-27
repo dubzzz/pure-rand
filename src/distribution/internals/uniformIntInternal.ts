@@ -9,9 +9,9 @@ export function uniformIntInternal(rng: RandomGenerator, rangeSize: number): num
   // Range provided by the RandomGenerator is large enough,
   // given rangeSize <= 0x100000000 and RandomGenerator is uniform on 0x100000000 values
   const MaxAllowed = rangeSize > 2 ? ~~(0x100000000 / rangeSize) * rangeSize : 0x100000000;
-  let deltaV = rng.unsafeNext() + 0x80000000;
+  let deltaV = rng.next() + 0x80000000;
   while (deltaV >= MaxAllowed) {
-    deltaV = rng.unsafeNext() + 0x80000000;
+    deltaV = rng.next() + 0x80000000;
   }
   return deltaV % rangeSize;
 }
