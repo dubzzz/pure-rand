@@ -34,7 +34,7 @@ describe('uniformArrayInt', () => {
         .property(arrayIntArb(), arrayIntArb(), (a, b) => {
           // Arrange
           const { uniformArrayIntInternal, from, to } = mockInternals(a, b);
-          const expectedRangeSize = arrayIntToBigInt(to) - arrayIntToBigInt(from) + BigInt(1);
+          const expectedRangeSize = arrayIntToBigInt(to) - arrayIntToBigInt(from) + 1n;
           const clonedRng = buildUniqueRng();
 
           // Act
@@ -110,9 +110,9 @@ const arrayIntArb = () =>
   });
 
 function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
-  let current = BigInt(0);
+  let current = 0n;
   for (let index = 0; index < arrayInt.data.length; ++index) {
-    current <<= BigInt(32);
+    current <<= 32n;
     current += BigInt(arrayInt.data[index]);
   }
   return current * BigInt(arrayInt.sign);

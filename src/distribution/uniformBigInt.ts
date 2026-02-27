@@ -2,10 +2,8 @@ import type { RandomGenerator } from '../types/RandomGenerator';
 
 // We are capturing the reference to BigInt so that it cannot be altered
 // by any external code after that point.
-const SBigInt: typeof BigInt = typeof BigInt !== 'undefined' ? BigInt : undefined!;
-const One: bigint = typeof BigInt !== 'undefined' ? BigInt(1) : undefined!;
-const ThirtyTwo: bigint = typeof BigInt !== 'undefined' ? BigInt(32) : undefined!;
-const NumValues: bigint = typeof BigInt !== 'undefined' ? BigInt(0x100000000) : undefined!;
+const SBigInt = BigInt;
+const NumValues: bigint = 0x100000000n;
 
 /**
  * Uniformly generate random bigint values between `from` (included) and `to` (included)
@@ -17,14 +15,14 @@ const NumValues: bigint = typeof BigInt !== 'undefined' ? BigInt(0x100000000) : 
  * @public
  */
 export function uniformBigInt(rng: RandomGenerator, from: bigint, to: bigint): bigint {
-  const diff = to - from + One;
+  const diff = to - from + 1n;
 
   // Number of iterations required to have enough random
   // to build uniform entries in the asked range
   let FinalNumValues = NumValues;
   let NumIterations = 1; // NumValues being large enough no need for bigint on NumIterations
   while (FinalNumValues < diff) {
-    FinalNumValues <<= ThirtyTwo; // equivalent to: *=NumValues
+    FinalNumValues <<= 32n; // equivalent to: *=NumValues
     ++NumIterations;
   }
 
@@ -47,7 +45,7 @@ function generateNext(NumIterations: number, rng: RandomGenerator): bigint {
   let value = SBigInt(rng.next() + 0x80000000);
   for (let num = 1; num < NumIterations; ++num) {
     const out = rng.next();
-    value = (value << ThirtyTwo) + SBigInt(out + 0x80000000); // <<ThirtyTwo is equivalent to *NumValues
+    value = (value << 32n) + SBigInt(out + 0x80000000); // <<32n is equivalent to *NumValues
   }
   return value;
 }

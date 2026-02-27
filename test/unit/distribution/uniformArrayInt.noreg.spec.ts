@@ -35,9 +35,6 @@ describe('uniformArrayInt [non regression]', () => {
     expect(values).toMatchSnapshot();
   });
 
-  // Skip next tests if BigInt is not supported
-  if (typeof BigInt === 'undefined') return it('no test', () => expect(true).toBe(true));
-
   it('Should always generate values within the range [from ; to]', () =>
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), arrayIntArb(), arrayIntArb(), (seed, a, b) => {
@@ -87,9 +84,9 @@ const arrayIntArb = () =>
   });
 
 function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
-  let current = BigInt(0);
+  let current = 0n;
   for (let index = 0; index < arrayInt.data.length; ++index) {
-    current <<= BigInt(32);
+    current <<= 32n;
     current += BigInt(arrayInt.data[index]);
   }
   return current * BigInt(arrayInt.sign);

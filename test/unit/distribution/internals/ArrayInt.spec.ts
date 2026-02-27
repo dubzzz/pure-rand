@@ -33,7 +33,7 @@ describe('ArrayInt', () => {
           fc.pre(a.sign === 1);
           const r = { sign: a.sign, data: a.data.slice(0) };
           addOneToPositiveArrayInt(r);
-          expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + BigInt(1));
+          expect(arrayIntToBigInt(r)).toEqual(arrayIntToBigInt(a) + 1n);
         }),
       ));
   });
@@ -92,9 +92,9 @@ const arrayIntArb = () =>
   });
 
 function arrayIntToBigInt(arrayInt: ArrayInt): bigint {
-  let current = BigInt(0);
+  let current = 0n;
   for (let index = 0; index < arrayInt.data.length; ++index) {
-    current <<= BigInt(32);
+    current <<= 32n;
     current += BigInt(arrayInt.data[index]);
   }
   return current * BigInt(arrayInt.sign);

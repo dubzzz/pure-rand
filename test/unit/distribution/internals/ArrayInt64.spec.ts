@@ -51,10 +51,10 @@ describe('ArrayInt64', () => {
     if (typeof BigInt === 'undefined') return it('no test', () => expect(true).toBe(true));
 
     const fromBigIntToArrayInt64 = (n: bigint): ArrayInt64 => {
-      const posN = n < BigInt(0) ? -n : n;
+      const posN = n < 0n ? -n : n;
       return {
-        sign: n < BigInt(0) ? -1 : 1,
-        data: [Number(posN >> BigInt(32)), Number(posN % (BigInt(1) << BigInt(32)))],
+        sign: n < 0n ? -1 : 1,
+        data: [Number(posN >> 32n), Number(posN % (1n << 32n))],
       };
     };
 
@@ -64,7 +64,7 @@ describe('ArrayInt64', () => {
           const min = a < b ? a : b;
           const max = a < b ? b : a;
           const result = max - min;
-          fc.pre(result < BigInt(1) << BigInt(64));
+          fc.pre(result < 1n << 64n);
 
           const minArrayInt = fromBigIntToArrayInt64(min);
           const maxArrayInt = fromBigIntToArrayInt64(max);
@@ -93,5 +93,5 @@ function toNumber(arrayInt: ArrayInt64): number {
 
 function bigInt64() {
   // @ts-ignore
-  return fc.bigInt({ min: -(BigInt(1) << BigInt(63)), max: (BigInt(1) << BigInt(63)) - BigInt(1) });
+  return fc.bigInt({ min: -(1n << 63n), max: (1n << 63n) - 1n });
 }

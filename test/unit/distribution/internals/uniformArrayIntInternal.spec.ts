@@ -104,12 +104,12 @@ describe('uniformArrayIntInternal', () => {
       fc
         .property(
           fc
-            .bigInt({ min: BigInt(1) })
+            .bigInt({ min: 1n })
             .chain((rangeSize) =>
               fc.record({
                 rangeSize: fc.constant(rangeSize),
                 rejectedValues: fc.array(fc.bigInt({ min: rangeSize })),
-                validValue: fc.bigInt({ min: BigInt(0), max: rangeSize - BigInt(1) }),
+                validValue: fc.bigInt({ min: 0n, max: rangeSize - 1n }),
               }),
             )
             .map(({ rangeSize, rejectedValues, validValue }) => {
