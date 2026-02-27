@@ -110,7 +110,7 @@ export function substractArrayIntToNew(arrayIntA: ArrayInt, arrayIntB: ArrayInt)
  * Trim uneeded zeros in ArrayInt
  * and uniform notation for zero: {sign: 1, data: [0]}
  */
-export function trimArrayIntInplace(arrayInt: ArrayInt) {
+export function trimArrayIntInplace(arrayInt: ArrayInt): ArrayInt {
   const data = arrayInt.data;
   let firstNonZero = 0;
   for (; firstNonZero !== data.length && data[firstNonZero] === 0; ++firstNonZero) {}
