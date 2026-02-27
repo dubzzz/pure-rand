@@ -59,7 +59,7 @@ class XorShift128Plus implements RandomGenerator {
   }
 }
 
-function fromState(state: readonly number[]): RandomGenerator {
+export function xorshift128plusFromState(state: readonly number[]): RandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
     throw new Error('The state must have been produced by a xorshift128plus RandomGenerator');
@@ -67,9 +67,6 @@ function fromState(state: readonly number[]): RandomGenerator {
   return new XorShift128Plus(state[0], state[1], state[2], state[3]);
 }
 
-export const xorshift128plus = Object.assign(
-  function (seed: number): RandomGenerator {
-    return new XorShift128Plus(-1, ~seed, seed | 0, 0);
-  },
-  { fromState },
-);
+export function xorshift128plus(seed: number): RandomGenerator {
+  return new XorShift128Plus(-1, ~seed, seed | 0, 0);
+}

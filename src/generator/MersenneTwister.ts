@@ -54,7 +54,7 @@ function twist(prev: number[]): number[] {
   return mt;
 }
 
-function fromState(state: readonly number[]): RandomGenerator {
+export function mersenneFromState(state: readonly number[]): RandomGenerator {
   const valid = state.length === N + 1 && state[0] >= 0 && state[0] < N;
   if (!valid) {
     throw new Error('The state must have been produced by a mersenne RandomGenerator');
@@ -62,15 +62,12 @@ function fromState(state: readonly number[]): RandomGenerator {
   return new MersenneTwister(state.slice(1), state[0]);
 }
 
-export const mersenne = Object.assign(
-  function (seed: number): RandomGenerator {
-    const out = Array(N);
-    out[0] = seed;
-    for (let idx = 1; idx !== N; ++idx) {
-      const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-      out[idx] = (Math.imul(F, xored) + idx) | 0;
-    }
-    return new MersenneTwister(twist(out), 0);
-  },
-  { fromState },
-);
+export function mersenne(seed: number): RandomGenerator {
+  const out = Array(N);
+  out[0] = seed;
+  for (let idx = 1; idx !== N; ++idx) {
+    const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
+    out[idx] = (Math.imul(F, xored) + idx) | 0;
+  }
+  return new MersenneTwister(twist(out), 0);
+}
