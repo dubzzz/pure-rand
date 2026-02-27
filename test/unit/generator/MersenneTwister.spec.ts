@@ -1,5 +1,4 @@
-import { describe, it } from 'vitest';
-import * as assert from 'assert';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
 import { mersenne } from '../../../src/generator/MersenneTwister';
@@ -18,8 +17,7 @@ describe('mersenne', () => {
     // rng = MT19937(42)
     // rng._legacy_seeding(42)
     // print([(rng.random_raw() & 0xffffffff) for v in range(1000)])
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         1608637542, 3421126067, 4083286876, 787846414, 3143890026, 3348747335, 2571218620, 2563451924, 670094950,
         1914837113, 669991378, 429389014, 249467210, 1972458954, 3720198231, 1433267572, 2581769315, 613608295,

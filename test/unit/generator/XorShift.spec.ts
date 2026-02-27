@@ -1,8 +1,7 @@
-import { describe, it } from 'vitest';
-import * as assert from 'assert';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { xorshift128plus } from '../../../src/generator/XorShift';
+import { xorshift128plus, xorshift128plusFromState } from '../../../src/generator/XorShift';
 import * as p from './RandomGenerator.properties';
 
 describe('xorshift128plus', () => {
@@ -27,8 +26,7 @@ describe('xorshift128plus', () => {
     // int main() {
     //   for (int i = 0 ; i != 100 ; ++i) { std::cout << next() << ","; }
     // }
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         4294967253, 1166015114, 1692303336, 3482095935, 4288634584, 1325520545, 1367235622, 1759582253, 2328126844,
         649610899, 3328014937, 278910909, 2928761053, 1702820659, 3325106640, 2884641937, 2678880596, 999204680,
@@ -74,8 +72,7 @@ describe('xorshift128plus', () => {
     //   jump();
     //   for (int i = 0 ; i != 100 ; ++i) { std::cout << next() << ","; }
     // }
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         2971276074, 3466165198, 456875496, 2879848137, 4162428146, 2513269982, 2277233661, 2163024882, 3082356668,
         1459960119, 3225207140, 418458707, 465389025, 33345291, 9975393, 1398264340, 2941704490, 4219353700, 1050887263,
@@ -93,7 +90,7 @@ describe('xorshift128plus', () => {
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xorshift128plus)));
   it('Should return the same sequence when built from state', () =>
-    fc.assert(p.clonedFromStateSameSequences(xorshift128plus)));
+    fc.assert(p.clonedFromStateSameSequences(xorshift128plus, xorshift128plusFromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xorshift128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xorshift128plus)));
   it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xorshift128plus)));

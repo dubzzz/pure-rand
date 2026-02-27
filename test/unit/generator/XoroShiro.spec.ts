@@ -1,5 +1,4 @@
-import { describe, it } from 'vitest';
-import * as assert from 'assert';
+import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
 import { xoroshiro128plus } from '../../../src/generator/XoroShiro';
@@ -27,8 +26,7 @@ describe('xoroshiro128plus', () => {
     //   s[1] = rotl(s1, 37); // c
     //   return result & 0xffffffff;
     // }
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         4294967253, 3587504873, 4286635183, 3511956468, 673719186, 1055838436, 982607204, 1805613139, 3223288787,
         1244866785, 2728956151, 371855737, 3026236645, 761656985, 3623017146, 1674769232, 1260144694, 1416578544,
@@ -70,8 +68,7 @@ describe('xoroshiro128plus', () => {
     //   s[0] = s0;
     //   s[1] = s1;
     // }
-    assert.deepEqual(
-      data,
+    expect(data).toEqual(
       [
         1900530380, 2341274553, 4162717490, 2793985206, 3278912033, 1720265279, 1825471876, 3286742441, 1587050712,
         3950106747, 540536355, 991034460, 2981829782, 4159175603, 2930607761, 2509744087, 137421383, 4073225526,
