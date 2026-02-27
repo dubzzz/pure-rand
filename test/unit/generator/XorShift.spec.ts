@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { xorshift128plus, xorshift128plusFromState } from '../../../src/generator/XorShift';
+import { xorshift128plus } from '../../../src/generator/XorShift';
 import * as p from './RandomGenerator.properties';
 
 describe('xorshift128plus', () => {
@@ -90,7 +90,7 @@ describe('xorshift128plus', () => {
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xorshift128plus)));
   it('Should return the same sequence when built from state', () =>
-    fc.assert(p.clonedFromStateSameSequences(xorshift128plus, xorshift128plusFromState)));
+    fc.assert(p.clonedFromStateSameSequences(xorshift128plus)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xorshift128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xorshift128plus)));
   it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xorshift128plus)));
