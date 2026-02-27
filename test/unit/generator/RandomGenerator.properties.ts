@@ -12,7 +12,7 @@ const pureGenerateN = purify(generateN);
 
 const MAX_SIZE: number = 2048;
 
-export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator) {
+export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const seq1 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
     const seq2 = pureGenerateN(pureSkipN(rng_for(seed), offset), num)[0];
@@ -20,7 +20,7 @@ export function sameSeedSameSequences(rng_for: (seed: number) => RandomGenerator
   });
 }
 
-export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenerator) {
+export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const rng = pureSkipN(rng_for(seed), offset);
     const seq1 = pureGenerateN(rng, num)[0];
@@ -29,7 +29,7 @@ export function sameSequencesIfCallTwice(rng_for: (seed: number) => RandomGenera
   });
 }
 
-export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
+export function valuesInRange(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rng = rng_for(seed);
     skipN(rng, offset);
@@ -39,7 +39,7 @@ export function valuesInRange(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
+export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rngNextFirst = rng_for(seed);
     const rngJumpFirst = rng_for(seed);
@@ -55,7 +55,7 @@ export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export function changeSelfWithNext(rng_for: (seed: number) => RandomGenerator) {
+export function changeSelfWithNext(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const expectedRng = rng_for(seed);
@@ -77,7 +77,7 @@ export function changeSelfWithNext(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export function changeSelfWithJump(rng_for: (seed: number) => RandomGenerator) {
+export function changeSelfWithJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const expectedRng = rng_for(seed);
@@ -98,7 +98,7 @@ export function changeSelfWithJump(rng_for: (seed: number) => RandomGenerator) {
   });
 }
 
-export function noChangeOnClonedWithNext(rng_for: (seed: number) => RandomGenerator) {
+export function noChangeOnClonedWithNext(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -119,7 +119,7 @@ export function noChangeOnClonedWithNext(rng_for: (seed: number) => RandomGenera
   });
 }
 
-export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenerator) {
+export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -143,7 +143,7 @@ export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenera
 export function clonedFromStateSameSequences(
   rng_for: (seed: number) => RandomGenerator,
   rng_fromState: (state: readonly number[]) => RandomGenerator,
-) {
+): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const source = pureSkipN(rng_for(seed), offset);
     expect(source.getState).not.toBe(undefined);

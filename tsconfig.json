@@ -23,6 +23,10 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    // Self Options
+    "declaration": true,
+    "isolatedDeclarations": true
   }
 }
