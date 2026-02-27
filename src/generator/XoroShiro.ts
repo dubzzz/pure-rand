@@ -13,12 +13,7 @@ class XoroShiro128Plus implements RandomGenerator {
   clone(): XoroShiro128Plus {
     return new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
   }
-  next(): [number, XoroShiro128Plus] {
-    const nextRng = new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
-    const out = nextRng.unsafeNext();
-    return [out, nextRng];
-  }
-  unsafeNext(): number {
+  next(): number {
     const out = (this.s00 + this.s10) | 0;
     // a = s0[n] ^ s1[n]
     const a0 = this.s10 ^ this.s00;
@@ -33,12 +28,7 @@ class XoroShiro128Plus implements RandomGenerator {
     this.s11 = (a0 << 5) ^ (a1 >>> 27);
     return out;
   }
-  jump(): XoroShiro128Plus {
-    const nextRng = new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
-    nextRng.unsafeJump();
-    return nextRng;
-  }
-  unsafeJump(): void {
+  jump(): void {
     // equivalent to 2^64 calls to next()
     // can be used to generate 2^64 non-overlapping subsequences
     let ns01 = 0;
@@ -55,7 +45,7 @@ class XoroShiro128Plus implements RandomGenerator {
           ns11 ^= this.s11;
           ns10 ^= this.s10;
         }
-        this.unsafeNext();
+        this.next();
       }
     }
     this.s01 = ns01;

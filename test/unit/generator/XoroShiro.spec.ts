@@ -7,12 +7,11 @@ import * as p from './RandomGenerator.properties';
 
 describe('xoroshiro128plus', () => {
   it('Should produce the right sequence for seed=42', () => {
-    let g = xoroshiro128plus(42);
+    const g = xoroshiro128plus(42);
     let data = [];
     for (let idx = 0; idx !== 100; ++idx) {
-      const [v, nextG] = g.next();
+      const v = g.next();
       data.push(v);
-      g = nextG;
     }
     // should be equivalent to the following C code:
     // uint64_t s[] = { (uint64_t) (~42), ((uint64_t) 42) << 32 };
@@ -47,12 +46,12 @@ describe('xoroshiro128plus', () => {
     );
   });
   it('Should produce the right sequence after jump for seed=42', () => {
-    let g = xoroshiro128plus(42).jump!();
+    const g = xoroshiro128plus(42);
+    g.jump!();
     let data = [];
     for (let idx = 0; idx !== 100; ++idx) {
-      const [v, nextG] = g.next();
+      const v = g.next();
       data.push(v);
-      g = nextG;
     }
     // should be equivalent to the following C code (+previous):
     // void jump() {
@@ -95,12 +94,10 @@ describe('xoroshiro128plus', () => {
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xoroshiro128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xoroshiro128plus)));
   it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xoroshiro128plus)));
-  it('Should impact itself with unsafeNext', () => fc.assert(p.changeSelfWithUnsafeNext(xoroshiro128plus)));
-  it('Should impact itself with unsafeJump', () => fc.assert(p.changeSelfWithUnsafeJump(xoroshiro128plus)));
-  it('Should not impact itself with next', () => fc.assert(p.noChangeSelfWithNext(xoroshiro128plus)));
-  it('Should not impact itself with jump', () => fc.assert(p.noChangeSelfWithJump(xoroshiro128plus)));
-  it('Should not impact clones when impacting itself on unsafeNext', () =>
-    fc.assert(p.noChangeOnClonedWithUnsafeNext(xoroshiro128plus)));
-  it('Should not impact clones when impacting itself on unsafeJump', () =>
-    fc.assert(p.noChangeOnClonedWithUnsafeJump(xoroshiro128plus)));
+  it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(xoroshiro128plus)));
+  it('Should impact itself with jump', () => fc.assert(p.changeSelfWithJump(xoroshiro128plus)));
+  it('Should not impact clones when impacting itself on next', () =>
+    fc.assert(p.noChangeOnClonedWithNext(xoroshiro128plus)));
+  it('Should not impact clones when impacting itself on jump', () =>
+    fc.assert(p.noChangeOnClonedWithJump(xoroshiro128plus)));
 });

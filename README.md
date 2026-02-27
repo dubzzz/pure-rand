@@ -65,11 +65,15 @@ In order to produce independent simulations it can be tempting to instanciate se
 ```javascript
 import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { purify } from 'pure-rand/utils/purify';
+
+const pureJump = purify((rng) => rng.jump());
+const createAnotherSimulation = (rng) => pureJump(rng)[1];
 
 const seed = 42;
 const rngSimulation1 = xoroshiro128plus(seed);
-const rngSimulation2 = rngSimulation1.jump(); // not in-place, creates a new instance
-const rngSimulation3 = rngSimulation2.jump(); // not in-place, creates a new instance
+const rngSimulation2 = createAnotherSimulation(rngSimulation1); // not in-place, creates a new instance
+const rngSimulation3 = createAnotherSimulation(rngSimulation2); // not in-place, creates a new instance
 
 const diceSim1Value = uniformInt(rngSimulation1, 1, 6); // value in {1..6}, here: 2
 const diceSim2Value = uniformInt(rngSimulation2, 1, 6); // value in {1..6}, here: 5
@@ -86,7 +90,7 @@ import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
 const seed = 42;
 const rng = xoroshiro128plus(seed);
 const rand = (min, max) => {
-  const out = (rng.unsafeNext() >>> 0) / 0x100000000;
+  const out = (rng.next() >>> 0) / 0x100000000;
   return min + Math.floor(out * (max - min + 1));
 };
 const firstDiceValue = rand(1, 6); // value in {1..6}, here: 6
