@@ -58,7 +58,7 @@ class XoroShiro128Plus implements RandomGenerator {
   }
 }
 
-function fromState(state: readonly number[]): RandomGenerator {
+export function xoroshiro128plusFromState(state: readonly number[]): RandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
     throw new Error('The state must have been produced by a xoroshiro128plus RandomGenerator');
@@ -66,9 +66,6 @@ function fromState(state: readonly number[]): RandomGenerator {
   return new XoroShiro128Plus(state[0], state[1], state[2], state[3]);
 }
 
-export const xoroshiro128plus = Object.assign(
-  function (seed: number): RandomGenerator {
-    return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
-  },
-  { fromState },
-);
+export function xoroshiro128plus(seed: number): RandomGenerator {
+  return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
+}

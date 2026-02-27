@@ -2,7 +2,7 @@ import { describe, it } from 'vitest';
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { congruential32 } from '../../../src/generator/LinearCongruential';
+import { congruential32, congruential32FromState } from '../../../src/generator/LinearCongruential';
 import * as p from './RandomGenerator.properties';
 
 describe('congruential32', () => {
@@ -132,7 +132,7 @@ describe('congruential32', () => {
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(congruential32)));
   it('Should return the same sequence when built from state', () =>
-    fc.assert(p.clonedFromStateSameSequences(congruential32)));
+    fc.assert(p.clonedFromStateSameSequences(congruential32, congruential32FromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential32)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(congruential32)));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(congruential32)));

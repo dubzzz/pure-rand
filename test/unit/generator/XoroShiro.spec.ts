@@ -2,7 +2,7 @@ import { describe, it } from 'vitest';
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { xoroshiro128plus } from '../../../src/generator/XoroShiro';
+import { xoroshiro128plus, xoroshiro128plusFromState } from '../../../src/generator/XoroShiro';
 import * as p from './RandomGenerator.properties';
 
 describe('xoroshiro128plus', () => {
@@ -90,7 +90,7 @@ describe('xoroshiro128plus', () => {
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xoroshiro128plus)));
   it('Should return the same sequence when built from state', () =>
-    fc.assert(p.clonedFromStateSameSequences(xoroshiro128plus)));
+    fc.assert(p.clonedFromStateSameSequences(xoroshiro128plus, xoroshiro128plusFromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(xoroshiro128plus)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(xoroshiro128plus)));
   it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(xoroshiro128plus)));

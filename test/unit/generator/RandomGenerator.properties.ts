@@ -142,13 +142,14 @@ export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenera
 }
 
 export function clonedFromStateSameSequences(
-  rng_for: ((seed: number) => RandomGenerator) & { fromState: (state: readonly number[]) => RandomGenerator },
+  rng_for: (seed: number) => RandomGenerator,
+  rng_fromState: (state: readonly number[]) => RandomGenerator,
 ) {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), fc.nat(MAX_SIZE), (seed, offset, num) => {
     const source = pureSkipN(rng_for(seed), offset);
     assert.notEqual(source.getState, undefined);
     const state = source.getState!();
-    const clonedFromState = rng_for.fromState(state);
+    const clonedFromState = rng_fromState(state);
     const seq1 = pureGenerateN(source, num)[0];
     const seq2 = pureGenerateN(clonedFromState, num)[0];
     assert.deepEqual(seq1, seq2);

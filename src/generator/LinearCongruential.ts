@@ -39,7 +39,7 @@ function computeValueFromNextSeed(nextseed: number) {
   return (nextseed & MASK_2) >> 16;
 }
 
-function fromState(state: readonly number[]): RandomGenerator {
+export function congruential32FromState(state: readonly number[]): RandomGenerator {
   const valid = state.length === 1;
   if (!valid) {
     throw new Error('The state must have been produced by a congruential32 RandomGenerator');
@@ -47,9 +47,6 @@ function fromState(state: readonly number[]): RandomGenerator {
   return new LinearCongruential32(state[0]);
 }
 
-export const congruential32 = Object.assign(
-  function (seed: number): RandomGenerator {
-    return new LinearCongruential32(seed);
-  },
-  { fromState },
-);
+export function congruential32(seed: number): RandomGenerator {
+  return new LinearCongruential32(seed);
+}

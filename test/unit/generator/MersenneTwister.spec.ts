@@ -2,7 +2,7 @@ import { describe, it } from 'vitest';
 import * as assert from 'assert';
 import * as fc from 'fast-check';
 
-import { mersenne } from '../../../src/generator/MersenneTwister';
+import { mersenne, mersenneFromState } from '../../../src/generator/MersenneTwister';
 import * as p from './RandomGenerator.properties';
 
 describe('mersenne', () => {
@@ -137,7 +137,7 @@ describe('mersenne', () => {
   });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
   it('Should return the same sequence when built from state', () =>
-    fc.assert(p.clonedFromStateSameSequences(mersenne)));
+    fc.assert(p.clonedFromStateSameSequences(mersenne, mersenneFromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(mersenne)));
