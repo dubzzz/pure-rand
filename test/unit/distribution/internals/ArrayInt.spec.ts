@@ -4,10 +4,10 @@ import * as fc from 'fast-check';
 import {
   addArrayIntToNew,
   addOneToPositiveArrayInt,
-  ArrayInt,
   substractArrayIntToNew,
   trimArrayIntInplace,
 } from '../../../../src/distribution/internals/ArrayInt';
+import type { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
 
 describe('ArrayInt', () => {
   describe('addArrayIntToNew', () => {

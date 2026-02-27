@@ -2,7 +2,7 @@ import { describe, it } from 'vitest';
 import * as fc from 'fast-check';
 
 import { uniformIntInternal } from '../../../../src/distribution/internals/uniformIntInternal';
-import { RandomGenerator } from '../../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../../src/types/RandomGenerator';
 
 class NatGenerator implements RandomGenerator {
   constructor(private current: number) {

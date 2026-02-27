@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
+import type { ArrayInt } from '../../../src/distribution/internals/ArrayInt';
 import { uniformArrayInt } from '../../../src/distribution/uniformArrayInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformArrayInt [non regression]', () => {
   it.each`

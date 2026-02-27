@@ -1,21 +1,28 @@
 {
   "compilerOptions": {
-    "declaration": false,
-    "sourceMap": false,
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "strictNullChecks": true,
-    "downlevelIteration": true,
-    "moduleResolution": "node",
-    "module": "commonjs",
-    "target": "es5",
-    "ignoreDeprecations": "5.0",
-    "lib": ["es6", "esnext.bigint"],
-    "outDir": "lib/"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "types": ["node"],
+
+    // Typechecking Options
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true
+  }
 }

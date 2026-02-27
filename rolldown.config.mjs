@@ -65,7 +65,7 @@ function buildConfigFor(pkg, dirname) {
         format: 'esm',
         dir: outputDir + '/esm',
       },
-      plugins: [...sharedOptions.plugins, dts({ tsconfig: './tsconfig.declaration.json' })],
+      plugins: [...sharedOptions.plugins, dts()],
     },
   ]);
 }

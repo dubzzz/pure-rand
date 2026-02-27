@@ -3,7 +3,7 @@ import fc from 'fast-check';
 
 import { uniformInt } from '../../../src/distribution/uniformInt';
 import { mersenne } from '../../../src/generator/MersenneTwister';
-import { RandomGenerator } from '../../../src/types/RandomGenerator';
+import type { RandomGenerator } from '../../../src/types/RandomGenerator';
 
 describe('uniformInt [non regression]', () => {
   it.each`
