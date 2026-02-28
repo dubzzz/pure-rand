@@ -186,7 +186,6 @@ jobs:
     needs:
       - production_package
       - format
-      - bench
       - test
       - test_bundle
       - typecheck

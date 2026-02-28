@@ -1,6 +1,6 @@
 import { describe, bench } from 'vitest';
 import { xorshift128plus } from '../generator/XorShift';
-import type { RandomGenerator } from '../../lib/types/RandomGenerator';
+import type { RandomGenerator } from '../../src/types/RandomGenerator';
 import { uniformInt } from './uniformInt';
 import { uniformArrayInt } from './uniformArrayInt';
 import { uniformBigInt } from './uniformBigInt';
