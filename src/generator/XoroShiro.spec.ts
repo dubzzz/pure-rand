@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { xoroshiro128plus, xoroshiro128plusFromState } from '../../../src/generator/XoroShiro';
+import { xoroshiro128plus, xoroshiro128plusFromState } from './XoroShiro';
 import * as p from './RandomGenerator.properties';
 
 describe('xoroshiro128plus', () => {

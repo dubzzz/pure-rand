@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { fromNumberToArrayInt64, substractArrayInt64 } from '../../../../src/distribution/internals/ArrayInt64';
-import type { ArrayInt64 } from '../../../../src/distribution/internals/ArrayInt64';
+import { fromNumberToArrayInt64, substractArrayInt64 } from './ArrayInt64';
+import type { ArrayInt64 } from './ArrayInt64';
 
 describe('ArrayInt64', () => {
   describe('fromNumberToArrayInt64', () => {

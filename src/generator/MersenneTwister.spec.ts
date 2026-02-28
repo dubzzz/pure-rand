@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { mersenne, mersenneFromState } from '../../../src/generator/MersenneTwister';
+import { mersenne, mersenneFromState } from './MersenneTwister';
 import * as p from './RandomGenerator.properties';
 
 describe('mersenne', () => {
