@@ -160,7 +160,7 @@ The chart has been split into three sections:
 - section 2: without uniform distribution of values
 - section 3: with uniform distribution of values (not supported by all libraries)
 
-<img src="https://raw.githubusercontent.com/dubzzz/pure-rand/main/perf/comparison.svg" alt="Comparison against other libraries" />
+<img src="https://raw.githubusercontent.com/dubzzz/pure-rand/main/assets/comparison.svg" alt="Comparison against other libraries" />
 
 ### Process
 

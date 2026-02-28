@@ -1,27 +1,10 @@
 import { defineConfig } from 'rolldown';
 import { dts } from 'rolldown-plugin-dts';
 import pkg from './package.json' with { type: 'json' };
-import { execSync } from 'child_process';
 import { globSync } from 'fs';
 
 const inputDir = 'src';
 const outputDir = 'lib';
-
-function getCommitHash() {
-  const gitHubCommitHash = process.env.GITHUB_SHA && process.env.GITHUB_SHA.split('\n')[0];
-  if (gitHubCommitHash) {
-    console.info(`Using env variable GITHUB_SHA for the commit hash, got: ${gitHubCommitHash}`);
-    return gitHubCommitHash;
-  }
-  if (process.env.EXPECT_GITHUB_SHA) {
-    if (!gitHubCommitHash) {
-      console.error('No GITHUB_SHA specified');
-      process.exit(1);
-    }
-  }
-  const out = execSync('git rev-parse HEAD');
-  return out.toString().split('\n')[0];
-}
 
 function buildConfigFor(pkg, dirname) {
   const inputs = Object.values(pkg.exports)
@@ -30,7 +13,9 @@ function buildConfigFor(pkg, dirname) {
     .map((filePath) => filePath.replace(`./${outputDir}/esm/`, `./${inputDir}/`))
     .flatMap((pattern) => globSync(pattern.replace(/\.js$/, '.ts')))
     .map((filePath) => filePath.replace(/\.ts$/, '.js'))
-    .filter((filePath) => !filePath.endsWith('.spec.js') && !filePath.endsWith('.properties.js'));
+    .filter((filePath) => !filePath.endsWith('.spec.js'))
+    .filter((filePath) => !filePath.endsWith('.properties.js'))
+    .filter((filePath) => !filePath.endsWith('.bench.js'));
 
   /** @type {RolldownOptions} */
   const sharedOptions = {

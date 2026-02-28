@@ -33,9 +33,7 @@
     "typecheck": "tsc --noEmit",
     "build": "rolldown -c && cd lib/esm/ && find . -type f -name '*.d.ts' -exec cp --parents {} ../ \\; && cp ../../package.esm-template.json package.json && cd ../..",
     "test": "vitest",
-    "build:bench:old": "tsc --outDir lib-reference/",
-    "build:bench:new": "tsc --outDir lib-test/",
-    "bench": "node perf/benchmark.cjs"
+    "bench": "vitest bench"
   },
   "repository": {
     "type": "git",
