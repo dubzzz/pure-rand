@@ -1,13 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import {
-  addArrayIntToNew,
-  addOneToPositiveArrayInt,
-  substractArrayIntToNew,
-  trimArrayIntInplace,
-} from '../../../../src/distribution/internals/ArrayInt';
-import type { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
+import { addArrayIntToNew, addOneToPositiveArrayInt, substractArrayIntToNew, trimArrayIntInplace } from './ArrayInt';
+import type { ArrayInt } from './ArrayInt';
 
 describe('ArrayInt', () => {
   describe('addArrayIntToNew', () => {

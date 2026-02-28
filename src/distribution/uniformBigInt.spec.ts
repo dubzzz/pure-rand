@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { uniformBigInt } from '../../../src/distribution/uniformBigInt';
-import { uniformInt } from '../../../src/distribution/uniformInt';
-import { mersenne } from '../../../src/generator/MersenneTwister';
+import { uniformBigInt } from './uniformBigInt';
+import { uniformInt } from './uniformInt';
+import { mersenne } from '../generator/MersenneTwister';
 
 const bigIntArbitrary = fc
   .tuple(fc.boolean(), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff))

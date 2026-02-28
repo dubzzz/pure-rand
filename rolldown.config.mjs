@@ -29,7 +29,8 @@ function buildConfigFor(pkg, dirname) {
     .filter((filePath) => filePath.endsWith('.js'))
     .map((filePath) => filePath.replace(`./${outputDir}/esm/`, `./${inputDir}/`))
     .flatMap((pattern) => globSync(pattern.replace(/\.js$/, '.ts')))
-    .map((filePath) => filePath.replace(/\.ts$/, '.js'));
+    .map((filePath) => filePath.replace(/\.ts$/, '.js'))
+    .filter((filePath) => !filePath.endsWith('.spec.js') && !filePath.endsWith('.properties.js'));
 
   /** @type {RolldownOptions} */
   const sharedOptions = {

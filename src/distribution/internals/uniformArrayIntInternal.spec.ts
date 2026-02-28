@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 
-import { uniformArrayIntInternal } from '../../../../src/distribution/internals/uniformArrayIntInternal';
-import type { ArrayInt } from '../../../../src/distribution/internals/ArrayInt';
-import type { RandomGenerator } from '../../../../src/types/RandomGenerator';
+import { uniformArrayIntInternal } from './uniformArrayIntInternal';
+import type { ArrayInt } from './ArrayInt';
+import type { RandomGenerator } from '../../types/RandomGenerator';
 
-import * as uniformIntInternalMock from '../../../../src/distribution/internals/uniformIntInternal';
-vi.mock('../../../../src/distribution/internals/uniformIntInternal');
+import * as uniformIntInternalMock from './uniformIntInternal';
+vi.mock('./uniformIntInternal');
 
 function buildUniqueRng(clonedRng?: RandomGenerator) {
   if (clonedRng !== undefined) {

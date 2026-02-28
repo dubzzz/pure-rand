@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { congruential32, congruential32FromState } from '../../../src/generator/LinearCongruential';
+import { congruential32, congruential32FromState } from './LinearCongruential';
 import * as p from './RandomGenerator.properties';
 
 describe('congruential32', () => {
