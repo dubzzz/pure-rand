@@ -5,21 +5,49 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
-    "./distribution/*": {
-      "require": "./lib/distribution/*.js",
-      "import": "./lib/esm/distribution/*.js"
+    "./distribution/uniformArrayInt": {
+      "require": "./lib/distribution/uniformArrayInt.js",
+      "import": "./lib/esm/distribution/uniformArrayInt.js"
     },
-    "./generator/*": {
-      "require": "./lib/generator/*.js",
-      "import": "./lib/esm/generator/*.js"
+    "./distribution/uniformBigInt": {
+      "require": "./lib/distribution/uniformBigInt.js",
+      "import": "./lib/esm/distribution/uniformBigInt.js"
     },
-    "./types/*": {
-      "require": "./lib/types/*.js",
-      "import": "./lib/esm/types/*.js"
+    "./distribution/uniformInt": {
+      "require": "./lib/distribution/uniformInt.js",
+      "import": "./lib/esm/distribution/uniformInt.js"
     },
-    "./utils/*": {
-      "require": "./lib/utils/*.js",
-      "import": "./lib/esm/utils/*.js"
+    "./generator/LinearCongruential": {
+      "require": "./lib/generator/LinearCongruential.js",
+      "import": "./lib/esm/generator/LinearCongruential.js"
+    },
+    "./generator/MersenneTwister": {
+      "require": "./lib/generator/MersenneTwister.js",
+      "import": "./lib/esm/generator/MersenneTwister.js"
+    },
+    "./generator/XorShift": {
+      "require": "./lib/generator/XorShift.js",
+      "import": "./lib/esm/generator/XorShift.js"
+    },
+    "./generator/XoroShiro": {
+      "require": "./lib/generator/XoroShiro.js",
+      "import": "./lib/esm/generator/XoroShiro.js"
+    },
+    "./types/RandomGenerator": {
+      "require": "./lib/types/RandomGenerator.js",
+      "import": "./lib/esm/types/RandomGenerator.js"
+    },
+    "./utils/generateN": {
+      "require": "./lib/utils/generateN.js",
+      "import": "./lib/esm/utils/generateN.js"
+    },
+    "./utils/purify": {
+      "require": "./lib/utils/purify.js",
+      "import": "./lib/esm/utils/purify.js"
+    },
+    "./utils/skipN": {
+      "require": "./lib/utils/skipN.js",
+      "import": "./lib/esm/utils/skipN.js"
     }
   },
   "files": [
