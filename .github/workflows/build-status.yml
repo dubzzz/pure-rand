@@ -99,7 +99,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Bench tests
-        run: pnpm bench
+        id: bench
+        run: pnpm bench | tee bench-output.txt
+      - name: Comment bench results on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          COMMENT_HEADER="### :stopwatch: Benchmark Results"
+          BODY="\n\n$COMMENT_HEADER\n\n\`\`\`\n$(cat bench-output.txt)\n\`\`\`\n"
+          EXISTING_COMMENT_ID=$(gh api repos/${{ github.repository }}/issues/${PR_NUMBER}/comments \
+            --jq ".[] | select(.user.login == 'github-actions[bot]') | select(.body | startswith(\"$COMMENT_HEADER\")) | .id" | head -n1)
+          if [ -n "$EXISTING_COMMENT_ID" ]; then
+            gh api repos/${{ github.repository }}/issues/comments/$EXISTING_COMMENT_ID -X PATCH -F body="$BODY"
+          else
+            gh pr comment $PR_NUMBER --body "$BODY"
+          fi
   test:
     name: 'Test'
     needs: warmup_pnpm_cache
