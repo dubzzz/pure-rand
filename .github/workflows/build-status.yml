@@ -15,6 +15,7 @@ on:
       - fix-v*
 
 jobs:
+  # Job to prepare pnpm cache (pre-requisite for any job installing dependencies)
   warmup_pnpm_cache:
     name: 'Warm up pnpm cache'
     runs-on: ubuntu-latest
@@ -31,6 +32,8 @@ jobs:
       - name: Update pnpm cache
         if: steps.pnpm-cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
+
+  # Validation jobs
   no_dedupe_required:
     name: 'No dedupe required'
     needs: warmup_pnpm_cache
@@ -158,6 +161,8 @@ jobs:
       - name: Preview
         if: github.event_name == 'pull_request'
         run: pnpm dlx pkg-pr-new publish --compact
+
+  # Post-build jobs
   test_bundle:
     name: 'Test bundle'
     needs:
@@ -181,15 +186,38 @@ jobs:
           name: bundle
       - name: Publint
         run: pnpm dlx publint ./package.tgz
+
+  # Job to confirm every required job passed
+  pre_all_required_checks_passed:
+    name: 'Pre All required checks passed'
+    needs:
+      - no_dedupe_required
+      - format
+      - typecheck
+      - test
+      - production_package
+      - test_bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Success
+        run: echo "Success"
+  all_required_checks_passed:
+    name: 'All required checks passed'
+    needs: pre_all_required_checks_passed
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - if: needs.pre_all_required_checks_passed.result == 'success'
+        name: Success
+        run: echo "Success"
+      - if: needs.pre_all_required_checks_passed.result != 'success'
+        name: Failure
+        run: exit 1
+
+  # Jobs for validated packages only
   publish_package:
     name: 'Publish package'
-    needs:
-      - production_package
-      - format
-      - test
-      - test_bundle
-      - typecheck
-      - no_dedupe_required
+    needs: all_required_checks_passed
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
