@@ -133,7 +133,6 @@ pure-rand provides 3 built-in functions for uniform distributions of values:
 
 - `uniformInt(rng, min, max)`
 - `uniformBigInt(rng, min, max)` - with `min` and `max` being `bigint`
-- `uniformArrayInt(rng, min, max)` - with `min` and `max` being instances of `ArrayInt = {sign, data}` ie. sign either 1 or -1 and data an array of numbers between 0 (included) and 0xffffffff (included)
 
 Each of these distributions come with its own import: `pure-rand/distribution/<name>`.
 
