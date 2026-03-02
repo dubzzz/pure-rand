@@ -108,10 +108,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           COMMENT_HEADER="### :stopwatch: Benchmark Results"
-          # Remove ANSI color codes from bench-output.txt before including in BODY
-          CLEANED_BENCH_OUTPUT=$(sed -r 's/\x1B\[[0-9;]*[mK]//g' bench-output.txt)
-          ESCAPED_BENCH_OUTPUT=$(echo "$CLEANED_BENCH_OUTPUT" | sed 's/\*/\\*/g')
-          BODY="\n\n${COMMENT_HEADER}\n\n\`\`\`\n${ESCAPED_BENCH_OUTPUT}\n\`\`\`\n"
+          BODY="\n\n${COMMENT_HEADER}\n\n\`\`\`\n$(sed -r 's/\x1B\[[0-9;]*[mK]//g' bench-output.txt | sed 's/\*/\\*/g')\n\`\`\`\n"
           EXISTING_COMMENT_ID=$(gh api repos/${{ github.repository }}/issues/${PR_NUMBER}/comments \
             --jq ".[] | select(.user.login == 'github-actions[bot]') | select(.body | startswith(\"$COMMENT_HEADER\")) | .id" | head -n1)
           if [ -n "$EXISTING_COMMENT_ID" ]; then
