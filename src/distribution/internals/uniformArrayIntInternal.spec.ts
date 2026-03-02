@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 
-import type { ArrayInt } from './uniformArrayIntInternal';
 import { uniformArrayIntInternal } from './uniformArrayIntInternal';
 import type { RandomGenerator } from '../../types/RandomGenerator';
 
 import * as uniformIntInternalMock from './uniformIntInternal';
+import type { ArrayInt64 } from './ArrayInt64';
 vi.mock('./uniformIntInternal');
 
 function buildUniqueRng(clonedRng?: RandomGenerator) {
@@ -26,12 +26,10 @@ function clean() {
 beforeEach(clean);
 describe('uniformArrayIntInternal', () => {
   it.each`
-    rangeSize             | resultingArrayInt     | description
-    ${[10, 20, 30]}       | ${[1, 1, 1]}          | ${'all generated values are smaller'}
-    ${[10, 20, 30]}       | ${[8, 520, 1000]}     | ${'some generated values are greater but resulting array is smaller'}
-    ${[10, 20, 30]}       | ${[10, 20, 29]}       | ${'resulting array is rangeSize minus one'}
-    ${[1]}                | ${[0]}                | ${'smallest possible rangeSize'}
-    ${[0, 0, 1, 0, 1, 0]} | ${[0, 0, 1, 0, 0, 1]} | ${'rangeSize starting by and including zeros'}
+    rangeSize   | resultingArrayInt | description
+    ${[10, 20]} | ${[1, 1]}         | ${'all generated values are smaller'}
+    ${[10, 20]} | ${[8, 520]}       | ${'some generated values are greater but resulting array is smaller'}
+    ${[10, 20]} | ${[10, 19]}       | ${'resulting array is rangeSize minus one'}
   `('Should only call the rangeSize.length times when $description', ({ rangeSize, resultingArrayInt }) => {
     // Arrange
     const { uniformIntInternal } = vi.mocked(uniformIntInternalMock);
@@ -52,7 +50,7 @@ describe('uniformArrayIntInternal', () => {
     }
 
     // Act
-    const g = uniformArrayIntInternal(initialRng, arrayIntBuffer(rangeSize.length).data, rangeSize);
+    const g = uniformArrayIntInternal(initialRng, [0, 0], rangeSize);
 
     // Assert
     expect(g).toEqual(resultingArrayInt);
@@ -60,11 +58,10 @@ describe('uniformArrayIntInternal', () => {
   });
 
   it.each`
-    rangeSize       | rejections                                       | resultingArrayInt | description
-    ${[10, 20, 30]} | ${[10, 20, 30]}                                  | ${[1, 1, 1]}      | ${'first generated value is the rangeSize itself'}
-    ${[10, 20, 30]} | ${[10, 50, 0]}                                   | ${[1, 1, 1]}      | ${'first generated value is greater than the rangeSize due to middle item'}
-    ${[10, 20, 30]} | ${[10, 20, 50]}                                  | ${[1, 1, 1]}      | ${'first generated value is greater than the rangeSize due to last item'}
-    ${[10, 20, 30]} | ${[10, 100, 1000, 10, 100, 1000, 10, 100, 1000]} | ${[1, 1, 1]}      | ${'multiple rejections in a row'}
+    rangeSize   | rejections                     | resultingArrayInt | description
+    ${[10, 20]} | ${[10, 20]}                    | ${[1, 1]}         | ${'first generated value is the rangeSize itself'}
+    ${[10, 20]} | ${[10, 50]}                    | ${[1, 1]}         | ${'first generated value is greater than the rangeSize due to last item'}
+    ${[10, 20]} | ${[10, 100, 10, 100, 10, 100]} | ${[1, 1]}         | ${'multiple rejections in a row'}
   `('Should retry until we get a valid value when $description', ({ rangeSize, rejections, resultingArrayInt }) => {
     // Arrange
     const { uniformIntInternal } = vi.mocked(uniformIntInternalMock);
@@ -91,7 +88,7 @@ describe('uniformArrayIntInternal', () => {
     }
 
     // Act
-    const g = uniformArrayIntInternal(initialRng, arrayIntBuffer(rangeSize.length).data, rangeSize);
+    const g = uniformArrayIntInternal(initialRng, [0, 0], rangeSize);
 
     // Assert
     expect(g).toEqual(resultingArrayInt);
@@ -104,11 +101,11 @@ describe('uniformArrayIntInternal', () => {
       fc
         .property(
           fc
-            .bigInt({ min: 1n })
+            .bigInt({ min: 1n, max: 0x7fffffffn * 0x100000000n })
             .chain((rangeSize) =>
               fc.record({
                 rangeSize: fc.constant(rangeSize),
-                rejectedValues: fc.array(fc.bigInt({ min: rangeSize })),
+                rejectedValues: fc.array(fc.bigInt({ min: rangeSize, max: 0x7fffffffn * 0x100000000n })),
                 validValue: fc.bigInt({ min: 0n, max: rangeSize - 1n }),
               }),
             )
@@ -116,14 +113,6 @@ describe('uniformArrayIntInternal', () => {
               let rangeSizeArrayIntData = fromBigUintToArrayIntData(rangeSize);
               let validValueArrayIntData = fromBigUintToArrayIntData(validValue);
               let rejectedValuesArrayIntData = rejectedValues.map(fromBigUintToArrayIntData);
-              const maxDataLength = [
-                rangeSizeArrayIntData,
-                validValueArrayIntData,
-                ...rejectedValuesArrayIntData,
-              ].reduce((acc, data) => Math.max(acc, data.length), 0);
-              rangeSizeArrayIntData = padDataOfArrayInt(rangeSizeArrayIntData, maxDataLength);
-              validValueArrayIntData = padDataOfArrayInt(validValueArrayIntData, maxDataLength);
-              rejectedValuesArrayIntData = rejectedValuesArrayIntData.map((v) => padDataOfArrayInt(v, maxDataLength));
               return {
                 rangeSize: rangeSizeArrayIntData,
                 rejectedValues: rejectedValuesArrayIntData,
@@ -148,7 +137,7 @@ describe('uniformArrayIntInternal', () => {
             mockRejectNextCalls(ctx);
 
             // Act
-            const g = uniformArrayIntInternal(initialRng, arrayIntBuffer(rangeSize.length).data, rangeSize);
+            const g = uniformArrayIntInternal(initialRng, [0, 0], rangeSize);
 
             // Assert
             expect(g).toEqual(validValue);
@@ -160,24 +149,16 @@ describe('uniformArrayIntInternal', () => {
 
 // Helpers
 
-function arrayIntBuffer(size: number): ArrayInt {
-  return { sign: 1, data: Array(size).fill(0) };
-}
-
-function fromBigUintToArrayIntData(n: bigint): ArrayInt['data'] {
+function fromBigUintToArrayIntData(n: bigint): ArrayInt64['data'] {
   const data: number[] = [];
   const repr = n.toString(16);
   for (let sectionEnd = repr.length; sectionEnd > 0; sectionEnd -= 8) {
     data.push(parseInt(repr.substring(sectionEnd - 8, sectionEnd), 16));
   }
-  return data.reverse();
+  return data.length === 0 ? [0, 0] : data.length === 1 ? [0, data[0]] : [data[1], data[0]];
 }
 
-function padDataOfArrayInt(arrayIntData: ArrayInt['data'], length: number): ArrayInt['data'] {
-  return [...Array(length - arrayIntData.length).fill(0), ...arrayIntData];
-}
-
-function mockResponse(arrayIntData: ArrayInt['data'], clonedRng: RandomGenerator, ctx: fc.ContextValue) {
+function mockResponse(arrayIntData: ArrayInt64['data'], clonedRng: RandomGenerator, ctx: fc.ContextValue) {
   const { uniformIntInternal } = vi.mocked(uniformIntInternalMock);
   for (const item of arrayIntData) {
     uniformIntInternal.mockImplementationOnce((rng, rangeSize) => {

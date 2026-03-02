@@ -153,7 +153,7 @@ function mockLargeInternals(settings: SettingsLargeType) {
     const out = rangeSize.map((r) => rangeRandom % (r || 1));
     ctx.log(`uniformArrayIntInternal(${JSON.stringify(rangeSize)}) -> ${JSON.stringify(out)}`);
     outputs.push(out);
-    return out;
+    return out as [number, number];
   });
 
   return { from, to, rng, outputs, uniformArrayIntInternal };

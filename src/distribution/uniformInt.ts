@@ -9,7 +9,7 @@ const safeNumberMaxSafeInteger = Number.MAX_SAFE_INTEGER;
 const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
-const sharedData = [0, 0];
+const sharedData: ArrayInt64['data'] = [0, 0];
 
 function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number, rangeSize: number): number {
   const rangeSizeArrayIntValue =
