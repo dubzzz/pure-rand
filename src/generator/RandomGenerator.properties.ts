@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import * as fc from 'fast-check';
 
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
 import { skipN } from '../utils/skipN';
 import { generateN } from '../utils/generateN';
@@ -39,15 +40,15 @@ export function valuesInRange(rng_for: (seed: number) => RandomGenerator): fc.IP
   });
 }
 
-export function noOrderNextJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
+export function noOrderNextJump(rng_for: (seed: number) => JumpableRandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     const rngNextFirst = rng_for(seed);
     const rngJumpFirst = rng_for(seed);
     // rngNextFirst = rng.next.next..(offset times)..next.jump
     skipN(rngNextFirst, offset);
-    rngNextFirst.jump!();
+    rngNextFirst.jump();
     // rngJumpFirst = rng.jump.next.next..(offset times)..next
-    rngJumpFirst.jump!();
+    rngJumpFirst.jump();
     skipN(rngJumpFirst, offset);
     // check same state and consequently same next value
     expect(rngNextFirst.getState()).toEqual(rngJumpFirst.getState());
@@ -77,19 +78,19 @@ export function changeSelfWithNext(rng_for: (seed: number) => RandomGenerator): 
   });
 }
 
-export function changeSelfWithJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
+export function changeSelfWithJump(rng_for: (seed: number) => JumpableRandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const expectedRng = rng_for(seed);
     skipN(expectedRng, offset);
-    expectedRng.jump!();
+    expectedRng.jump();
     const rng = rng_for(seed);
     skipN(rng, offset);
     const rngStateBefore = rng.getState();
     const expectedRngStateAfter = expectedRng.getState();
 
     // Act
-    rng.jump!();
+    rng.jump();
     const rngStateAfter = rng.getState();
 
     // Assert
@@ -119,7 +120,7 @@ export function noChangeOnClonedWithNext(rng_for: (seed: number) => RandomGenera
   });
 }
 
-export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenerator): fc.IProperty<unknown> {
+export function noChangeOnClonedWithJump(rng_for: (seed: number) => JumpableRandomGenerator): fc.IProperty<unknown> {
   return fc.property(fc.integer(), fc.nat(MAX_SIZE), (seed, offset) => {
     // Arrange
     const rng = rng_for(seed);
@@ -129,7 +130,7 @@ export function noChangeOnClonedWithJump(rng_for: (seed: number) => RandomGenera
     const rngClonedReprBefore = JSON.stringify(rngCloned);
 
     // Act
-    rng.jump!();
+    rng.jump();
     const rngReprAfter = JSON.stringify(rng);
     const rngClonedReprAfter = JSON.stringify(rngCloned);
 

@@ -45,7 +45,7 @@ describe('xoroshiro128plus', () => {
   });
   it('Should produce the right sequence after jump for seed=42', () => {
     const g = xoroshiro128plus(42);
-    g.jump!();
+    g.clone();
     let data = [];
     for (let idx = 0; idx !== 100; ++idx) {
       const v = g.next();

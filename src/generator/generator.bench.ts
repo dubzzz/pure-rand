@@ -3,10 +3,13 @@ import { xoroshiro128plus } from './XoroShiro';
 import { congruential32 } from './LinearCongruential';
 import { mersenne } from './MersenneTwister';
 import { xorshift128plus } from './XorShift';
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 const numInts = 5_000;
 const algorithms = [congruential32, mersenne, xoroshiro128plus, xorshift128plus];
-const algorithmsWithJump = algorithms.filter((algorithm) => algorithm(0).jump !== undefined);
+const algorithmsWithJump = algorithms.filter(
+  (algorithm): algorithm is (seed: number) => JumpableRandomGenerator => 'jump' in algorithm(0),
+);
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
@@ -35,7 +38,7 @@ describe('generator', () => {
       const rng = algorithm(0);
       bench(algorithm.name, () => {
         for (let i = 0; i !== numInts; ++i) {
-          rng.jump!();
+          rng.jump();
         }
       });
     }

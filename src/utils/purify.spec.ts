@@ -10,13 +10,11 @@ describe('purify', () => {
       clone: notImplemented,
       getState: notImplemented,
       next: notImplemented,
-      jump: notImplemented,
     };
     const rng: RandomGenerator = {
       clone: () => clonedRng,
       getState: notImplemented,
       next: notImplemented,
-      jump: notImplemented,
     };
     const action = vi.fn<(rng: RandomGenerator, label: string, num: number) => string>(
       (_, label, num) => `${label}::${num}`,
