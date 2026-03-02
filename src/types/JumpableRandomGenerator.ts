@@ -1,8 +1,6 @@
 import type { RandomGenerator } from './RandomGenerator';
 
 export interface JumpableRandomGenerator extends RandomGenerator {
-  /** Produce a fully independent clone of the current instance */
-  clone(): JumpableRandomGenerator;
   /**
    * Jump current generator
    *
