@@ -103,19 +103,21 @@ jobs:
         run: pnpm bench | tee bench-output.txt
       - name: Comment bench results on PR
         if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          COMMENT_HEADER="### :stopwatch: Benchmark Results"
-          BODY="\n\n${COMMENT_HEADER}\n\n\`\`\`\n$(sed -r 's/\x1B\[[0-9;]*[mK]//g' bench-output.txt | sed 's/\*/\\*/g')\n\`\`\`\n"
-          EXISTING_COMMENT_ID=$(gh api repos/${{ github.repository }}/issues/${PR_NUMBER}/comments \
-            --jq ".[] | select(.user.login == 'github-actions[bot]') | select(.body | startswith(\"$COMMENT_HEADER\")) | .id" | head -n1)
-          if [ -n "$EXISTING_COMMENT_ID" ]; then
-            gh api repos/${{ github.repository }}/issues/comments/$EXISTING_COMMENT_ID -X PATCH -F body="$BODY"
-          else
-            gh pr comment $PR_NUMBER --body "$BODY"
-          fi
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require("fs");
+            const raw = fs.readFileSync("bench-output.txt", "utf8");
+            const cleaned = raw.replace(/\x1B\[[0-9;]*[mK]/g, "").replace(/\*/g, "\\*");
+            const commentHeader = "### :stopwatch: Benchmark Results";
+            const body = `${commentHeader}\n\n\`\`\`\n${cleaned}\n\`\`\``;
+            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
+            const existing = comments.find(c => c.user.login === "github-actions[bot]" && c.body.startsWith(commentHeader));
+            if (existing !== undefined) {
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+            }
   test:
     name: 'Test'
     needs: warmup_pnpm_cache
