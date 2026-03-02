@@ -79,11 +79,11 @@
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
     "fast-check": "^4.5.3",
-    "oxfmt": "^0.35.0",
+    "oxfmt": "^0.36.0",
     "pkg-pr-new": "^0.0.65",
     "publint": "0.3.18",
     "rolldown": "1.0.0-rc.6",
-    "rolldown-plugin-dts": "^0.22.2",
+    "rolldown-plugin-dts": "^0.22.3",
     "tinybench": "^6.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
