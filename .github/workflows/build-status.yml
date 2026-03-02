@@ -221,6 +221,34 @@ jobs:
           name: bundle
       - name: Publint
         run: pnpm dlx publint ./package.tgz
+      - name: Unpack production package
+        run: tar -xzf package.tgz --strip-components=1
+      - name: Alter internals to behave as if published
+        run: pnpm dlx @fast-check/packaged --keep-node-modules
+      - name: Retrieve potentially dropped test-bundle
+        run: git restore -s@ -SW -- test-bundle
+      - name: Check bundle
+        run: pnpm test-bundle
+      - name: Check legacy bundle
+        run: |
+          export NODE_VERSION="$(node --version)"
+          export NVS_HOME="$HOME/.nvs"
+          git clone --branch v1.7.1 --depth 1 https://github.com/jasongin/nvs "$NVS_HOME"
+          if [ "$(git -C "$NVS_HOME" rev-parse HEAD)" != "b87ae9593cd20e7b667e9099240c9befeb50659f" ]; then
+            echo "ERROR: HEAD is not the expected commit hash"
+            exit 1
+          fi
+          chmod +x "$NVS_HOME/nvs"
+          export PATH="$PATH:$NVS_HOME"
+          if [ "$(node --version)" != "$NODE_VERSION" ]; then
+            echo "ERROR: Node version got updated from $NODE_VERSION to $(node --version)"
+            exit 2
+          fi
+          pnpm test-legacy-bundle
+          if [ "$(node --version)" != "$NODE_VERSION" ]; then
+            echo "ERROR: Node version got updated from $NODE_VERSION to $(node --version)"
+            exit 3
+          fi
 
   # Job to confirm every required job passed
   pre_all_required_checks_passed:

@@ -61,6 +61,8 @@
     "typecheck": "tsc --noEmit",
     "build": "rolldown -c && cd lib/esm/ && find . -type f -name '*.d.ts' -exec cp --parents {} ../ \\; && cp ../../package.esm-template.json package.json && cd ../..",
     "test": "vitest",
+    "test-bundle": "for f in test-bundle/*.mjs test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && node \"$f\" || exit 1; fi; done",
+    "test-legacy-bundle": "nvs add 12.17.0 && for f in test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && $(nvs which 12.17.0) \"$f\" || exit 1; fi; done",
     "bench": "vitest bench"
   },
   "repository": {
