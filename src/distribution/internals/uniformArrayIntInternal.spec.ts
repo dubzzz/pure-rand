@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 
+import type { ArrayInt } from './uniformArrayIntInternal';
 import { uniformArrayIntInternal } from './uniformArrayIntInternal';
-import type { ArrayInt } from './ArrayInt';
 import type { RandomGenerator } from '../../types/RandomGenerator';
 
 import * as uniformIntInternalMock from './uniformIntInternal';

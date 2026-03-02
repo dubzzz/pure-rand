@@ -5,10 +5,6 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
-    "./distribution/uniformArrayInt": {
-      "require": "./lib/distribution/uniformArrayInt.js",
-      "import": "./lib/esm/distribution/uniformArrayInt.js"
-    },
     "./distribution/uniformBigInt": {
       "require": "./lib/distribution/uniformBigInt.js",
       "import": "./lib/esm/distribution/uniformBigInt.js"

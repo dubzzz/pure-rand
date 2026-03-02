@@ -1,9 +1,16 @@
-import type { ArrayInt } from './ArrayInt';
-
 // Helpers specific to 64 bits versions
 
 /** @internal */
-export type ArrayInt64 = Required<ArrayInt> & { data: [number, number] };
+export type ArrayInt64 = {
+  /**
+   * Sign of the represented number
+   */
+  sign: -1 | 1;
+  /**
+   * Value of the number, must only contain numbers in the range [0, 0xffffffff]
+   */
+  data: [number, number];
+};
 
 /**
  * We only accept safe integers here
