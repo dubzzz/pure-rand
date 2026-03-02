@@ -1,6 +1,16 @@
 // Helpers specific to 64 bits versions
 
-/** @internal */
+/**
+ * An ArrayInt64 represents an integer larger than what can be represented in classical JavaScript.
+ * The values stored in data must be in the range [0, 0xffffffff].
+ *
+ * @example
+ * ```js
+ * { sign:  1, data: [ 0, 42 ] } // = 42
+ * { sign: -1, data: [ 0, 42 ] } // = -42
+ * { sign: -1, data: [ 5, 42 ] } // = -1 * (5 * 2**32 + 42)
+ * ```
+ */
 export type ArrayInt64 = {
   /**
    * Sign of the represented number
