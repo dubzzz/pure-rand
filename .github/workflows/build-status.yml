@@ -125,7 +125,7 @@ jobs:
           script: |
             const fs = require("fs");
             const raw = fs.readFileSync("bench-output.txt", "utf8");
-            const cleaned = raw.replace(/\x1B\[[0-9;]*[mK]/g, "").replace(/\*/g, "\\*");
+            const cleaned = raw.replace(/\x1B\[[0-9;]*[mK]/g, "");
             const commentHeader = "### :stopwatch: Benchmark Results";
             const body = `${commentHeader}\n\n\`\`\`\n${cleaned}\n\`\`\``;
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
