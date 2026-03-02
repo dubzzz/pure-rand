@@ -1,12 +1,19 @@
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 /**
  * Transform an operation on a RandomGenerator into a pure version of it
  * @param action - The transform operation to make pure
  */
-export function purify<TArgs extends unknown[], TReturn, TRandomGenerator extends RandomGenerator>(
-  action: (rng: TRandomGenerator, ...args: TArgs) => TReturn,
-): (rng: TRandomGenerator, ...args: TArgs) => [TReturn, TRandomGenerator] {
+export function purify<TArgs extends unknown[], TReturn>(
+  action: (rng: RandomGenerator, ...args: TArgs) => TReturn,
+): (rng: RandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator];
+export function purify<TArgs extends unknown[], TReturn>(
+  action: (rng: JumpableRandomGenerator, ...args: TArgs) => TReturn,
+): (rng: JumpableRandomGenerator, ...args: TArgs) => [TReturn, JumpableRandomGenerator];
+export function purify<TArgs extends unknown[], TReturn>(
+  action: (rng: JumpableRandomGenerator, ...args: TArgs) => TReturn,
+): (rng: JumpableRandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator] {
   return (rng, ...args) => {
     const clonedRng = rng.clone();
     const out = action(clonedRng, ...args);

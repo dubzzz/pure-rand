@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { purify } from './purify';
 import type { RandomGenerator } from '../types/RandomGenerator';
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 describe('purify', () => {
   it('should not alter the original instance', () => {
@@ -33,5 +34,19 @@ describe('purify', () => {
     expect(outRng).not.toBe(rng);
     expect(outRng).toBe(clonedRng);
     expect(out).toBe('label::10');
+  });
+
+  it('should purify for RandomGenerator', () => {
+    const action: (rng: RandomGenerator, label: string, num: number) => string = () => '';
+    expectTypeOf(purify(action)).toEqualTypeOf<
+      (rng: RandomGenerator, label: string, num: number) => [string, RandomGenerator]
+    >();
+  });
+
+  it('should purify for JumpableRandomGenerator', () => {
+    const action: (rng: JumpableRandomGenerator, label: string, num: number) => string = () => '';
+    expectTypeOf(purify(action)).toEqualTypeOf<
+      (rng: JumpableRandomGenerator, label: string, num: number) => [string, JumpableRandomGenerator]
+    >();
   });
 });
