@@ -33,6 +33,10 @@
       "require": "./lib/generator/XoroShiro.js",
       "import": "./lib/esm/generator/XoroShiro.js"
     },
+    "./types/JumpableRandomGenerator": {
+      "require": "./lib/types/JumpableRandomGenerator.js",
+      "import": "./lib/esm/types/JumpableRandomGenerator.js"
+    },
     "./types/RandomGenerator": {
       "require": "./lib/types/RandomGenerator.js",
       "import": "./lib/esm/types/RandomGenerator.js"

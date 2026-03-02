@@ -1,4 +1,4 @@
-import type { RandomGenerator } from '../types/RandomGenerator';
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 // XorShift128+ with a=23, b=18, c=5
 // - http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf
@@ -7,7 +7,7 @@ import type { RandomGenerator } from '../types/RandomGenerator';
 //
 // NOTE: Math.random() of V8 uses XorShift128+ with a=23, b=17, c=26,
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
-class XorShift128Plus implements RandomGenerator {
+class XorShift128Plus implements JumpableRandomGenerator {
   constructor(
     private s01: number,
     private s00: number,
@@ -59,7 +59,7 @@ class XorShift128Plus implements RandomGenerator {
   }
 }
 
-export function xorshift128plusFromState(state: readonly number[]): RandomGenerator {
+export function xorshift128plusFromState(state: readonly number[]): JumpableRandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
     throw new Error('The state must have been produced by a xorshift128plus RandomGenerator');
@@ -67,6 +67,6 @@ export function xorshift128plusFromState(state: readonly number[]): RandomGenera
   return new XorShift128Plus(state[0], state[1], state[2], state[3]);
 }
 
-export function xorshift128plus(seed: number): RandomGenerator {
+export function xorshift128plus(seed: number): JumpableRandomGenerator {
   return new XorShift128Plus(-1, ~seed, seed | 0, 0);
 }

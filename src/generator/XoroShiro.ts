@@ -1,9 +1,9 @@
-import type { RandomGenerator } from '../types/RandomGenerator';
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
-class XoroShiro128Plus implements RandomGenerator {
+class XoroShiro128Plus implements JumpableRandomGenerator {
   constructor(
     private s01: number,
     private s00: number,
@@ -58,7 +58,7 @@ class XoroShiro128Plus implements RandomGenerator {
   }
 }
 
-export function xoroshiro128plusFromState(state: readonly number[]): RandomGenerator {
+export function xoroshiro128plusFromState(state: readonly number[]): JumpableRandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
     throw new Error('The state must have been produced by a xoroshiro128plus RandomGenerator');
@@ -66,6 +66,6 @@ export function xoroshiro128plusFromState(state: readonly number[]): RandomGener
   return new XoroShiro128Plus(state[0], state[1], state[2], state[3]);
 }
 
-export function xoroshiro128plus(seed: number): RandomGenerator {
+export function xoroshiro128plus(seed: number): JumpableRandomGenerator {
   return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
 }

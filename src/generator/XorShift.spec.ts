@@ -45,7 +45,7 @@ describe('xorshift128plus', () => {
   });
   it('Should produce the right sequence after jump for seed=42', () => {
     const g = xorshift128plus(42);
-    g.jump!();
+    g.jump();
     let data = [];
     for (let idx = 0; idx !== 100; ++idx) {
       const v = g.next();

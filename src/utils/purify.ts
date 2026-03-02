@@ -1,3 +1,4 @@
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 /**
@@ -6,7 +7,13 @@ import type { RandomGenerator } from '../types/RandomGenerator';
  */
 export function purify<TArgs extends unknown[], TReturn>(
   action: (rng: RandomGenerator, ...args: TArgs) => TReturn,
-): (rng: RandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator] {
+): (rng: RandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator];
+export function purify<TArgs extends unknown[], TReturn>(
+  action: (rng: JumpableRandomGenerator, ...args: TArgs) => TReturn,
+): (rng: JumpableRandomGenerator, ...args: TArgs) => [TReturn, JumpableRandomGenerator];
+export function purify<TArgs extends unknown[], TReturn>(
+  action: (rng: JumpableRandomGenerator, ...args: TArgs) => TReturn,
+): (rng: JumpableRandomGenerator, ...args: TArgs) => [TReturn, RandomGenerator] {
   return (rng, ...args) => {
     const clonedRng = rng.clone();
     const out = action(clonedRng, ...args);
