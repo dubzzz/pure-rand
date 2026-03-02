@@ -127,7 +127,7 @@ jobs:
             const raw = fs.readFileSync("bench-output.txt", "utf8");
             const cleaned = raw.replace(/\x1B\[[0-9;]*[mK]/g, "");
             const commentHeader = "### :stopwatch: Benchmark Results";
-            const body = `${commentHeader}\n\n<details><summary>Click to expand</summary>\n\n\`\`\`\n${cleaned}\n\`\`\`</details>`;
+            const body = `${commentHeader}\n\n<details><summary>Click to expand</summary>\n\n\`\`\`\n${cleaned}\n\`\`\`</details>\n\nCommit: ${context.sha}`;
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
             const existing = comments.find(c => c.user.login === "github-actions[bot]" && c.body.startsWith(commentHeader));
             if (existing !== undefined) {
