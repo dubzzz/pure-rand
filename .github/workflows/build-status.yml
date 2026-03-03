@@ -214,8 +214,8 @@ jobs:
               if (m === null) {
                 continue;
               }
-              const files = fileMatch[2] === "current" ? currentFiles : publishedFiles;
-              files.push({ size: Number(fileMatch[2]), path: fileMatch[3] });
+              const files = m[1] === "current" ? currentFiles : publishedFiles;
+              files.push({ size: Number(m[2]), path: m[3] });
             }
             currentFiles.sort((a, b) => b.size - a.size);
             publishedFiles.sort((a, b) => b.size - a.size);
