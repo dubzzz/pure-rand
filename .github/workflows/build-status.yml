@@ -219,9 +219,8 @@ jobs:
             echo ""
             echo "| File | Size |"
             echo "|------|------|"
-            find "$pkg_dir" -type f | sort | while read -r f; do
+            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | sort -rn | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
-              size=$(stat --format=%s "$f")
               printf "| \`%s\` | %s |\n" "$rel_path" "$(format_bytes $size)"
             done
           } > size-output.txt
