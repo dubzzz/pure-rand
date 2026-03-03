@@ -232,9 +232,9 @@ jobs:
             const totalUntar = sumSize(currentFiles, () => true);
             const publishedSize = sumSize(publishedFiles, () => true);
             const esmJsFilter = f => isESM(f) && isJS(f);
-            const esmDtsFilter = f => isESM(f) && isDJS(f);
+            const esmDtsFilter = f => isESM(f) && isDTS(f);
             const cjsJsFilter = f => isCJS(f) && isJS(f);
-            const cjsDtsFilter = f => isCJS(f) && isDJS(f);
+            const cjsDtsFilter = f => isCJS(f) && isDTS(f);
 
             // Build category table
             let details = "| Category | Size (new) | Size (published) |\n|----------|------|------|\n";
