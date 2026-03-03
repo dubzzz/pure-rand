@@ -128,12 +128,44 @@ describe('congruential32', () => {
       ].map((v) => v | 0),
     );
   });
+  it('Should produce the right sequence after jump for seed=42', () => {
+    const g = congruential32(42);
+    g.jump();
+    const data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const v = g.next();
+      data.push(v);
+    }
+    // Verifies against manual advancement by 2^16 next() calls (= 3 * 2^16 LCG steps).
+    // Jump constants precomputed via the LCG jump-ahead algorithm from:
+    // F. Brown, "Random Number Generation with Arbitrary Strides", Trans. Am. Nucl. Soc. (Nov. 1994)
+    expect(data).toEqual(
+      [
+        2465055980, 3883212298, 4021781768, 738993281, 3215657551, 984983963, 2896152994, 1422049114, 1152760575,
+        2899723742, 2082487871, 398492622, 76255798, 2215279246, 3044661771, 2239891048, 2928515811, 2990029361,
+        2305593392, 1500586776, 3294838601, 2335870109, 833774352, 7718367, 285290200, 1060774088, 1896682433,
+        2661497019, 2001778250, 3610235348, 1510287817, 570761941, 510977537, 3514690393, 842682139, 3499042025,
+        2712543904, 481540341, 3898195024, 2670247668, 1239841767, 241610001, 850833705, 1071541028, 1993336276,
+        3560123125, 3430856005, 4113308155, 3182374902, 4242096142, 663756062, 2557311941, 599938835, 1467766910,
+        2297401161, 1634419517, 977439997, 2264808165, 635274734, 487214458, 3255669425, 2273302381, 3079637125,
+        2702596895, 485245105, 3288217115, 461445586, 1798588098, 846485922, 974131284, 4134376994, 2028790940,
+        244515625, 163930541, 1877278150, 1188919153, 1605435649, 1872886775, 3162597328, 2231559874, 444075616,
+        1187015306, 1287526668, 774513201, 3912888716, 285946065, 2523757377, 276618804, 754296248, 2745085974,
+        1322021033, 4113569277, 905852707, 4114890895, 3409788845, 894566056, 4198542707, 756173224, 513315557,
+        699881382,
+      ].map((v) => v | 0),
+    );
+  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(congruential32)));
   it('Should return the same sequence when built from state', () =>
     fc.assert(p.clonedFromStateSameSequences(congruential32, congruential32FromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(congruential32)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(congruential32)));
+  it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(congruential32)));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(congruential32)));
+  it('Should impact itself with jump', () => fc.assert(p.changeSelfWithJump(congruential32)));
   it('Should not impact clones when impacting itself on next', () =>
     fc.assert(p.noChangeOnClonedWithNext(congruential32)));
+  it('Should not impact clones when impacting itself on jump', () =>
+    fc.assert(p.noChangeOnClonedWithJump(congruential32)));
 });
