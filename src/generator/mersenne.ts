@@ -24,7 +24,7 @@ class MersenneTwister implements RandomGenerator {
   }
   next(): number {
     let y = this.states[this.index];
-    y ^= this.states[this.index] >>> U;
+    y ^= y >>> U;
     y ^= (y << S) & B;
     y ^= (y << T) & C;
     y ^= y >>> L;

@@ -26,6 +26,11 @@ export function uniformBigInt(rng: RandomGenerator, from: bigint, to: bigint): b
     ++NumIterations;
   }
 
+  // Fast path: power-of-2 ranges have no bias, use bitwise AND
+  if ((diff & (diff - 1n)) === 0n) {
+    return (generateNext(NumIterations, rng) & (diff - 1n)) + from;
+  }
+
   let value = generateNext(NumIterations, rng);
   if (value < diff) {
     return value + from;
