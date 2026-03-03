@@ -239,14 +239,19 @@ jobs:
             details += `| Types for ESM | ${formatBytes(sumSize(currentFiles, esmDtsFilter))} | ${formatBytes(sumSize(publishedFiles, esmDtsFilter))} |\n`;
             details += `| Types for CJS | ${formatBytes(sumSize(currentFiles, cjsDtsFilter))} | ${formatBytes(sumSize(publishedFiles, cjsDtsFilter))} |\n`;
 
-            // Build per-file table sorted biggest first
-            details += "\n| File | Size (new) |\n|------|------|\n";
+            // Build merged per-file table: new files by descending size, then published-only files by descending size
+            const publishedByPath = new Map(publishedFiles.map(f => [f.path, f]));
+            const seenPaths = new Set();
+            details += "\n| File | Size (new) | Size (published) |\n|------|------|------|\n";
             for (const f of currentFiles) {
-              details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
+              seenPaths.add(f.path);
+              const pub = publishedByPath.get(f.path);
+              details += `| \`${f.path}\` | ${formatBytes(f.size)} | ${pub ? formatBytes(pub.size) : "-"} |\n`;
             }
-            details += "\n| File | Size (old) |\n|------|------|\n";
             for (const f of publishedFiles) {
-              details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
+              if (!seenPaths.has(f.path)) {
+                details += `| \`${f.path}\` | - | ${formatBytes(f.size)} |\n`;
+              }
             }
 
             // Build summary
