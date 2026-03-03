@@ -61,8 +61,8 @@
     "typecheck": "tsc --noEmit",
     "build": "rolldown -c && cd lib/esm/ && find . -type f -name '*.d.ts' -exec cp --parents {} ../ \\; && cp ../../package.esm-template.json package.json && cd ../..",
     "test": "vitest",
-    "test-bundle": "for f in test-bundle/*.mjs test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && node \"$f\" || exit 1; fi; done",
-    "test-legacy-bundle": "nvs add 12.17.0 && for f in test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && $(nvs which 12.17.0) \"$f\" || exit 1; fi; done",
+    "test-bundle": "echo \"node: $(${NODE_BIN:-node} --version)\" && for f in test-bundle/*.mjs test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && ${NODE_BIN:-node} \"$f\" || exit 1; fi; done",
+    "test-legacy-bundle": "nvs add 12.17.0 && NODE_BIN=$(nvs which 12.17.0) pnpm test-bundle",
     "bench": "vitest bench"
   },
   "repository": {
@@ -76,6 +76,7 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
+    "@fast-check/packaged": "^0.5.0",
     "fast-check": "^4.5.3",
     "oxfmt": "^0.36.0",
     "pkg-pr-new": "^0.0.65",

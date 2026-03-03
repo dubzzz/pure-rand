@@ -224,7 +224,7 @@ jobs:
       - name: Unpack production package
         run: tar -xzf package.tgz --strip-components=1
       - name: Alter internals to behave as if published
-        run: pnpm dlx @fast-check/packaged --keep-node-modules
+        run: pnpm exec packaged --keep-node-modules
       - name: Retrieve potentially dropped test-bundle
         run: git restore -s@ -SW -- test-bundle
       - name: Check bundle
