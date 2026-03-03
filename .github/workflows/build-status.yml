@@ -207,10 +207,8 @@ jobs:
             for (const line of lines) {
               const m = line.match(/^(current|published)\s+(\d+)\s+(.+)$/);
               if (m === null) {
-                console.log(`⚠️ Ignored line: ${JSON.stringify(line)}`);
                 continue;
               }
-              console.log(`🔀 Routing line to ${m[1] === "current" ? "current" : "published"}: ${JSON.stringify(line)}`);
               const files = m[1] === "current" ? currentFiles : publishedFiles;
               files.push({ size: Number(m[2]), path: m[3] });
             }
