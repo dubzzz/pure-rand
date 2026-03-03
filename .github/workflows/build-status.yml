@@ -185,7 +185,7 @@ jobs:
           pkg_dir="extracted/package"
           {
             echo "TGZ_SIZE=$tgz_size"
-            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
+            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | sort -k2 | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
               echo "$size $rel_path"
             done
