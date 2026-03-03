@@ -150,30 +150,28 @@ jobs:
         with:
           name: bundle
       - name: Compute package size
+        id: compute
         run: |
-          mkdir -p extracted
-          tar -xzf package.tgz -C extracted
-          pkg_dir="extracted/package"
-          {
+          extract_sizes() {
+            local tgz_path="$1"
+            local kind="$2"
+            mkdir -p extracted
+            tar -xzf "$tgz_path" -C extracted
+            local pkg_dir="extracted/package"
             find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
-              echo "current $size $rel_path"
+              echo "$kind $size $rel_path"
             done
-          } > size-output.txt
+            rm -rf extracted
+          }
+
+          extract_sizes package.tgz current > size-output.txt
           tgzSize=$(stat --format=%s package.tgz)
           echo "tgzSize=$tgzSize" >> "$GITHUB_OUTPUT"
           mkdir -p published
           if npm pack pure-rand --pack-destination=published 2>/dev/null; then
             published_tgz=$(find published -name '*.tgz' -type f | head -n1)
-            mkdir -p published_extracted
-            tar -xzf "$published_tgz" -C published_extracted
-            pkg_dir="published_extracted/package"
-            {
-              find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
-                rel_path="${f#$pkg_dir/}"
-                echo "published $size $rel_path"
-              done
-            } > size-output.txt
+            extract_sizes "$published_tgz" published >> size-output.txt
             version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
             echo "lastPublishedVersion=$lastPublishedVersion" >> "$GITHUB_OUTPUT"
           else
