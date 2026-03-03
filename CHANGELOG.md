@@ -1,26 +1,25 @@
-# CHANGELOG 7.X
+# CHANGELOG 8.X
 
-## 7.0.1
-
-### Fixes
-
-- [c24bc93](https://github.com/dubzzz/pure-rand/commit/c24bc93) 🐛 Properly define exports in package.json (#758)
-
-## 7.0.0
+## 8.0.0
 
 ### Breaking Changes
 
-- [2c94832](https://github.com/dubzzz/pure-rand/commit/2c94832) 🏷️ Move to "import type" when feasible (#736)
-- [3741a63](https://github.com/dubzzz/pure-rand/commit/3741a63) 🏷️ Mark `getState` as compulsory on `RandomGenerator` (#733)
+- [a766210](https://github.com/dubzzz/pure-rand/commit/a766210) 💥 Move `rng` as first argument (#831)
+- [423e6d6](https://github.com/dubzzz/pure-rand/commit/423e6d6) 💥 Drop main entry point (#832)
+- [a51c7df](https://github.com/dubzzz/pure-rand/commit/a51c7df) 💥 Drop pure versions, rename others (#833)
+- [67cb28c](https://github.com/dubzzz/pure-rand/commit/67cb28c) 💥 Make unsafe the default (#846)
+- [6b5dd37](https://github.com/dubzzz/pure-rand/commit/6b5dd37) 💥 Move `fromState` in dedicated export (#848)
+- [09b403a](https://github.com/dubzzz/pure-rand/commit/09b403a) 💥 Introduce dedicated Jumpable type (#864)
+- [1838e5e](https://github.com/dubzzz/pure-rand/commit/1838e5e) 💥 Drop `uniformArrayInt` (#868)
 
 ### Features
 
-- [228c73d](https://github.com/dubzzz/pure-rand/commit/228c73d) ⚡️ Faster uniform distributions on bigint (#757)
-- [86869a1](https://github.com/dubzzz/pure-rand/commit/86869a1) ✨ Expose generators and distributions (#735)
+- [bd76869](https://github.com/dubzzz/pure-rand/commit/bd76869) ✨ Add `purify` utils
+- [b0262ca](https://github.com/dubzzz/pure-rand/commit/b0262ca) ⚡️ Faster `uniformInt` on large ranges (#869)
 
 ### Fixes
 
-- [680a672](https://github.com/dubzzz/pure-rand/commit/680a672) 🚚 Do not export mersenne as default (#738)
-- [e1758c0](https://github.com/dubzzz/pure-rand/commit/e1758c0) 🚚 Split ArrayInt into two files (#737)
-- [0c356cf](https://github.com/dubzzz/pure-rand/commit/0c356cf) 🚚 Moving files around (#734)
-- [6d9b7b4](https://github.com/dubzzz/pure-rand/commit/6d9b7b4) 📝 Document generation of float/double (#715)
+- [33052bc](https://github.com/dubzzz/pure-rand/commit/33052bc) 🚚 Rename generator files to match generator function names (#876)
+- [aedace9](https://github.com/dubzzz/pure-rand/commit/aedace9) ♻️ Consider full bigint support (#851)
+- [762eb02](https://github.com/dubzzz/pure-rand/commit/762eb02) 🔧 Explicitely list all exports (#856)
+- [2249bc7](https://github.com/dubzzz/pure-rand/commit/2249bc7) 📝 Fix GitHub Actions badge in README (#881)
