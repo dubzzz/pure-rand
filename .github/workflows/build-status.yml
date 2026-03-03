@@ -222,7 +222,7 @@ jobs:
             const isDTS = f => f.path.endsWith(".d.ts");
             const sumSize = (files, predicate) => files.reduce((s, f) => predicate(f) ? s + f.size : s, 0);
             const formatBytes = b => b >= 1048576 ? (b / 1048576).toFixed(2) + " MB" : b >= 1024 ? (b / 1024).toFixed(2) + " kB" : b + " B";
-            const formatDiff = (newSize, pubSize) => { const d = newSize - pubSize; if (d > 0) return `🔺 +${formatBytes(d)}`; if (d < 0) return `🔽 -${formatBytes(Math.abs(d))}`; return "🟰"; };
+            const formatDiff = (newSize, pubSize) => { const d = newSize - pubSize; if (d === 0) return "🟰"; if (pubSize === 0) return "🔺 new"; const pct = ((d / pubSize) * 100).toFixed(1); return d > 0 ? `🔺 +${pct}%` : `🔽 ${pct}%`; };
 
             // Compute totals and categories
             const totalUntar = sumSize(currentFiles, () => true);
