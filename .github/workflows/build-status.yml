@@ -160,6 +160,7 @@ jobs:
         with:
           name: unit-tests-${{matrix.node-version}}
           flags: unit-tests, unit-tests-${{matrix.node-version}}
+          token: ${{secrets.CODECOV_TOKEN}}
           fail_ci_if_error: false # default: false
           verbose: false # default: false
   production_package:
