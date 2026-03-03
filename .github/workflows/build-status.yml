@@ -251,8 +251,8 @@ jobs:
             }
 
             // Build summary
-            const tgzSize = Number("${{ needs.published_package_size.outputs.tgzSize }}");
-            const publishedVersion = "${{ needs.published_package_size.outputs.publishedVersion }}"
+            const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
+            const publishedVersion = "${{ needs.package_size.outputs.publishedVersion }}"
             const newSizeSummary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
             const diff = totalUntar - publishedSize;
             const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
