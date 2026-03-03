@@ -3,7 +3,7 @@ import * as fc from 'fast-check';
 
 import { uniformBigInt } from './uniformBigInt';
 import { uniformInt } from './uniformInt';
-import { mersenne } from '../generator/MersenneTwister';
+import { mersenne } from '../generator/mersenne';
 
 const bigIntArbitrary = fc
   .tuple(fc.boolean(), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff), fc.nat(0xffffffff))

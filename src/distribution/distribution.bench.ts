@@ -1,5 +1,5 @@
 import { describe, bench } from 'vitest';
-import { xorshift128plus } from '../generator/XorShift';
+import { xorshift128plus } from '../generator/xorshift128plus';
 import type { RandomGenerator } from '../../src/types/RandomGenerator';
 import { uniformInt } from './uniformInt';
 import { uniformBigInt } from './uniformBigInt';

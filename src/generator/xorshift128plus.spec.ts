@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { xorshift128plus, xorshift128plusFromState } from './XorShift';
+import { xorshift128plus, xorshift128plusFromState } from './xorshift128plus';
 import * as p from './RandomGenerator.properties';
 
 describe('xorshift128plus', () => {

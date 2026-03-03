@@ -1,8 +1,8 @@
 import { describe, bench } from 'vitest';
-import { xoroshiro128plus } from './XoroShiro';
-import { congruential32 } from './LinearCongruential';
-import { mersenne } from './MersenneTwister';
-import { xorshift128plus } from './XorShift';
+import { xoroshiro128plus } from './xoroshiro128plus';
+import { congruential32 } from './congruential32';
+import { mersenne } from './mersenne';
+import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 const numInts = 5_000;
