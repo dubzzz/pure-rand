@@ -135,6 +135,37 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
             }
+  published_package_size:
+    name: 'Published package size'
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      version: ${{ steps.compute.outputs.version }}
+      untar_size: ${{ steps.compute.outputs.untar_size }}
+    steps:
+      - name: Download and measure published package
+        id: compute
+        run: |
+          dir_size() {
+            local total=0
+            while IFS= read -r -d '' f; do
+              total=$((total + $(stat --format=%s "$f")))
+            done < <(find "$1" -type f -print0)
+            echo "$total"
+          }
+          mkdir -p published
+          if npm pack pure-rand --pack-destination=published 2>/dev/null; then
+            published_tgz=$(find published -name '*.tgz' -type f | head -n1)
+            version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
+            mkdir -p published_extracted
+            tar -xzf "$published_tgz" -C published_extracted
+            untar_size=$(dir_size "published_extracted/package")
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "untar_size=$untar_size" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Failed to download published version from npm, size comparison will be skipped"
+          fi
   package_size:
     name: 'Package size'
     needs: production_package
@@ -146,12 +177,6 @@ jobs:
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: bundle
-      - name: Download published version from npm
-        run: |
-          mkdir -p published
-          if ! npm pack pure-rand --pack-destination=published 2>/dev/null; then
-            echo "::warning::Failed to download published version from npm, size comparison will be skipped"
-          fi
       - name: Compute package size
         run: |
           format_bytes() {
@@ -185,16 +210,6 @@ jobs:
           tar -xzf package.tgz -C extracted
           pkg_dir="extracted/package"
           new_untar_size=$(dir_size "$pkg_dir")
-          published_tgz=$(find published -name '*.tgz' -type f 2>/dev/null | head -n1)
-          if [ -n "$published_tgz" ]; then
-            published_version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
-            mkdir -p published_extracted
-            tar -xzf "$published_tgz" -C published_extracted
-            published_untar_size=$(dir_size "published_extracted/package")
-          else
-            published_version=""
-            published_untar_size=""
-          fi
           mapfile -t esm_js_files < <(find "$pkg_dir/lib/esm" -name '*.js' -type f 2>/dev/null | sort)
           mapfile -t esm_dts_files < <(find "$pkg_dir/lib/esm" -name '*.d.ts' -type f 2>/dev/null | sort)
           mapfile -t cjs_js_files < <(find "$pkg_dir/lib" -path "$pkg_dir/lib/esm" -prune -o -name '*.js' -type f -print 2>/dev/null | sort)
@@ -206,8 +221,6 @@ jobs:
           {
             echo "NEW_UNTAR_SIZE=$new_untar_size"
             echo "NEW_TGZ_SIZE=$tgz_size"
-            echo "PUBLISHED_UNTAR_SIZE=$published_untar_size"
-            echo "PUBLISHED_VERSION=$published_version"
             echo "---"
             echo "| Category | Size |"
             echo "|----------|------|"
@@ -234,7 +247,9 @@ jobs:
           retention-days: 1
   comment_package_size:
     name: 'Comment package size'
-    needs: package_size
+    needs:
+      - package_size
+      - published_package_size
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -266,8 +281,10 @@ jobs:
             }
             const newSize = Number(meta.NEW_UNTAR_SIZE);
             const newTgzSize = Number(meta.NEW_TGZ_SIZE);
-            const publishedSize = meta.PUBLISHED_UNTAR_SIZE ? Number(meta.PUBLISHED_UNTAR_SIZE) : null;
-            const publishedVersion = meta.PUBLISHED_VERSION || null;
+            const publishedSizeRaw = "${{ needs.published_package_size.outputs.untar_size }}";
+            const publishedVersionRaw = "${{ needs.published_package_size.outputs.version }}";
+            const publishedSize = publishedSizeRaw ? Number(publishedSizeRaw) : null;
+            const publishedVersion = publishedVersionRaw || null;
             let summary = `**New size:** ${formatBytes(newSize)} (tgz: ${formatBytes(newTgzSize)})`;
             if (publishedSize !== null && publishedVersion) {
               const diff = newSize - publishedSize;
