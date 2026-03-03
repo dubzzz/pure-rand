@@ -150,32 +150,29 @@ jobs:
         with:
           name: bundle
       - name: Compute package size
+        id: compute
         run: |
-          mkdir -p extracted
-          tar -xzf package.tgz -C extracted
-          pkg_dir="extracted/package"
-          {
+          extract_sizes() {
+            local tgz_path="$1"
+            local kind="$2"
+            mkdir -p extracted
+            tar -xzf "$tgz_path" -C extracted
+            local pkg_dir="extracted/package"
             find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
-              echo "current $size $rel_path"
+              echo "$kind $size $rel_path"
             done
-          } > size-output.txt
+            rm -rf extracted
+          }
+          extract_sizes package.tgz current > size-output.txt
           tgzSize=$(stat --format=%s package.tgz)
           echo "tgzSize=$tgzSize" >> "$GITHUB_OUTPUT"
           mkdir -p published
           if npm pack pure-rand --pack-destination=published 2>/dev/null; then
             published_tgz=$(find published -name '*.tgz' -type f | head -n1)
-            mkdir -p published_extracted
-            tar -xzf "$published_tgz" -C published_extracted
-            pkg_dir="published_extracted/package"
-            {
-              find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
-                rel_path="${f#$pkg_dir/}"
-                echo "published $size $rel_path"
-              done
-            } > size-output.txt
             version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
-            echo "lastPublishedVersion=$lastPublishedVersion" >> "$GITHUB_OUTPUT"
+            extract_sizes "$published_tgz" published >> size-output.txt
+            echo "lastPublishedVersion=$version" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Failed to download published version from npm, size comparison will be skipped"
           fi
@@ -233,35 +230,49 @@ jobs:
             // Compute totals and categories
             const totalUntar = sumSize(currentFiles, () => true);
             const publishedSize = sumSize(publishedFiles, () => true);
+            const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
+            const publishedVersion = "${{ needs.package_size.outputs.lastPublishedVersion }}";
             const esmJsFilter = f => isESM(f) && isJS(f);
             const esmDtsFilter = f => isESM(f) && isDTS(f);
             const cjsJsFilter = f => isCJS(f) && isJS(f);
             const cjsDtsFilter = f => isCJS(f) && isDTS(f);
 
             // Build category table
-            let details = "| Category | Size (new) | Size (published) |\n|----------|------|------|\n";
-            details += `| **Total** | **${formatBytes(totalUntar)}** |\n`;
-            details += `| ESM bundle | ${formatBytes(sumSize(currentFiles, esmJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, esmJsFilter))} |\n`;
-            details += `| CJS bundle | ${formatBytes(sumSize(currentFiles, cjsJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, cjsJsFilter))} |\n`;
-            details += `| Types for ESM | ${formatBytes(sumSize(currentFiles, esmDtsFilter))} | ${formatBytes(sumSize(publishedFiles, esmDtsFilter))} |\n`;
-            details += `| Types for CJS | ${formatBytes(sumSize(currentFiles, cjsDtsFilter))} | ${formatBytes(sumSize(publishedFiles, cjsDtsFilter))} |\n`;
+            const hasPublished = publishedVersion && publishedSize > 0;
+            let details = hasPublished
+              ? "| Category | Size (new) | Size (published) |\n|----------|------|------|\n"
+              : "| Category | Size |\n|----------|------|\n";
+            const catRow = (label, filter) => {
+              const cur = formatBytes(sumSize(currentFiles, filter));
+              return hasPublished
+                ? `| ${label} | ${cur} | ${formatBytes(sumSize(publishedFiles, filter))} |\n`
+                : `| ${label} | ${cur} |\n`;
+            };
+            details += hasPublished
+              ? `| **Total** | **${formatBytes(totalUntar)}** | **${formatBytes(publishedSize)}** |\n`
+              : `| **Total** | **${formatBytes(totalUntar)}** |\n`;
+            details += catRow("ESM bundle", esmJsFilter);
+            details += catRow("CJS bundle", cjsJsFilter);
+            details += catRow("Types for ESM", esmDtsFilter);
+            details += catRow("Types for CJS", cjsDtsFilter);
 
             // Build per-file table sorted biggest first
-            details += "\n| File | Size (new) |\n|------|------|\n";
+            details += "\n| File | Size |\n|------|------|\n";
             for (const f of currentFiles) {
               details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
             }
 
             // Build summary
-            const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
-            const publishedVersion = "${{ needs.package_size.outputs.publishedVersion }}"
             const newSizeSummary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
-            const diff = totalUntar - publishedSize;
-            const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-            const pct = publishedSize > 0 ? (diff / publishedSize) * 100 : 0;
-            const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
-            const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
-            const summary = `${newSizeSummary} — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
+            let summary = newSizeSummary;
+            if (hasPublished) {
+              const diff = totalUntar - publishedSize;
+              const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
+              const pct = (diff / publishedSize) * 100;
+              const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
+              const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
+              summary += ` — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
+            }
 
             const commentHeader = "### 🗜️ Package Size";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
