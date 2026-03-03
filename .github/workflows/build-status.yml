@@ -173,18 +173,28 @@ jobs:
             done
             echo "$total"
           }
+          dir_size() {
+            local total=0
+            while IFS= read -r -d '' f; do
+              total=$((total + $(stat --format=%s "$f")))
+            done < <(find "$1" -type f -print0)
+            echo "$total"
+          }
           tgz_size=$(stat --format=%s package.tgz)
-          published_tgz=$(find published -name '*.tgz' -type f 2>/dev/null | head -n1)
-          if [ -n "$published_tgz" ]; then
-            published_tgz_size=$(stat --format=%s "$published_tgz")
-            published_version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
-          else
-            published_tgz_size=""
-            published_version=""
-          fi
           mkdir -p extracted
           tar -xzf package.tgz -C extracted
           pkg_dir="extracted/package"
+          new_untar_size=$(dir_size "$pkg_dir")
+          published_tgz=$(find published -name '*.tgz' -type f 2>/dev/null | head -n1)
+          if [ -n "$published_tgz" ]; then
+            published_version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
+            mkdir -p published_extracted
+            tar -xzf "$published_tgz" -C published_extracted
+            published_untar_size=$(dir_size "published_extracted/package")
+          else
+            published_version=""
+            published_untar_size=""
+          fi
           mapfile -t esm_js_files < <(find "$pkg_dir/lib/esm" -name '*.js' -type f 2>/dev/null | sort)
           mapfile -t esm_dts_files < <(find "$pkg_dir/lib/esm" -name '*.d.ts' -type f 2>/dev/null | sort)
           mapfile -t cjs_js_files < <(find "$pkg_dir/lib" -path "$pkg_dir/lib/esm" -prune -o -name '*.js' -type f -print 2>/dev/null | sort)
@@ -194,13 +204,15 @@ jobs:
           cjs_js_size=$(sum_file_sizes "${cjs_js_files[@]}")
           cjs_dts_size=$(sum_file_sizes "${cjs_dts_files[@]}")
           {
+            echo "NEW_UNTAR_SIZE=$new_untar_size"
             echo "NEW_TGZ_SIZE=$tgz_size"
-            echo "PUBLISHED_TGZ_SIZE=$published_tgz_size"
+            echo "PUBLISHED_UNTAR_SIZE=$published_untar_size"
             echo "PUBLISHED_VERSION=$published_version"
             echo "---"
             echo "| Category | Size |"
             echo "|----------|------|"
-            printf "| **Total (tgz)** | **%s** |\n" "$(format_bytes $tgz_size)"
+            printf "| **Total (untar)** | **%s** |\n" "$(format_bytes $new_untar_size)"
+            printf "| Total (tgz) | %s |\n" "$(format_bytes $tgz_size)"
             printf "| ESM bundle | %s |\n" "$(format_bytes $esm_js_size)"
             printf "| CJS bundle | %s |\n" "$(format_bytes $cjs_js_size)"
             printf "| Types for ESM | %s |\n" "$(format_bytes $esm_dts_size)"
@@ -254,10 +266,11 @@ jobs:
               if (b >= 1024) return (b / 1024).toFixed(2) + " kB";
               return b + " B";
             }
-            const newSize = Number(meta.NEW_TGZ_SIZE);
-            const publishedSize = meta.PUBLISHED_TGZ_SIZE ? Number(meta.PUBLISHED_TGZ_SIZE) : null;
+            const newSize = Number(meta.NEW_UNTAR_SIZE);
+            const newTgzSize = Number(meta.NEW_TGZ_SIZE);
+            const publishedSize = meta.PUBLISHED_UNTAR_SIZE ? Number(meta.PUBLISHED_UNTAR_SIZE) : null;
             const publishedVersion = meta.PUBLISHED_VERSION || null;
-            let summary = `**New size:** ${formatBytes(newSize)}`;
+            let summary = `**New size:** ${formatBytes(newSize)} (tgz: ${formatBytes(newTgzSize)})`;
             if (publishedSize !== null && publishedVersion) {
               const diff = newSize - publishedSize;
               const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
