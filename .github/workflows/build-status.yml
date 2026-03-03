@@ -235,7 +235,7 @@ jobs:
 
             // Build category table
             let details = "| Category | Size (new) | Size (published) |\n|----------|------|------|\n";
-            details += `| **Total** | **${formatBytes(totalUntar)}** |\n`;
+            details += `| **Total** | **${formatBytes(totalUntar)}** | **${formatBytes(publishedSize)}** |\n`;
             details += `| ESM bundle | ${formatBytes(sumSize(currentFiles, esmJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, esmJsFilter))} |\n`;
             details += `| CJS bundle | ${formatBytes(sumSize(currentFiles, cjsJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, cjsJsFilter))} |\n`;
             details += `| Types for ESM | ${formatBytes(sumSize(currentFiles, esmDtsFilter))} | ${formatBytes(sumSize(publishedFiles, esmDtsFilter))} |\n`;
