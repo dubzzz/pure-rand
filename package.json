@@ -61,7 +61,7 @@
     "typecheck": "tsc --noEmit",
     "build": "rolldown -c && cd lib/esm/ && find . -type f -name '*.d.ts' -exec cp --parents {} ../ \\; && cp ../../package.esm-template.json package.json && cd ../..",
     "test": "vitest",
-    "test-bundle": "echo \"node: $(${NODE_BIN:-node} --version)\" && for f in test-bundle/*.mjs test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && ${NODE_BIN:-node} \"$f\" || exit 1; fi; done",
+    "test-bundle": "echo \"node: $(${NODE_BIN:-node} --version)\" && rm -rf test-bundle/*.mjs && for f in test-bundle/*.cjs; do if [ -f \"$f\" ]; then echo \"Creating ${f%.cjs}.mjs\" &&  mjs=\"${f%.cjs}.mjs\" && sed -E \"s/^const (\\{[^}]*\\}) = require\\(([^)]+)\\);$/import \\1 from \\2;/; s/^const ([a-zA-Z_][a-zA-Z0-9_]*) = require\\(([^)]+)\\);$/import \\1 from \\2;/; s/^'use strict';$//\" \"$f\" > \"$mjs\"; fi; done && for f in test-bundle/*.cjs test-bundle/*.mjs; do if [ -f \"$f\" ]; then echo \"Running ${f##*/}\" && ${NODE_BIN:-node} \"$f\" || exit 1; fi; done",
     "test-legacy-bundle": "nvs add 12.17.0 && NODE_BIN=$(nvs which 12.17.0) pnpm test-bundle",
     "bench": "vitest bench"
   },

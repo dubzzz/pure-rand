@@ -2,6 +2,7 @@ coverage/
 lib/
 lib-*/
 node_modules/
+test-bundle/*.mjs
 .nyc_output/
 out.txt
 v8.log
