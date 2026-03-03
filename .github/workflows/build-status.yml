@@ -135,37 +135,6 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
             }
-  published_package_size:
-    name: 'Published package size'
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions: {}
-    outputs:
-      version: ${{ steps.compute.outputs.version }}
-      untar_size: ${{ steps.compute.outputs.untar_size }}
-    steps:
-      - name: Download and measure published package
-        id: compute
-        run: |
-          dir_size() {
-            local total=0
-            while IFS= read -r -d '' f; do
-              total=$((total + $(stat --format=%s "$f")))
-            done < <(find "$1" -type f -print0)
-            echo "$total"
-          }
-          mkdir -p published
-          if npm pack pure-rand --pack-destination=published 2>/dev/null; then
-            published_tgz=$(find published -name '*.tgz' -type f | head -n1)
-            version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
-            mkdir -p published_extracted
-            tar -xzf "$published_tgz" -C published_extracted
-            untar_size=$(dir_size "published_extracted/package")
-            echo "version=$version" >> "$GITHUB_OUTPUT"
-            echo "untar_size=$untar_size" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::Failed to download published version from npm, size comparison will be skipped"
-          fi
   package_size:
     name: 'Package size'
     needs: production_package
@@ -179,6 +148,13 @@ jobs:
           name: bundle
       - name: Compute package size
         run: |
+          dir_size() {
+            local total=0
+            while IFS= read -r -d '' f; do
+              total=$((total + $(stat --format=%s "$f")))
+            done < <(find "$1" -type f -print0)
+            echo "$total"
+          }
           tgz_size=$(stat --format=%s package.tgz)
           mkdir -p extracted
           tar -xzf package.tgz -C extracted
@@ -190,6 +166,18 @@ jobs:
               echo "$size $rel_path"
             done
           } > size-output.txt
+          mkdir -p published
+          if npm pack pure-rand --pack-destination=published 2>/dev/null; then
+            published_tgz=$(find published -name '*.tgz' -type f | head -n1)
+            version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
+            mkdir -p published_extracted
+            tar -xzf "$published_tgz" -C published_extracted
+            untar_size=$(dir_size "published_extracted/package")
+            echo "PUBLISHED_VERSION=$version" >> size-output.txt
+            echo "PUBLISHED_UNTAR_SIZE=$untar_size" >> size-output.txt
+          else
+            echo "::warning::Failed to download published version from npm, size comparison will be skipped"
+          fi
           cat size-output.txt
       - name: Upload size results
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -200,9 +188,7 @@ jobs:
           retention-days: 1
   comment_package_size:
     name: 'Comment package size'
-    needs:
-      - package_size
-      - published_package_size
+    needs: package_size
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
@@ -220,12 +206,20 @@ jobs:
             const raw = fs.readFileSync("size-output.txt", "utf8").trim();
             const lines = raw.split("\n");
 
-            // Parse raw data: first line is TGZ_SIZE=<n>, rest are "<size> <path>"
+            // Parse raw data: metadata lines (KEY=value) and file lines (<size> <path>)
             let tgzSize = 0;
+            let publishedVersion = null;
+            let publishedSize = null;
             const files = [];
             for (const line of lines) {
-              const metaMatch = line.match(/^TGZ_SIZE=(\d+)$/);
-              if (metaMatch) { tgzSize = Number(metaMatch[1]); continue; }
+              const metaMatch = line.match(/^([A-Z_]+)=(.*)$/);
+              if (metaMatch) {
+                const [, key, value] = metaMatch;
+                if (key === "TGZ_SIZE") tgzSize = Number(value);
+                else if (key === "PUBLISHED_VERSION") publishedVersion = value;
+                else if (key === "PUBLISHED_UNTAR_SIZE") publishedSize = Number(value);
+                continue;
+              }
               const fileMatch = line.match(/^(\d+)\s+(.+)$/);
               if (fileMatch) files.push({ size: Number(fileMatch[1]), path: fileMatch[2] });
             }
@@ -259,10 +253,6 @@ jobs:
             }
 
             // Build summary
-            const publishedSizeRaw = "${{ needs.published_package_size.outputs.untar_size }}";
-            const publishedVersionRaw = "${{ needs.published_package_size.outputs.version }}";
-            const publishedSize = publishedSizeRaw ? Number(publishedSizeRaw) : null;
-            const publishedVersion = publishedVersionRaw || null;
             let summary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
             if (publishedSize !== null && publishedVersion) {
               const diff = totalUntar - publishedSize;
