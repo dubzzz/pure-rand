@@ -23,8 +23,10 @@ testGenerator(xoroshiro128plus);
 
 const rng = xorshift128plus(42);
 {
-  const value = uniformInt(rng, -100, 100);
-  assert.ok(typeof value === 'number' && value >= -100 && value <= 100);
+  const value1 = uniformInt(rng, -100, 100);
+  assert.ok(typeof value1 === 'number' && value1 >= -100 && value1 <= 100);
+  const value2 = uniformInt(rng, 0, 8_000_000_000); // larger than 2**32 range
+  assert.ok(typeof value2 === 'number' && value2 >= 0 && value2 <= 8_000_000_000);
 }
 {
   const value = uniformBigInt(rng, 0n, 100n);
