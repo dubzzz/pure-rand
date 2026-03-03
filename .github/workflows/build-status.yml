@@ -222,6 +222,7 @@ jobs:
             const isDTS = f => f.path.endsWith(".d.ts");
             const sumSize = (files, predicate) => files.reduce((s, f) => predicate(f) ? s + f.size : s, 0);
             const formatBytes = b => b >= 1048576 ? (b / 1048576).toFixed(2) + " MB" : b >= 1024 ? (b / 1024).toFixed(2) + " kB" : b + " B";
+            const formatDiff = (newSize, pubSize) => { const d = newSize - pubSize; if (d > 0) return `🔺 +${formatBytes(d)}`; if (d < 0) return `🔽 -${formatBytes(Math.abs(d))}`; return "🟰"; };
 
             // Compute totals and categories
             const totalUntar = sumSize(currentFiles, () => true);
@@ -232,25 +233,33 @@ jobs:
             const cjsDtsFilter = f => isCJS(f) && isDTS(f);
 
             // Build category table
-            let details = "| Category | Size (new) | Size (published) |\n|----------|------|------|\n";
-            details += `| **Total** | **${formatBytes(totalUntar)}** | **${formatBytes(publishedSize)}** |\n`;
-            details += `| ESM bundle | ${formatBytes(sumSize(currentFiles, esmJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, esmJsFilter))} |\n`;
-            details += `| CJS bundle | ${formatBytes(sumSize(currentFiles, cjsJsFilter))} |\ ${formatBytes(sumSize(publishedFiles, cjsJsFilter))} |\n`;
-            details += `| Types for ESM | ${formatBytes(sumSize(currentFiles, esmDtsFilter))} | ${formatBytes(sumSize(publishedFiles, esmDtsFilter))} |\n`;
-            details += `| Types for CJS | ${formatBytes(sumSize(currentFiles, cjsDtsFilter))} | ${formatBytes(sumSize(publishedFiles, cjsDtsFilter))} |\n`;
+            const catRow = (label, filter, isBold) => {
+              const n = sumSize(currentFiles, filter);
+              const p = sumSize(publishedFiles, filter);
+              const sn = isBold ? `**${formatBytes(n)}**` : formatBytes(n);
+              const sp = isBold ? `**${formatBytes(p)}**` : formatBytes(p);
+              return `| ${isBold ? "**" + label + "**" : label} | ${sn} | ${sp} | ${formatDiff(n, p)} |\n`;
+            };
+            let details = "| Category | Size (new) | Size (published) | Diff |\n|----------|------|------|------|\n";
+            details += catRow("Total", () => true, true);
+            details += catRow("ESM bundle", esmJsFilter, false);
+            details += catRow("CJS bundle", cjsJsFilter, false);
+            details += catRow("Types for ESM", esmDtsFilter, false);
+            details += catRow("Types for CJS", cjsDtsFilter, false);
 
             // Build merged per-file table: new files by descending size, then published-only files by descending size
             const publishedByPath = new Map(publishedFiles.map(f => [f.path, f]));
             const seenPaths = new Set();
-            details += "\n| File | Size (new) | Size (published) |\n|------|------|------|\n";
+            details += "\n| File | Size (new) | Size (published) | Diff |\n|------|------|------|------|\n";
             for (const f of currentFiles) {
               seenPaths.add(f.path);
               const pub = publishedByPath.get(f.path);
-              details += `| \`${f.path}\` | ${formatBytes(f.size)} | ${pub ? formatBytes(pub.size) : "-"} |\n`;
+              const diffCol = pub ? formatDiff(f.size, pub.size) : "-";
+              details += `| \`${f.path}\` | ${formatBytes(f.size)} | ${pub ? formatBytes(pub.size) : "-"} | ${diffCol} |\n`;
             }
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
-                details += `| \`${f.path}\` | - | ${formatBytes(f.size)} |\n`;
+                details += `| \`${f.path}\` | - | ${formatBytes(f.size)} | - |\n`;
               }
             }
 
