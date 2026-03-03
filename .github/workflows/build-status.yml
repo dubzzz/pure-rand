@@ -244,6 +244,10 @@ jobs:
             for (const f of currentFiles) {
               details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
             }
+            details += "\n| File | Size (old) |\n|------|------|\n";
+            for (const f of publishedFiles) {
+              details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
+            }
 
             // Build summary
             const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
