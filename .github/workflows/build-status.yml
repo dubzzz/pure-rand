@@ -249,14 +249,14 @@ jobs:
 
             // Build summary
             const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
-            const publishedVersion = "${{ needs.package_size.outputs.publishedVersion }}"
+            const lastPublishedVersion = "${{ needs.package_size.outputs.lastPublishedVersion }}"
             const newSizeSummary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
             const diff = totalUntar - publishedSize;
             const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
             const pct = publishedSize > 0 ? (diff / publishedSize) * 100 : 0;
             const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
             const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
-            const summary = `${newSizeSummary} — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
+            const summary = `${newSizeSummary} — **Published (${lastPublishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
 
             const commentHeader = "### 🗜️ Package Size";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
