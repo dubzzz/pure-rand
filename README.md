@@ -4,7 +4,7 @@
 
 Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 
-[![Build Status](https://github.com/dubzzz/pure-rand/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/dubzzz/pure-rand/actions)
+[![Build Status](https://github.com/dubzzz/pure-rand/actions/workflows/build-status.yml/badge.svg?branch=main)](https://github.com/dubzzz/pure-rand/actions)
 [![NPM Version](https://badge.fury.io/js/pure-rand.svg)](https://badge.fury.io/js/pure-rand)
 [![Monthly Downloads](https://img.shields.io/npm/dm/pure-rand)](https://www.npmjs.com/package/pure-rand)
 
