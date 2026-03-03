@@ -273,7 +273,10 @@ jobs:
             if (publishedSize !== null && publishedVersion) {
               const diff = newSize - publishedSize;
               const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-              summary += ` — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})`;
+              const pct = publishedSize > 0 ? (diff / publishedSize) * 100 : 0;
+              const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
+              const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
+              summary += ` — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
             }
             const commentHeader = "### 🗜️ Package Size";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
