@@ -146,6 +146,12 @@ jobs:
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: bundle
+      - name: Download published version from npm
+        run: |
+          mkdir -p published
+          if ! npm pack pure-rand --pack-destination=published 2>/dev/null; then
+            echo "::warning::Failed to download published version from npm, size comparison will be skipped"
+          fi
       - name: Compute package size
         run: |
           format_bytes() {
@@ -168,6 +174,14 @@ jobs:
             echo "$total"
           }
           tgz_size=$(stat --format=%s package.tgz)
+          published_tgz=$(find published -name '*.tgz' -type f 2>/dev/null | head -n1)
+          if [ -n "$published_tgz" ]; then
+            published_tgz_size=$(stat --format=%s "$published_tgz")
+            published_version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
+          else
+            published_tgz_size=""
+            published_version=""
+          fi
           mkdir -p extracted
           tar -xzf package.tgz -C extracted
           pkg_dir="extracted/package"
@@ -180,6 +194,10 @@ jobs:
           cjs_js_size=$(sum_file_sizes "${cjs_js_files[@]}")
           cjs_dts_size=$(sum_file_sizes "${cjs_dts_files[@]}")
           {
+            echo "NEW_TGZ_SIZE=$tgz_size"
+            echo "PUBLISHED_TGZ_SIZE=$published_tgz_size"
+            echo "PUBLISHED_VERSION=$published_version"
+            echo "---"
             echo "| Category | Size |"
             echo "|----------|------|"
             printf "| **Total (tgz)** | **%s** |\n" "$(format_bytes $tgz_size)"
@@ -221,9 +239,32 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const content = fs.readFileSync("size-output.txt", "utf8");
+            const raw = fs.readFileSync("size-output.txt", "utf8");
+            const lines = raw.split("\n");
+            const meta = {};
+            let detailStart = 0;
+            for (let i = 0; i < lines.length; i++) {
+              if (lines[i] === "---") { detailStart = i + 1; break; }
+              const m = lines[i].match(/^([A-Z_]+)=(.*)$/);
+              if (m) meta[m[1]] = m[2];
+            }
+            const details = lines.slice(detailStart).join("\n");
+            function formatBytes(b) {
+              if (b >= 1048576) return (b / 1048576).toFixed(2) + " MB";
+              if (b >= 1024) return (b / 1024).toFixed(2) + " kB";
+              return b + " B";
+            }
+            const newSize = Number(meta.NEW_TGZ_SIZE);
+            const publishedSize = meta.PUBLISHED_TGZ_SIZE ? Number(meta.PUBLISHED_TGZ_SIZE) : null;
+            const publishedVersion = meta.PUBLISHED_VERSION || null;
+            let summary = `**New size:** ${formatBytes(newSize)}`;
+            if (publishedSize !== null && publishedVersion) {
+              const diff = newSize - publishedSize;
+              const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
+              summary += ` — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})`;
+            }
             const commentHeader = "### 🗜️ Package Size";
-            const body = `${commentHeader}\n\n<details><summary>Click to expand</summary>\n\n${content}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
+            const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
             const existing = comments.find(c => c.user.login === "github-actions[bot]" && c.body.startsWith(commentHeader));
             if (existing !== undefined) {
