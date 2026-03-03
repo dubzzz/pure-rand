@@ -179,62 +179,15 @@ jobs:
           name: bundle
       - name: Compute package size
         run: |
-          format_bytes() {
-            local bytes=$1
-            if [ "$bytes" -ge 1048576 ]; then
-              awk "BEGIN {printf \"%.2f MB\", $bytes / 1048576}"
-            elif [ "$bytes" -ge 1024 ]; then
-              awk "BEGIN {printf \"%.2f kB\", $bytes / 1024}"
-            else
-              printf "%d B" "$bytes"
-            fi
-          }
-          sum_file_sizes() {
-            local total=0
-            for f in "$@"; do
-              if [ -f "$f" ]; then
-                total=$((total + $(stat --format=%s "$f")))
-              fi
-            done
-            echo "$total"
-          }
-          dir_size() {
-            local total=0
-            while IFS= read -r -d '' f; do
-              total=$((total + $(stat --format=%s "$f")))
-            done < <(find "$1" -type f -print0)
-            echo "$total"
-          }
           tgz_size=$(stat --format=%s package.tgz)
           mkdir -p extracted
           tar -xzf package.tgz -C extracted
           pkg_dir="extracted/package"
-          new_untar_size=$(dir_size "$pkg_dir")
-          mapfile -t esm_js_files < <(find "$pkg_dir/lib/esm" -name '*.js' -type f 2>/dev/null | sort)
-          mapfile -t esm_dts_files < <(find "$pkg_dir/lib/esm" -name '*.d.ts' -type f 2>/dev/null | sort)
-          mapfile -t cjs_js_files < <(find "$pkg_dir/lib" -path "$pkg_dir/lib/esm" -prune -o -name '*.js' -type f -print 2>/dev/null | sort)
-          mapfile -t cjs_dts_files < <(find "$pkg_dir/lib" -path "$pkg_dir/lib/esm" -prune -o -name '*.d.ts' -type f -print 2>/dev/null | sort)
-          esm_js_size=$(sum_file_sizes "${esm_js_files[@]}")
-          esm_dts_size=$(sum_file_sizes "${esm_dts_files[@]}")
-          cjs_js_size=$(sum_file_sizes "${cjs_js_files[@]}")
-          cjs_dts_size=$(sum_file_sizes "${cjs_dts_files[@]}")
           {
-            echo "NEW_UNTAR_SIZE=$new_untar_size"
-            echo "NEW_TGZ_SIZE=$tgz_size"
-            echo "---"
-            echo "| Category | Size |"
-            echo "|----------|------|"
-            printf "| **Total** | **%s** |\n" "$(format_bytes $new_untar_size)"
-            printf "| ESM bundle | %s |\n" "$(format_bytes $esm_js_size)"
-            printf "| CJS bundle | %s |\n" "$(format_bytes $cjs_js_size)"
-            printf "| Types for ESM | %s |\n" "$(format_bytes $esm_dts_size)"
-            printf "| Types for CJS | %s |\n" "$(format_bytes $cjs_dts_size)"
-            echo ""
-            echo "| File | Size |"
-            echo "|------|------|"
-            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | sort -rn | while read -r size f; do
+            echo "TGZ_SIZE=$tgz_size"
+            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
-              printf "| \`%s\` | %s |\n" "$rel_path" "$(format_bytes $size)"
+              echo "$size $rel_path"
             done
           } > size-output.txt
           cat size-output.txt
@@ -264,36 +217,62 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const raw = fs.readFileSync("size-output.txt", "utf8");
+            const raw = fs.readFileSync("size-output.txt", "utf8").trim();
             const lines = raw.split("\n");
-            const meta = {};
-            let detailStart = 0;
-            for (let i = 0; i < lines.length; i++) {
-              if (lines[i] === "---") { detailStart = i + 1; break; }
-              const m = lines[i].match(/^([A-Z_]+)=(.*)$/);
-              if (m) meta[m[1]] = m[2];
+
+            // Parse raw data: first line is TGZ_SIZE=<n>, rest are "<size> <path>"
+            let tgzSize = 0;
+            const files = [];
+            for (const line of lines) {
+              const metaMatch = line.match(/^TGZ_SIZE=(\d+)$/);
+              if (metaMatch) { tgzSize = Number(metaMatch[1]); continue; }
+              const fileMatch = line.match(/^(\d+)\s+(.+)$/);
+              if (fileMatch) files.push({ size: Number(fileMatch[1]), path: fileMatch[2] });
             }
-            const details = lines.slice(detailStart).join("\n");
+
+            // Compute totals and categories
+            const totalUntar = files.reduce((s, f) => s + f.size, 0);
+            const esmJs = files.filter(f => f.path.startsWith("lib/esm/") && f.path.endsWith(".js")).reduce((s, f) => s + f.size, 0);
+            const esmDts = files.filter(f => f.path.startsWith("lib/esm/") && f.path.endsWith(".d.ts")).reduce((s, f) => s + f.size, 0);
+            const cjsJs = files.filter(f => f.path.startsWith("lib/") && !f.path.startsWith("lib/esm/") && f.path.endsWith(".js")).reduce((s, f) => s + f.size, 0);
+            const cjsDts = files.filter(f => f.path.startsWith("lib/") && !f.path.startsWith("lib/esm/") && f.path.endsWith(".d.ts")).reduce((s, f) => s + f.size, 0);
+
             function formatBytes(b) {
               if (b >= 1048576) return (b / 1048576).toFixed(2) + " MB";
               if (b >= 1024) return (b / 1024).toFixed(2) + " kB";
               return b + " B";
             }
-            const newSize = Number(meta.NEW_UNTAR_SIZE);
-            const newTgzSize = Number(meta.NEW_TGZ_SIZE);
+
+            // Build category table
+            let details = "| Category | Size |\n|----------|------|\n";
+            details += `| **Total** | **${formatBytes(totalUntar)}** |\n`;
+            details += `| ESM bundle | ${formatBytes(esmJs)} |\n`;
+            details += `| CJS bundle | ${formatBytes(cjsJs)} |\n`;
+            details += `| Types for ESM | ${formatBytes(esmDts)} |\n`;
+            details += `| Types for CJS | ${formatBytes(cjsDts)} |\n`;
+
+            // Build per-file table sorted biggest first
+            details += "\n| File | Size |\n|------|------|\n";
+            files.sort((a, b) => b.size - a.size);
+            for (const f of files) {
+              details += `| \`${f.path}\` | ${formatBytes(f.size)} |\n`;
+            }
+
+            // Build summary
             const publishedSizeRaw = "${{ needs.published_package_size.outputs.untar_size }}";
             const publishedVersionRaw = "${{ needs.published_package_size.outputs.version }}";
             const publishedSize = publishedSizeRaw ? Number(publishedSizeRaw) : null;
             const publishedVersion = publishedVersionRaw || null;
-            let summary = `**New size:** ${formatBytes(newSize)} (tgz: ${formatBytes(newTgzSize)})`;
+            let summary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
             if (publishedSize !== null && publishedVersion) {
-              const diff = newSize - publishedSize;
+              const diff = totalUntar - publishedSize;
               const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
               const pct = publishedSize > 0 ? (diff / publishedSize) * 100 : 0;
               const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
               const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
               summary += ` — **Published (${publishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
             }
+
             const commentHeader = "### 🗜️ Package Size";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
