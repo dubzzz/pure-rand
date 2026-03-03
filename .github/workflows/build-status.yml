@@ -154,12 +154,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Unit tests
-        run: pnpm test
+        run: pnpm test --coverage
       - name: Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de #v5.5.2
         with:
-          name: unit-tests-${{matrix.node-version}}-${{runner.os}}
-          flags: unit-tests, unit-tests-${{matrix.node-version}}-${{runner.os}}
+          name: unit-tests-${{matrix.node-version}}
+          flags: unit-tests, unit-tests-${{matrix.node-version}}
+          token: ${{secrets.CODECOV_TOKEN}}
           fail_ci_if_error: false # default: false
           verbose: false # default: false
   production_package:
