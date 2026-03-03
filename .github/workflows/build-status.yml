@@ -155,8 +155,7 @@ jobs:
           extract_sizes() {
             local tgz_path="$1"
             local kind="$2"
-            mkdir -p extracted
-            tar -xzf "$tgz_path" -C extracted
+            mkdir -p extracted && tar -xzf "$tgz_path" -C extracted
             local pkg_dir="extracted/package"
             find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
               rel_path="${f#$pkg_dir/}"
@@ -166,14 +165,12 @@ jobs:
           }
 
           extract_sizes package.tgz current > size-output.txt
-          tgzSize=$(stat --format=%s package.tgz)
-          echo "tgzSize=$tgzSize" >> "$GITHUB_OUTPUT"
+          echo "tgzSize=$(stat --format=%s package.tgz)" >> "$GITHUB_OUTPUT"
           mkdir -p published
           if npm pack pure-rand --pack-destination=published 2>/dev/null; then
             published_tgz=$(find published -name '*.tgz' -type f | head -n1)
             extract_sizes "$published_tgz" published >> size-output.txt
-            version=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')
-            echo "lastPublishedVersion=$lastPublishedVersion" >> "$GITHUB_OUTPUT"
+            echo "lastPublishedVersion=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Failed to download published version from npm, size comparison will be skipped"
           fi
