@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { uniformBigInt } from './uniformBigInt';
-import { mersenne } from '../generator/MersenneTwister';
+import { mersenne } from '../generator/mersenne';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 describe('uniformBigInt [non regression]', () => {

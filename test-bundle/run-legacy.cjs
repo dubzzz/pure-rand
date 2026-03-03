@@ -2,10 +2,10 @@
 'use strict';
 
 const assert = require('assert');
-const { congruential32 } = require('pure-rand/generator/LinearCongruential');
-const { mersenne } = require('pure-rand/generator/MersenneTwister');
-const { xorshift128plus } = require('pure-rand/generator/XorShift');
-const { xoroshiro128plus } = require('pure-rand/generator/XoroShiro');
+const { congruential32 } = require('pure-rand/generator/congruential32');
+const { mersenne } = require('pure-rand/generator/mersenne');
+const { xorshift128plus } = require('pure-rand/generator/xorshift128plus');
+const { xoroshiro128plus } = require('pure-rand/generator/xoroshiro128plus');
 const { uniformInt } = require('pure-rand/distribution/uniformInt');
 const { uniformBigInt } = require('pure-rand/distribution/uniformBigInt');
 const { generateN } = require('pure-rand/utils/generateN');

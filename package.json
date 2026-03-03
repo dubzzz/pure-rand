@@ -13,21 +13,21 @@
       "require": "./lib/distribution/uniformInt.js",
       "import": "./lib/esm/distribution/uniformInt.js"
     },
-    "./generator/LinearCongruential": {
-      "require": "./lib/generator/LinearCongruential.js",
-      "import": "./lib/esm/generator/LinearCongruential.js"
+    "./generator/congruential32": {
+      "require": "./lib/generator/congruential32.js",
+      "import": "./lib/esm/generator/congruential32.js"
     },
-    "./generator/MersenneTwister": {
-      "require": "./lib/generator/MersenneTwister.js",
-      "import": "./lib/esm/generator/MersenneTwister.js"
+    "./generator/mersenne": {
+      "require": "./lib/generator/mersenne.js",
+      "import": "./lib/esm/generator/mersenne.js"
     },
-    "./generator/XorShift": {
-      "require": "./lib/generator/XorShift.js",
-      "import": "./lib/esm/generator/XorShift.js"
+    "./generator/xorshift128plus": {
+      "require": "./lib/generator/xorshift128plus.js",
+      "import": "./lib/esm/generator/xorshift128plus.js"
     },
-    "./generator/XoroShiro": {
-      "require": "./lib/generator/XoroShiro.js",
-      "import": "./lib/esm/generator/XoroShiro.js"
+    "./generator/xoroshiro128plus": {
+      "require": "./lib/generator/xoroshiro128plus.js",
+      "import": "./lib/esm/generator/xoroshiro128plus.js"
     },
     "./types/JumpableRandomGenerator": {
       "require": "./lib/types/JumpableRandomGenerator.js",

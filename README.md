@@ -28,7 +28,7 @@ Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 
 ```javascript
 import { uniformInt } from 'pure-rand/distribution/uniformInt';
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 const seed = 42;
 const rng = xoroshiro128plus(seed);
@@ -43,7 +43,7 @@ Pure means that the instance `rng` will never be altered in-place. It can be cal
 
 ```javascript
 import { uniformIntDistribution } from 'pure-rand/distribution/UniformIntDistribution';
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import { purify } from 'pure-rand/utils/purify';
 
 const uniformIntDistributionPure = purify(uniformIntDistribution);
@@ -64,7 +64,7 @@ In order to produce independent simulations it can be tempting to instanciate se
 
 ```javascript
 import { uniformInt } from 'pure-rand/distribution/uniformInt';
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import { purify } from 'pure-rand/utils/purify';
 
 const pureJump = purify((rng) => rng.jump());
@@ -85,7 +85,7 @@ const diceSim3Value = uniformInt(rngSimulation3, 1, 6); // value in {1..6}, here
 While not recommended as non-uniform distribution implies that one or several values from the range will be more likely than others, it might be tempting for people wanting to maximize the throughput.
 
 ```javascript
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 const seed = 42;
 const rng = xoroshiro128plus(seed);
@@ -228,7 +228,7 @@ The following snippet is responsible for generating 32-bit floating point number
 
 ```js
 import { uniformInt } from 'pure-rand/distribution/uniformInt';
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 function generateFloat32(rng) {
   const g1 = uniformInt(rng, 0, (1 << 24) - 1);
@@ -249,7 +249,7 @@ The following snippet is responsible for generating 64-bit floating point number
 
 ```js
 import { uniformInt } from 'pure-rand/distribution/uniformInt';
-import { xoroshiro128plus } from 'pure-rand/generator/XoroShiro';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 function generateFloat64(rng) {
   const g1 = uniformInt(rng, 0, (1 << 26) - 1);

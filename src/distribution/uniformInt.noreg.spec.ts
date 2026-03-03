@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
 import { uniformInt } from './uniformInt';
-import { mersenne } from '../generator/MersenneTwister';
+import { mersenne } from '../generator/mersenne';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 describe('uniformInt [non regression]', () => {
