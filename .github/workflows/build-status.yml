@@ -151,13 +151,6 @@ jobs:
           name: bundle
       - name: Compute package size
         run: |
-          dir_size() {
-            local total=0
-            while IFS= read -r -d '' f; do
-              total=$((total + $(stat --format=%s "$f")))
-            done < <(find "$1" -type f -print0)
-            echo "$total"
-          }
           mkdir -p extracted
           tar -xzf package.tgz -C extracted
           pkg_dir="extracted/package"
