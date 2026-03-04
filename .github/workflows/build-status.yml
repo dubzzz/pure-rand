@@ -322,9 +322,9 @@ jobs:
             // Published-only files (not in new or main)
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
-                let row = `| \`${f.path}\` | - ➖ |`;
+                let row = `| \`${f.path}\` |  ➖ |`;
                 if (hasMain) row += ` - | - |`;
-                row += ` ${formatBytes(f.size)} | - ➖ |\n`;
+                row += ` ${formatBytes(f.size)} |  ➖ |\n`;
                 details += row;
               }
             }
