@@ -136,9 +136,8 @@ describe('congruential32', () => {
       const v = g.next();
       data.push(v);
     }
-    // Verifies against manual advancement by 2^16 next() calls (= 3 * 2^16 LCG steps).
-    // Jump constants precomputed via the LCG jump-ahead algorithm from:
-    // F. Brown, "Random Number Generation with Arbitrary Strides", Trans. Am. Nucl. Soc. (Nov. 1994)
+    // The following values correspond to the values that would have been extracted from `g`
+    // if instead of `g.jump()` we called `for (let i = 0; i !== 2**16; ++i) { g.next(); }`.
     expect(data).toEqual(
       [
         2465055980, 3883212298, 4021781768, 738993281, 3215657551, 984983963, 2896152994, 1422049114, 1152760575,
