@@ -144,11 +144,19 @@ jobs:
     outputs:
       lastPublishedVersion: ${{ steps.compute.outputs.lastPublishedVersion }}
       tgzSize: ${{ steps.compute.outputs.tgzSize }}
+      mainTgzSize: ${{ steps.compute.outputs.mainTgzSize }}
     steps:
       - name: Download production package
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: bundle
+      - name: Restore main bundle sizes from cache
+        id: main-cache
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: main-bundle-sizes.txt
+          key: bundle-sizes-main-will-not-match
+          restore-keys: bundle-sizes-main-
       - name: Compute package size
         id: compute
         run: |
@@ -166,6 +174,15 @@ jobs:
 
           extract_sizes package.tgz current > size-output.txt
           echo "tgzSize=$(stat --format=%s package.tgz)" >> "$GITHUB_OUTPUT"
+
+          if [ -f main-bundle-sizes.txt ]; then
+            grep '^main ' main-bundle-sizes.txt >> size-output.txt
+            mainTgzSize=$(grep '^mainTgzSize ' main-bundle-sizes.txt | awk '{print $2}')
+            echo "mainTgzSize=${mainTgzSize}" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No cached main bundle sizes found, main comparison will be skipped"
+          fi
+
           mkdir -p published
           if npm pack pure-rand --pack-destination=published 2>/dev/null; then
             published_tgz=$(find published -name '*.tgz' -type f | head -n1)
@@ -203,16 +220,18 @@ jobs:
             const raw = fs.readFileSync("size-output.txt", "utf8").trim();
             const lines = raw.split("\n");
             const currentFiles = [];
+            const mainFiles = [];
             const publishedFiles = [];
             for (const line of lines) {
-              const m = line.match(/^(current|published)\s+(\d+)\s+(.+)$/);
+              const m = line.match(/^(current|main|published)\s+(\d+)\s+(.+)$/);
               if (m === null) {
                 continue;
               }
-              const files = m[1] === "current" ? currentFiles : publishedFiles;
+              const files = m[1] === "current" ? currentFiles : m[1] === "main" ? mainFiles : publishedFiles;
               files.push({ size: Number(m[2]), path: m[3] });
             }
             currentFiles.sort((a, b) => b.size - a.size);
+            mainFiles.sort((a, b) => b.size - a.size);
             publishedFiles.sort((a, b) => b.size - a.size);
 
             // Define various helpers
@@ -222,11 +241,13 @@ jobs:
             const isDTS = f => f.path.endsWith(".d.ts");
             const sumSize = (files, predicate) => files.reduce((s, f) => predicate(f) ? s + f.size : s, 0);
             const formatBytes = b => b >= 1048576 ? (b / 1048576).toFixed(2) + " MB" : b >= 1024 ? (b / 1024).toFixed(2) + " kB" : b + " B";
-            const formatDiff = (newSize, pubSize) => { const d = newSize - pubSize; if (d === 0) return "🟰"; if (pubSize === 0) return "🔺 new"; const pct = ((d / pubSize) * 100).toFixed(1); return d > 0 ? `🔺 +${pct}%` : `🔽 ${pct}%`; };
+            const formatDiff = (newSize, refSize) => { const d = newSize - refSize; if (d === 0) return "🟰"; if (refSize === 0) return "🔺 new"; const pct = ((d / refSize) * 100).toFixed(1); return d > 0 ? `🔺 +${pct}%` : `🔽 ${pct}%`; };
+            const hasMain = mainFiles.length > 0;
 
             // Compute totals and categories
-            const totalUntar = sumSize(currentFiles, () => true);
-            const publishedSize = sumSize(publishedFiles, () => true);
+            const totalNew = sumSize(currentFiles, () => true);
+            const totalMain = sumSize(mainFiles, () => true);
+            const totalPublished = sumSize(publishedFiles, () => true);
             const esmJsFilter = f => isESM(f) && isJS(f);
             const esmDtsFilter = f => isESM(f) && isDTS(f);
             const cjsJsFilter = f => isCJS(f) && isJS(f);
@@ -235,44 +256,96 @@ jobs:
             // Build category table
             const catRow = (label, filter, isBold) => {
               const n = sumSize(currentFiles, filter);
+              const m = sumSize(mainFiles, filter);
               const p = sumSize(publishedFiles, filter);
-              const sn = isBold ? `**${formatBytes(n)}**` : formatBytes(n);
-              const sp = isBold ? `**${formatBytes(p)}**` : formatBytes(p);
-              return `| ${isBold ? "**" + label + "**" : label} | ${sn} | ${sp} | ${formatDiff(n, p)} |\n`;
+              const fmt = v => isBold ? `**${formatBytes(v)}**` : formatBytes(v);
+              let row = `| ${isBold ? "**" + label + "**" : label} | ${fmt(n)} |`;
+              if (hasMain) row += ` ${fmt(m)} | ${formatDiff(n, m)} |`;
+              row += ` ${fmt(p)} | ${formatDiff(n, p)} |\n`;
+              return row;
             };
-            let details = "| Category | Size (new) | Size (published) | Diff |\n|----------|------|------|------|\n";
+            let catHeader = "| Category | Size (new) |";
+            let catSep = "|----------|------|";
+            if (hasMain) { catHeader += " Size (main) | Diff (main) |"; catSep += "------|------|"; }
+            catHeader += " Size (published) | Diff (published) |\n";
+            catSep += "------|------|\n";
+            let details = catHeader + catSep;
             details += catRow("Total", () => true, true);
             details += catRow("ESM bundle", esmJsFilter, false);
             details += catRow("CJS bundle", cjsJsFilter, false);
             details += catRow("Types for ESM", esmDtsFilter, false);
             details += catRow("Types for CJS", cjsDtsFilter, false);
 
-            // Build merged per-file table: new files by descending size, then published-only files by descending size
+            // Build merged per-file table
+            const mainByPath = new Map(mainFiles.map(f => [f.path, f]));
             const publishedByPath = new Map(publishedFiles.map(f => [f.path, f]));
             const seenPaths = new Set();
-            details += "\n| File | Size (new) | Size (published) | Diff |\n|------|------|------|------|\n";
+            let fileHeader = "| File | Size (new) |";
+            let fileSep = "|------|------|";
+            if (hasMain) { fileHeader += " Size (main) | Diff (main) |"; fileSep += "------|------|"; }
+            fileHeader += " Size (published) | Diff (published) |\n";
+            fileSep += "------|------|\n";
+            details += "\n" + fileHeader + fileSep;
+
+            // New files first (sorted by descending size)
             for (const f of currentFiles) {
               seenPaths.add(f.path);
+              const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
-              const diffCol = pub ? formatDiff(f.size, pub.size) : "-";
-              details += `| \`${f.path}\` | ${formatBytes(f.size)} | ${pub ? formatBytes(pub.size) : "-"} | ${diffCol} |\n`;
+              const addedOnMain = hasMain && !mn ? " ➕" : "";
+              const addedOnPub = !pub ? " ➕" : "";
+              let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
+              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} | ${mn ? formatDiff(f.size, mn.size) : "-"}${addedOnMain} |`;
+              row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? formatDiff(f.size, pub.size) : "-"}${addedOnPub} |\n`;
+              details += row;
             }
+            // Main-only files (not in new)
+            for (const f of mainFiles) {
+              if (!seenPaths.has(f.path)) {
+                seenPaths.add(f.path);
+                const pub = publishedByPath.get(f.path);
+                let row = `| \`${f.path}\` | - ➖ |`;
+                if (hasMain) row += ` ${formatBytes(f.size)} | - ➖ |`;
+                row += ` ${pub ? formatBytes(pub.size) : "-"} | - |\n`;
+                details += row;
+              }
+            }
+            // Published-only files (not in new or main)
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
-                details += `| \`${f.path}\` | - | ${formatBytes(f.size)} | - |\n`;
+                let row = `| \`${f.path}\` | - ➖ |`;
+                if (hasMain) row += ` - | - |`;
+                row += ` ${formatBytes(f.size)} | - ➖ |\n`;
+                details += row;
               }
             }
 
-            // Build summary
+            // Build summary header: new size vs main vs published
             const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
-            const lastPublishedVersion = "${{ needs.package_size.outputs.lastPublishedVersion }}"
-            const newSizeSummary = `**New size:** ${formatBytes(totalUntar)} (tgz: ${formatBytes(tgzSize)})`;
-            const diff = totalUntar - publishedSize;
-            const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-            const pct = publishedSize > 0 ? (diff / publishedSize) * 100 : 0;
-            const arrow = diff > 0 ? " 🔺" : diff < 0 ? " 🔽" : "";
-            const pctStr = diff !== 0 ? `${arrow} ${sign}${Math.abs(pct).toFixed(1)}%` : "";
-            const summary = `${newSizeSummary} — **Published (${lastPublishedVersion}):** ${formatBytes(publishedSize)} (${sign}${formatBytes(Math.abs(diff))})${pctStr}`;
+            const mainTgzSize = Number("${{ needs.package_size.outputs.mainTgzSize }}") || 0;
+            const lastPublishedVersion = "${{ needs.package_size.outputs.lastPublishedVersion }}";
+
+            let summary = `**New size:** ${formatBytes(totalNew)} (tgz: ${formatBytes(tgzSize)})`;
+
+            if (hasMain) {
+              const mainDiff = totalNew - totalMain;
+              const mainSign = mainDiff > 0 ? "+" : mainDiff < 0 ? "-" : "";
+              const mainPct = totalMain > 0 ? (mainDiff / totalMain) * 100 : 0;
+              const mainArrow = mainDiff > 0 ? " 🔺" : mainDiff < 0 ? " 🔽" : "";
+              const mainPctStr = mainDiff !== 0 ? `${mainArrow} ${mainSign}${Math.abs(mainPct).toFixed(1)}%` : "";
+              summary += ` — **Main:** ${formatBytes(totalMain)}`;
+              if (mainTgzSize > 0) summary += ` (tgz: ${formatBytes(mainTgzSize)})`;
+              summary += ` (${mainSign}${formatBytes(Math.abs(mainDiff))})${mainPctStr}`;
+            }
+
+            if (totalPublished > 0) {
+              const pubDiff = totalNew - totalPublished;
+              const pubSign = pubDiff > 0 ? "+" : pubDiff < 0 ? "-" : "";
+              const pubPct = totalPublished > 0 ? (pubDiff / totalPublished) * 100 : 0;
+              const pubArrow = pubDiff > 0 ? " 🔺" : pubDiff < 0 ? " 🔽" : "";
+              const pubPctStr = pubDiff !== 0 ? `${pubArrow} ${pubSign}${Math.abs(pubPct).toFixed(1)}%` : "";
+              summary += ` — **Published (${lastPublishedVersion}):** ${formatBytes(totalPublished)} (${pubSign}${formatBytes(Math.abs(pubDiff))})${pubPctStr}`;
+            }
 
             const commentHeader = "### 🗜️ Package Size";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})`;
@@ -339,6 +412,29 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
+      - name: Compute and cache bundle sizes for main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          extract_sizes() {
+            local tgz_path="$1"
+            local kind="$2"
+            mkdir -p extracted && tar -xzf "$tgz_path" -C extracted
+            local pkg_dir="extracted/package"
+            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
+              rel_path="${f#$pkg_dir/}"
+              echo "$kind $size $rel_path"
+            done
+            rm -rf extracted
+          }
+          extract_sizes package.tgz main > main-bundle-sizes.txt
+          echo "mainTgzSize $(stat --format=%s package.tgz)" >> main-bundle-sizes.txt
+          cat main-bundle-sizes.txt
+      - name: Save main bundle sizes to cache
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: main-bundle-sizes.txt
+          key: bundle-sizes-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
         run: pnpm dlx pkg-pr-new publish --compact --comment=off
