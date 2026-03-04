@@ -138,6 +138,36 @@ describe('mersenne', () => {
     fc.assert(p.clonedFromStateSameSequences(mersenne, mersenneFromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
+  it('Should produce the right sequence after jump for seed=42', () => {
+    const g = mersenne(42);
+    g.jump();
+    const data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const v = g.next();
+      data.push(v);
+    }
+    expect(data).toEqual(
+      [
+        -882305318, 949738347, -1437985833, 802380053, 642497010, -1915855415, -1616044034, -213013294, -1381322230,
+        406408635, -836857604, 1107958984, -1292691191, -738454049, 5403122, 217673392, 1419376225, -1869230824,
+        1045914623, -1880851839, 1856540156, 1882392370, -86531035, -922452909, -1182076070, 1850269478, 192112321,
+        -37260815, 604740346, -784704974, -189101692, 669393398, 1640493968, 688589838, 506903105, 1660363845,
+        -587925838, -1763507605, 1009654233, 828841928, 346037261, -1049433465, -696507795, 1636655135, 931195906,
+        -645346331, 896423928, -848273863, -1925103231, 1723188439, 2121878801, 1030585954, -1755323654, -2085238480,
+        -581131459, 348271188, -1881926836, 885467340, -1357063491, -1741056746, 1037143385, 1823241438, -1851724813,
+        67740364, -742091949, 269338573, 1462361042, -2113688591, -1162228646, 507140458, 325050198, -809507168,
+        497657817, -1024218158, -1062326784, 2024681629, 1295731950, 1979336344, -1026782028, 1262805104, 2048225877,
+        -1844417277, 440958613, 1653114314, -1779741609, 702916382, 1812742096, -1926866066, 999119286, 174011724,
+        2097295668, 2119671991, 1395801113, -428423474, 1496356633, 221337877, 707886033, 1999826809, -1815865640,
+        1667402836,
+      ].map((v) => v | 0),
+    );
+  });
+  it('Should not depend on ordering between jump and next', () =>
+    fc.assert(p.noOrderNextJump(mersenne), { numRuns: 10 }));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(mersenne)));
+  it('Should impact itself with jump', () => fc.assert(p.changeSelfWithJump(mersenne), { numRuns: 10 }));
   it('Should not impact clones when impacting itself on next', () => fc.assert(p.noChangeOnClonedWithNext(mersenne)));
+  it('Should not impact clones when impacting itself on jump', () =>
+    fc.assert(p.noChangeOnClonedWithJump(mersenne), { numRuns: 10 }));
 });
