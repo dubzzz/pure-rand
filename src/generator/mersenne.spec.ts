@@ -133,11 +133,47 @@ describe('mersenne', () => {
       ].map((v) => v | 0),
     );
   });
+  it('Should produce the right sequence after jump for seed=42', () => {
+    const g = mersenne(42);
+    g.jump();
+    const data = [];
+    for (let idx = 0; idx !== 100; ++idx) {
+      const v = g.next();
+      data.push(v);
+    }
+    // should be equivalent to the following Python code:
+    // from numpy.random import MT19937
+    // rng = MT19937(42)
+    // rng._legacy_seeding(42)
+    // jumped = rng.jumped()
+    // print([(jumped.random_raw() & 0xffffffff) for v in range(100)])
+    // numpy >= 1.19 required (jump fix: numpy/numpy#16153)
+    expect(data).toEqual(
+      [
+        3412661978, 949738347, 2856981463, 802380053, 642497010, 2379111881, 2678923262, 4081954002, 2913645066,
+        406408635, 3458109692, 1107958984, 3002276105, 3556513247, 5403122, 217673392, 1419376225, 2425736472,
+        1045914623, 2414115457, 1856540156, 1882392370, 4208436261, 3372514387, 3112891226, 1850269478, 192112321,
+        4257706481, 604740346, 3510262322, 4105865604, 669393398, 1640493968, 688589838, 506903105, 1660363845,
+        3707041458, 2531459691, 1009654233, 828841928, 346037261, 3245533831, 3598459501, 1636655135, 931195906,
+        3649620965, 896423928, 3446693433, 2369864065, 1723188439, 2121878801, 1030585954, 2539643642, 2209728816,
+        3713835837, 348271188, 2413040460, 885467340, 2937903805, 2553910550, 1037143385, 1823241438, 2443242483,
+        67740364, 3552875347, 269338573, 1462361042, 2181278705, 3132738650, 507140458, 325050198, 3485460128,
+        497657817, 3270749138, 3232640512, 2024681629, 1295731950, 1979336344, 3268185268, 1262805104, 2048225877,
+        2450550019, 440958613, 1653114314, 2515225687, 702916382, 1812742096, 2368101230, 999119286, 174011724,
+        2097295668, 2119671991, 1395801113, 3866543822, 1496356633, 221337877, 707886033, 1999826809, 2479101656,
+        1667402836,
+      ].map((v) => v | 0),
+    );
+  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(mersenne)));
   it('Should return the same sequence when built from state', () =>
     fc.assert(p.clonedFromStateSameSequences(mersenne, mersenneFromState)));
   it('Should return the same sequence if called twice', () => fc.assert(p.sameSequencesIfCallTwice(mersenne)));
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
+  it('Should not depend on ordering between jump and next', () => fc.assert(p.noOrderNextJump(mersenne)));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(mersenne)));
+  it('Should impact itself with jump', () => fc.assert(p.changeSelfWithJump(mersenne)));
   it('Should not impact clones when impacting itself on next', () => fc.assert(p.noChangeOnClonedWithNext(mersenne)));
+  it('Should not impact clones when impacting itself on jump', () =>
+    fc.assert(p.noChangeOnClonedWithJump(mersenne)));
 });
