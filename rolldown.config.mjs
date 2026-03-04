@@ -27,6 +27,7 @@ function buildConfigFor(pkg, dirname) {
         const relativeFilePathWithTsExtension = chunkInfo.facadeModuleId.substring(cwdAndInputDirLength);
         return `${relativeFilePathWithTsExtension.replace(/\.ts$/, '.js')}`;
       },
+      minify: 'dce-only',
     },
     external: /^[^./]/, // as recommended by https://rolldown.rs/reference/InputOptions.external#avoid-node-modules-for-npm-packages
     treeshake: {
