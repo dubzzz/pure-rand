@@ -301,9 +301,8 @@ jobs:
               seenPaths.add(f.path);
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
-              const addedOnMain = hasMain && !mn ? " ➕" : "";
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} | ${mn ? formatDiff(f.size, mn.size) : "-"}${addedOnMain} |`;
+              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} | ${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
               row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
               details += row;
             }
