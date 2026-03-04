@@ -1,5 +1,5 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
-import { uniformIntInternal } from './internals/uniformIntInternal';
+import { uniformIntInternal, uniformIntInternalNew, uniformIntInternalNewNew } from './internals/uniformIntInternal';
 import type { ArrayInt64 } from './internals/ArrayInt64';
 import { fromNumberToArrayInt64, substractArrayInt64 } from './internals/ArrayInt64';
 import { uniformArrayIntInternal } from './internals/uniformArrayIntInternal';
@@ -41,6 +41,26 @@ function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number,
  *
  * @public
  */
+export function uniformIntNewNew(rng: RandomGenerator, from: number, to: number): number {
+  const rangeSize = to - from;
+  if (rangeSize <= 0xffffffff) {
+    // Calling unsafeUniformIntDistributionInternal can be considered safe
+    // up-to 2**32 values. Above this range it may miss values.
+    const g = uniformIntInternalNewNew(rng, rangeSize + 1);
+    return g + from;
+  }
+  return uniformLargeIntInternal(rng, from, to, rangeSize);
+}
+export function uniformIntNew(rng: RandomGenerator, from: number, to: number): number {
+  const rangeSize = to - from;
+  if (rangeSize <= 0xffffffff) {
+    // Calling unsafeUniformIntDistributionInternal can be considered safe
+    // up-to 2**32 values. Above this range it may miss values.
+    const g = uniformIntInternalNew(rng, rangeSize + 1);
+    return g + from;
+  }
+  return uniformLargeIntInternal(rng, from, to, rangeSize);
+}
 export function uniformInt(rng: RandomGenerator, from: number, to: number): number {
   const rangeSize = to - from;
   if (rangeSize <= 0xffffffff) {
