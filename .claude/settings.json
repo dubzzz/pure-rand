@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/npm-to-pnpm.js"
+            "command": "bash .claude/npm-to-pnpm.sh"
           }
         ]
       }
