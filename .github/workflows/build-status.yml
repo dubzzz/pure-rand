@@ -150,13 +150,15 @@ jobs:
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: bundle
-      - name: Restore main bundle sizes from cache
+      - name: Prepare main bundle restore directory
+        run: mkdir -p main-bundle
+      - name: Restore main bundle from cache
         id: main-cache
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: main-bundle-sizes.txt
-          key: bundle-sizes-main-will-not-match
-          restore-keys: bundle-sizes-main-
+          path: main-bundle/package.tgz
+          key: bundle-main-will-not-match
+          restore-keys: bundle-main-
       - name: Compute package size
         id: compute
         run: |
@@ -175,12 +177,11 @@ jobs:
           extract_sizes package.tgz current > size-output.txt
           echo "tgzSize=$(stat --format=%s package.tgz)" >> "$GITHUB_OUTPUT"
 
-          if [ -f main-bundle-sizes.txt ]; then
-            grep '^main ' main-bundle-sizes.txt >> size-output.txt
-            mainTgzSize=$(grep '^mainTgzSize ' main-bundle-sizes.txt | awk '{print $2}')
-            echo "mainTgzSize=${mainTgzSize}" >> "$GITHUB_OUTPUT"
+          if [ -f main-bundle/package.tgz ]; then
+            extract_sizes main-bundle/package.tgz main >> size-output.txt
+            echo "mainTgzSize=$(stat --format=%s main-bundle/package.tgz)" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::No cached main bundle sizes found, main comparison will be skipped"
+            echo "::warning::No cached main bundle found, main comparison will be skipped"
           fi
 
           mkdir -p published
@@ -412,29 +413,15 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
-      - name: Compute and cache bundle sizes for main
+      - name: Prepare main bundle for caching
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          extract_sizes() {
-            local tgz_path="$1"
-            local kind="$2"
-            mkdir -p extracted && tar -xzf "$tgz_path" -C extracted
-            local pkg_dir="extracted/package"
-            find "$pkg_dir" -type f -exec stat --format='%s %n' {} \; | while read -r size f; do
-              rel_path="${f#$pkg_dir/}"
-              echo "$kind $size $rel_path"
-            done
-            rm -rf extracted
-          }
-          extract_sizes package.tgz main > main-bundle-sizes.txt
-          echo "mainTgzSize $(stat --format=%s package.tgz)" >> main-bundle-sizes.txt
-          cat main-bundle-sizes.txt
-      - name: Save main bundle sizes to cache
+        run: mkdir -p main-bundle && cp package.tgz main-bundle/package.tgz
+      - name: Cache bundle for main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: main-bundle-sizes.txt
-          key: bundle-sizes-main-${{ github.sha }}
+          path: main-bundle/package.tgz
+          key: bundle-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
         run: pnpm dlx pkg-pr-new publish --compact --comment=off
