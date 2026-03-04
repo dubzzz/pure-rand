@@ -539,7 +539,15 @@ jobs:
         uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: bundle
+      - uses: step-security/wait-for-secrets@084b3ae774c0e0003a9307ae4f487c10f1f998fe # v1.2.1
+        id: wait-for-secrets
+        with:
+          secrets: |
+            OTP:
+              name: 'OTP to publish package'
+              description: 'OTP from authenticator app'
       - name: Publish package
-        run: npm publish --provenance --access public package.tgz
+        run: npm publish --provenance --access public --otp "$OTP_VALUE" package.tgz
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          OTP_VALUE: ${{steps.wait-for-secrets.outputs.OTP}}
