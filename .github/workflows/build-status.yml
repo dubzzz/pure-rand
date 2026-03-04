@@ -357,7 +357,7 @@ jobs:
             }
 
             const commentHeader = "### 🗜️ Package Size";
-            const noMainWarning = hasMain ? "" : "\n\n> ⚠️ No cached main bundle was available — main comparison is not included.";
+            const noMainWarning = hasMain ? "" : "\n\n**⚠️ No cached main bundle was available — main comparison is not included.**";
             const body = `${commentHeader}\n\n${summary}\n\n<details><summary>Click to expand</summary>\n\n${details}\n\n</details>\n\nCommit: ${context.payload.pull_request.head.sha} (merge: ${context.sha})${noMainWarning}`;
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
             const existing = comments.find(c => c.user.login === "github-actions[bot]" && c.body.startsWith(commentHeader));
