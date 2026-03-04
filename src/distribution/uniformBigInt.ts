@@ -18,13 +18,10 @@ export function uniformBigInt(rng: RandomGenerator, from: bigint, to: bigint): b
   const diff = to - from + 1n;
 
   // Number of iterations required to have enough random
-  // to build uniform entries in the asked range
-  let FinalNumValues = NumValues;
-  let NumIterations = 1; // NumValues being large enough no need for bigint on NumIterations
-  while (FinalNumValues < diff) {
-    FinalNumValues <<= 32n; // equivalent to: *=NumValues
-    ++NumIterations;
-  }
+  // to build uniform entries in the asked range: smallest N with (2**32)**N >= diff
+  // Computed directly from hex digit count: N = ceil(hexDigits(diff-1) / 8)
+  const NumIterations = ((diff - 1n).toString(16).length + 7) >>> 3;
+  const FinalNumValues = 1n << SBigInt(NumIterations * 32);
 
   // Fast path: power-of-2 ranges have no bias, use bitwise AND
   if ((diff & (diff - 1n)) === 0n) {

@@ -1,9 +1,9 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 export function generateN(rng: RandomGenerator, num: number): number[] {
-  const out = new Array<number>(num);
+  const out: number[] = [];
   for (let idx = 0; idx !== num; ++idx) {
-    out[idx] = rng.next();
+    out.push(rng.next());
   }
   return out;
 }
