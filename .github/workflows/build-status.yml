@@ -302,10 +302,9 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               const addedOnMain = hasMain && !mn ? " ➕" : "";
-              const addedOnPub = !pub ? " ➕" : "";
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
               if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} | ${mn ? formatDiff(f.size, mn.size) : "-"}${addedOnMain} |`;
-              row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? formatDiff(f.size, pub.size) : "-"}${addedOnPub} |\n`;
+              row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
               details += row;
             }
             // Main-only files (not in new)
