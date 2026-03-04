@@ -311,9 +311,9 @@ jobs:
               if (!seenPaths.has(f.path)) {
                 seenPaths.add(f.path);
                 const pub = publishedByPath.get(f.path);
-                let row = `| \`${f.path}\` | - ➖ |`;
-                if (hasMain) row += ` ${formatBytes(f.size)} | - ➖ |`;
-                row += ` ${pub ? formatBytes(pub.size) : "-"} | - |\n`;
+                let row = `| \`${f.path}\` | -  |`;
+                if (hasMain) row += ` ${formatBytes(f.size)} | ➖ |`;
+                row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? "➖" : ""} |\n`;
                 details += row;
               }
             }
