@@ -146,19 +146,20 @@ jobs:
       tgzSize: ${{ steps.compute.outputs.tgzSize }}
       mainTgzSize: ${{ steps.compute.outputs.mainTgzSize }}
     steps:
-      - name: Download production package
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
-        with:
-          name: bundle
-      - name: Prepare main bundle restore directory
-        run: mkdir -p main-bundle
       - name: Restore main bundle from cache
         id: main-cache
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: main-bundle/package.tgz
+          path: package.tgz
           key: bundle-main-will-not-match
           restore-keys: bundle-main-
+      - name: Rename main bundle
+        if: steps.main-cache.outputs.cache-hit != ''
+        run: mv package.tgz main-package.tgz
+      - name: Download production package
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: bundle
       - name: Compute package size
         id: compute
         run: |
@@ -177,9 +178,9 @@ jobs:
           extract_sizes package.tgz current > size-output.txt
           echo "tgzSize=$(stat --format=%s package.tgz)" >> "$GITHUB_OUTPUT"
 
-          if [ -f main-bundle/package.tgz ]; then
-            extract_sizes main-bundle/package.tgz main >> size-output.txt
-            echo "mainTgzSize=$(stat --format=%s main-bundle/package.tgz)" >> "$GITHUB_OUTPUT"
+          if [ -f main-package.tgz ]; then
+            extract_sizes main-package.tgz main >> size-output.txt
+            echo "mainTgzSize=$(stat --format=%s main-package.tgz)" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::No cached main bundle found, main comparison will be skipped"
           fi
@@ -413,14 +414,11 @@ jobs:
           path: package.tgz
           if-no-files-found: error
           retention-days: 1
-      - name: Prepare main bundle for caching
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: mkdir -p main-bundle && cp package.tgz main-bundle/package.tgz
       - name: Cache bundle for main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: main-bundle/package.tgz
+          path: package.tgz
           key: bundle-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
