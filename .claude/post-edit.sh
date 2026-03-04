@@ -10,7 +10,7 @@ if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.tsx && "$FILE_PATH" != *.js && "
 fi
 
 # Format
-pnpm format 2>&1 || true
+pnpm format "$FILE_PATH" 2>&1 || true
 
 # Typecheck
 pnpm typecheck 2>&1
