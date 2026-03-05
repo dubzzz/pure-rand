@@ -68,3 +68,43 @@ export function congruential32FromState(state: readonly number[]): JumpableRando
 export function congruential32(seed: number): JumpableRandomGenerator {
   return new LinearCongruential32(seed);
 }
+
+/**
+ * Advance a SplitMix32 counter and return the hashed output.
+ * See xoroshiro128plus.ts for full rationale.
+ */
+function splitMix32(state: number): { next: number; value: number } {
+  const next = (state + 0x9e3779b9) | 0;
+  let z = next;
+  z = Math.imul(z ^ (z >>> 16), 0x85ebca6b) | 0;
+  z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35) | 0;
+  return { next, value: z ^ (z >>> 16) };
+}
+
+/**
+ * Seed a LinearCongruential32 generator using an array of 32-bit integers.
+ *
+ * Motivation: the single-integer constructor `congruential32(seed)` can only
+ * produce 2^32 distinct sequences. Seeding from an array allows callers to
+ * supply richer entropy even though the LCG itself has only 32 bits of state.
+ *
+ * Because the state is a single 32-bit word, the entire seed array must be
+ * compressed into one value. We use SplitMix32 accumulation — fold each
+ * element into a running counter and then extract one final hashed word — which
+ * gives good avalanche properties: every bit of every seed element influences
+ * the final seed.
+ *
+ * Note: No matter how many elements the array contains, the observable output
+ * space is still bounded by 2^32 (the LCG period). Arrays are useful here
+ * primarily for API uniformity and to avoid forcing callers to pre-hash their
+ * entropy manually.
+ *
+ * @param seeds - An array of 32-bit integer seeds (treated as signed 32-bit values).
+ */
+export function congruential32ByArray(seeds: readonly number[]): JumpableRandomGenerator {
+  let acc = 0;
+  for (let i = 0; i < seeds.length; i++) {
+    acc = splitMix32((acc + (seeds[i] | 0)) | 0).next;
+  }
+  return new LinearCongruential32(splitMix32(acc).value);
+}
