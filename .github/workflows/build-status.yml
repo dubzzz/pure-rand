@@ -302,7 +302,7 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) mn ? ` ${formatBytes(mn.size)}${formatDiff(f.size, mn.size)} |` : ` - |`;
+              if (hasMain) row += mn ? ` ${formatBytes(mn.size)}${formatDiff(f.size, mn.size)} |` : ` - |`;
               row += pub ? ` ${formatBytes(pub.size)}${formatDiff(f.size, pub.size)} |\n` : ` - |\n`;
               details += row;
             }
