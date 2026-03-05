@@ -4,6 +4,7 @@ import type { RandomGenerator } from '../../src/types/RandomGenerator';
 import { uniformInt } from './uniformInt';
 import { uniformBigInt } from './uniformBigInt';
 import { uniformFloat32 } from './uniformFloat32';
+import { uniformFloat64 } from './uniformFloat64';
 
 describe('distribution', () => {
   const rng = xorshift128plus(0);
@@ -69,6 +70,9 @@ describe('distribution', () => {
     });
     bench(`uniformFloat32`, () => {
       uniformFloat32(rng);
+    });
+    bench(`uniformFloat64`, () => {
+      uniformFloat64(rng);
     });
 
     // range < 2 ** 8
