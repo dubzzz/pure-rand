@@ -263,8 +263,8 @@ jobs:
               const p = sumSize(publishedFiles, filter);
               const fmt = v => isBold ? `**${formatBytes(v)}**` : formatBytes(v);
               let row = `| ${isBold ? "**" + label + "**" : label} | ${fmt(n)} |`;
-              if (hasMain) row += ` ${fmt(m)} / ${formatDiff(n, m)} |`;
-              row += ` ${fmt(p)} / ${formatDiff(n, p)} |\n`;
+              if (hasMain) row += ` ${fmt(m)}<br>${formatDiff(n, m)} |`;
+              row += ` ${fmt(p)}<br>${formatDiff(n, p)} |\n`;
               return row;
             };
             let catHeader = "| Category | Size (new) |";
@@ -302,8 +302,8 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} / ${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
-              row += ` ${pub ? formatBytes(pub.size) : "-"} / ${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
+              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"}<br>${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
+              row += ` ${pub ? formatBytes(pub.size) : "-"}<br>${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
               details += row;
             }
             // Main-only files (not in new)
@@ -312,8 +312,8 @@ jobs:
                 seenPaths.add(f.path);
                 const pub = publishedByPath.get(f.path);
                 let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` ${formatBytes(f.size)} / ➖ |`;
-                row += ` ${pub ? formatBytes(pub.size) : "-"} / ${pub ? "➖" : ""} |\n`;
+                if (hasMain) row += ` ${formatBytes(f.size)}<br>➖ |`;
+                row += ` ${pub ? formatBytes(pub.size) : "-"}<br>${pub ? "➖" : ""} |\n`;
                 details += row;
               }
             }
@@ -321,8 +321,8 @@ jobs:
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
                 let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` - / - |`;
-                row += ` ${formatBytes(f.size)} / ➖ |\n`;
+                if (hasMain) row += ` -<br>- |`;
+                row += ` ${formatBytes(f.size)}<br>➖ |\n`;
                 details += row;
               }
             }
