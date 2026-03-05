@@ -303,7 +303,8 @@ jobs:
               seenPaths.add(f.path);
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
-              let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
+              const prefix = hasMain && !mn ? "➕\u00A0" : "";
+              let row = `| ${prefix}\`${f.path}\` | ${formatBytes(f.size)} |`;
               if (hasMain) row += mn ? ` ${formatBytes(mn.size)}${formatDiff(f.size, mn.size)} |` : `  |`;
               row += pub ? ` ${formatBytes(pub.size)}${formatDiff(f.size, pub.size)} |\n` : `  |\n`;
               details += row;
@@ -313,7 +314,7 @@ jobs:
               if (!seenPaths.has(f.path)) {
                 seenPaths.add(f.path);
                 const pub = publishedByPath.get(f.path);
-                let row = `| \`${f.path}\` |  |`;
+                let row = `| 🔥\u00A0\`${f.path}\` |  |`;
                 if (hasMain) row += ` 🔥\u00A0${formatBytes(f.size)} |`;
                 row += pub ? ` 🔥\u00A0${formatBytes(pub.size)} |\n` : `  |\n`;
                 details += row;
