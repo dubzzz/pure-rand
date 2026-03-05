@@ -244,7 +244,7 @@ jobs:
             const isDTS = f => f.path.endsWith(".d.ts");
             const sumSize = (files, predicate) => files.reduce((s, f) => predicate(f) ? s + f.size : s, 0);
             const formatBytes = b => b >= 1048576 ? (b / 1048576).toFixed(2) + " MB" : b >= 1024 ? (b / 1024).toFixed(2) + " kB" : b + " B";
-            const formatDiff = (newSize, refSize) => { const d = newSize - refSize; if (d === 0) return "🟰"; if (refSize === 0) return "🔺\u00A0new"; const pct = ((d / refSize) * 100).toFixed(1); return d > 0 ? `🔺\u00A0+${pct}%` : `🔽\u00A0${pct}%`; };
+            const formatDiff = (newSize, refSize) => { const d = newSize - refSize; if (d === 0) return ""; if (refSize === 0) return "<br>🔺\u00A0new"; const pct = ((d / refSize) * 100).toFixed(1); return d > 0 ? `<br>🔺\u00A0+${pct}%` : `<br>🔽\u00A0${pct}%`; };
             const hasMain = mainFiles.length > 0;
 
             // Compute totals and categories
@@ -263,8 +263,8 @@ jobs:
               const p = sumSize(publishedFiles, filter);
               const fmt = v => isBold ? `**${formatBytes(v)}**` : formatBytes(v);
               let row = `| ${isBold ? "**" + label + "**" : label} | ${fmt(n)} |`;
-              if (hasMain) row += ` ${fmt(m)}<br>${formatDiff(n, m)} |`;
-              row += ` ${fmt(p)}<br>${formatDiff(n, p)} |\n`;
+              if (hasMain) row += ` ${fmt(m)}${formatDiff(n, m)} |`;
+              row += ` ${fmt(p)}${formatDiff(n, p)} |\n`;
               return row;
             };
             let catHeader = "| Category | Size (new) |";
@@ -302,8 +302,8 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) mn ? ` ${formatBytes(mn.size)}<br>${formatDiff(f.size, mn.size)} |` : ` - |`;
-              row += pub ? ` ${formatBytes(pub.size)}<br>${formatDiff(f.size, pub.size)} |\n` : ` - |\n`;
+              if (hasMain) mn ? ` ${formatBytes(mn.size)}${formatDiff(f.size, mn.size)} |` : ` - |`;
+              row += pub ? ` ${formatBytes(pub.size)}${formatDiff(f.size, pub.size)} |\n` : ` - |\n`;
               details += row;
             }
             // Main-only files (not in new)
