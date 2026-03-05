@@ -129,11 +129,12 @@ Once you are able to generate random values, next step is to scale them into the
 
 At this point, simple way would be to do `min + floor(random() * (max - min + 1))` but actually it will not generate the values with equal probabilities even if you use the best PRNG in the world to back `random()`. In order to have equal probabilities you need to rely on uniform distributions<sup>(3)</sup> which comes built-in in some PNRG libraries.
 
-pure-rand provides 3 built-in functions for uniform distributions of values:
+pure-rand provides 4 built-in functions for uniform distributions of values:
 
 - `uniformInt(rng, min, max)`
 - `uniformBigInt(rng, min, max)` - with `min` and `max` being `bigint`
 - `uniformFloat32(rng)` - to generate value between 0 (included) and 1 (excluded)
+- `uniformFloat64(rng)` - to generate value between 0 (included) and 1 (excluded)
 
 Each of these distributions come with its own import: `pure-rand/distribution/<name>`.
 
@@ -165,27 +166,3 @@ For detailed benchmark results and methodology, see the [full comparison](./COMP
 (2) — How long it takes to reapeat itself?
 
 (3) — While most users don't really think of it, uniform distribution is key! Without it entries might be biased towards some values and make some others less probable. The naive `rand() % numValues` is a good example of biased version as if `rand()` is uniform in `0, 1, 2` and `numValues` is `2`, the probabilities are: `P(0) = 67%`, `P(1) = 33%` causing `1` to be less probable than `0`
-
-## Advanced patterns
-
-### Generate 64-bit floating point numbers
-
-The following snippet is responsible for generating 64-bit floating point numbers that spread uniformly between 0 (included) and 1 (excluded).
-
-```js
-import { uniformInt } from 'pure-rand/distribution/uniformInt';
-import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
-
-function generateFloat64(rng) {
-  const g1 = uniformInt(rng, 0, (1 << 26) - 1);
-  const g2 = uniformInt(rng, 0, (1 << 27) - 1);
-  const value = (g1 * Math.pow(2, 27) + g2) * Math.pow(2, -53);
-  return value;
-}
-
-const seed = 42;
-const rng = xoroshiro128plus(seed);
-
-const float64Bits1 = generateFloat64(rng);
-const float64Bits2 = generateFloat64(rng);
-```

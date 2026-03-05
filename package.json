@@ -17,6 +17,10 @@
       "require": "./lib/distribution/uniformFloat32.js",
       "import": "./lib/esm/distribution/uniformFloat32.js"
     },
+    "./distribution/uniformFloat64": {
+      "require": "./lib/distribution/uniformFloat64.js",
+      "import": "./lib/esm/distribution/uniformFloat64.js"
+    },
     "./generator/congruential32": {
       "require": "./lib/generator/congruential32.js",
       "import": "./lib/esm/generator/congruential32.js"
