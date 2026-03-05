@@ -263,18 +263,18 @@ jobs:
               const p = sumSize(publishedFiles, filter);
               const fmt = v => isBold ? `**${formatBytes(v)}**` : formatBytes(v);
               let row = `| ${isBold ? "**" + label + "**" : label} | ${fmt(n)} |`;
-              if (hasMain) row += ` ${fmt(m)} | ${formatDiff(n, m)} |`;
-              row += ` ${fmt(p)} | ${formatDiff(n, p)} |\n`;
+              if (hasMain) row += ` ${fmt(m)} / ${formatDiff(n, m)} |`;
+              row += ` ${fmt(p)} / ${formatDiff(n, p)} |\n`;
               return row;
             };
             let catHeader = "| Category | Size (new) |";
             let catSep = "|----------|------|";
             if (hasMain) {
-              catHeader += " Size (main) | Diff (main) |";
-              catSep += "------|------|";
+              catHeader += " Size (main) |";
+              catSep += "------|";
             }
-            catHeader += " Size (published) | Diff (published) |\n";
-            catSep += "------|------|\n";
+            catHeader += " Size (published) |\n";
+            catSep += "------|\n";
             let details = catHeader + catSep;
             details += catRow("Total", () => true, true);
             details += catRow("ESM bundle", esmJsFilter, false);
@@ -289,11 +289,11 @@ jobs:
             let fileHeader = "| File | Size (new) |";
             let fileSep = "|------|------|";
             if (hasMain) {
-              fileHeader += " Size (main) | Diff (main) |";
-              fileSep += "------|------|";
+              fileHeader += " Size (main) |";
+              fileSep += "------|";
             }
-            fileHeader += " Size (published) | Diff (published) |\n";
-            fileSep += "------|------|\n";
+            fileHeader += " Size (published) |\n";
+            fileSep += "------|\n";
             details += "\n" + fileHeader + fileSep;
 
             // New files first (sorted by descending size)
@@ -302,8 +302,8 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} | ${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
-              row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
+              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"} / ${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
+              row += ` ${pub ? formatBytes(pub.size) : "-"} / ${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
               details += row;
             }
             // Main-only files (not in new)
@@ -312,8 +312,8 @@ jobs:
                 seenPaths.add(f.path);
                 const pub = publishedByPath.get(f.path);
                 let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` ${formatBytes(f.size)} | ➖ |`;
-                row += ` ${pub ? formatBytes(pub.size) : "-"} | ${pub ? "➖" : ""} |\n`;
+                if (hasMain) row += ` ${formatBytes(f.size)} / ➖ |`;
+                row += ` ${pub ? formatBytes(pub.size) : "-"} / ${pub ? "➖" : ""} |\n`;
                 details += row;
               }
             }
@@ -321,8 +321,8 @@ jobs:
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
                 let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` - | - |`;
-                row += ` ${formatBytes(f.size)} | ➖ |\n`;
+                if (hasMain) row += ` - / - |`;
+                row += ` ${formatBytes(f.size)} / ➖ |\n`;
                 details += row;
               }
             }
