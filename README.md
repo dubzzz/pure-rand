@@ -14,7 +14,7 @@ Fast Pseudorandom number generators (aka PRNG) with purity in mind!
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/dubzzz/pure-rand/labels/good%20first%20issue)
 [![License](https://img.shields.io/npm/l/pure-rand.svg)](https://github.com/dubzzz/pure-rand/blob/main/LICENSE)
-[![Twitter](https://img.shields.io/twitter/url/https/github.com/dubzzz/pure-rand.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20pure-rand%20by%20%40ndubien%20https%3A%2F%2Fgithub.com%2Fdubzzz%2Fpure-rand%20%F0%9F%91%8D)
+[![Share on Bluesky](https://img.shields.io/badge/share%20on-Bluesky-0285FF?logo=bluesky&logoColor=white)](https://bsky.app/intent/compose?text=pure-rand%20%E2%80%94%20fast%20and%20pure%20pseudorandom%20number%20generators%20for%20JS%2FTS.%20Perfect%20for%20reproducible%20randomness!%20%F0%9F%8E%B2%0A%0Ahttps%3A%2F%2Fgithub.com%2Fdubzzz%2Fpure-rand%0A%0Aby%20%40nicolas.dubien.me)
 
 ## Getting started
 
