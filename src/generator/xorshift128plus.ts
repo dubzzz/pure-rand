@@ -70,3 +70,38 @@ export function xorshift128plusFromState(state: readonly number[]): JumpableRand
 export function xorshift128plus(seed: number): JumpableRandomGenerator {
   return new XorShift128Plus(-1, ~seed, seed | 0, 0);
 }
+
+/**
+ * Advance a SplitMix32 counter and return the hashed output.
+ * See xoroshiro128plus.ts for full rationale.
+ */
+function splitMix32(state: number): { next: number; value: number } {
+  const next = (state + 0x9e3779b9) | 0;
+  let z = next;
+  z = Math.imul(z ^ (z >>> 16), 0x85ebca6b) | 0;
+  z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35) | 0;
+  return { next, value: z ^ (z >>> 16) };
+}
+
+/**
+ * Seed an XorShift128+ generator using an array of 32-bit integers.
+ *
+ * Motivation and implementation strategy are identical to `xoroshiro128plusByArray`
+ * (see that function's JSDoc). Both generators share a 128-bit state represented
+ * as four 32-bit words, so the same SplitMix32 expansion applies.
+ *
+ * @param seeds - An array of 32-bit integer seeds (treated as signed 32-bit values).
+ */
+export function xorshift128plusByArray(seeds: readonly number[]): JumpableRandomGenerator {
+  let acc = 0;
+  for (let i = 0; i < seeds.length; i++) {
+    acc = splitMix32((acc + (seeds[i] | 0)) | 0).next;
+  }
+
+  const r0 = splitMix32(acc);
+  const r1 = splitMix32(r0.next);
+  const r2 = splitMix32(r1.next);
+  const r3 = splitMix32(r2.next);
+
+  return new XorShift128Plus(r0.value, r1.value, r2.value, r3.value);
+}
