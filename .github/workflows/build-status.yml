@@ -303,7 +303,7 @@ jobs:
               seenPaths.add(f.path);
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
-              const prefix = hasMain && !mn ? "➕\u00A0" : "";
+              const prefix = hasMain && !mn ? "🆕\u00A0" : "";
               let row = `| ${prefix}\`${f.path}\` | ${formatBytes(f.size)} |`;
               if (hasMain) row += mn ? ` ${formatBytes(mn.size)}${formatDiff(f.size, mn.size)} |` : `  |`;
               row += pub ? ` ${formatBytes(pub.size)}${formatDiff(f.size, pub.size)} |\n` : `  |\n`;
