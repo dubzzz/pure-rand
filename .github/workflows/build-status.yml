@@ -255,6 +255,7 @@ jobs:
             const esmDtsFilter = f => isESM(f) && isDTS(f);
             const cjsJsFilter = f => isCJS(f) && isJS(f);
             const cjsDtsFilter = f => isCJS(f) && isDTS(f);
+            const otherFilter = f => !esmJsFilter(f) && !esmDtsFilter(f) && !cjsJsFilter(f) && !cjsDtsFilter(f);
 
             // Build category table
             const catRow = (label, filter, isBold) => {
@@ -281,6 +282,7 @@ jobs:
             details += catRow("CJS bundle", cjsJsFilter, false);
             details += catRow("Types for ESM", esmDtsFilter, false);
             details += catRow("Types for CJS", cjsDtsFilter, false);
+            details += catRow("Other", otherFilter, false);
 
             // Build merged per-file table
             const mainByPath = new Map(mainFiles.map(f => [f.path, f]));
