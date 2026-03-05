@@ -2,6 +2,58 @@
 
 ## 8.0.0
 
+### Migration from 7.x to 8.0
+
+**No more main entry point** — Replace barrel imports with subpath imports:
+
+```diff
+-import { uniformIntDistribution, xoroshiro128plus } from 'pure-rand';
++import { uniformInt } from 'pure-rand/distribution/uniformInt';
++import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+```
+
+**`rng` is now the first argument** — All functions now take the generator as the first parameter:
+
+```diff
+-uniformIntDistribution(1, 6, rng);
++uniformInt(rng, 1, 6);
+```
+
+**Functions mutate `rng` in-place by default** — The old "pure" functions (returning `[value, nextRng]` tuples) have been removed. Functions now directly return the generated value and mutate the generator. To get the old pure behavior, wrap with `purify`:
+
+```diff
+-const [value, nextRng] = uniformIntDistribution(1, 6, rng);
++import { purify } from 'pure-rand/utils/purify';
++const pureUniformInt = purify(uniformInt);
++const [value, nextRng] = pureUniformInt(rng, 1, 6);
+```
+
+**Renamed distributions** — Pure distribution names have been shortened:
+
+| 7.x                                                                 | 8.0                     |
+| ------------------------------------------------------------------- | ----------------------- |
+| `unsafeUniformIntDistribution`                                      | `uniformInt`            |
+| `unsafeUniformBigIntDistribution`                                   | `uniformBigInt`         |
+| `uniformIntDistribution`                                            | `purify(uniformInt)`    |
+| `uniformBigIntDistribution`                                         | `purify(uniformBigInt)` |
+| `uniformArrayIntDistribution` / `unsafeUniformArrayIntDistribution` | _(removed)_             |
+
+**`fromState` moved to dedicated exports** — Restoring a generator from its state now uses a separate function:
+
+```diff
+-import prand from 'pure-rand';
+-const rng = prand.xoroshiro128plus.fromState(state);
++import { xoroshiro128plusFromState } from 'pure-rand/generator/xoroshiro128plus';
++const rng = xoroshiro128plusFromState(state);
+```
+
+**Dedicated `JumpableRandomGenerator` type** — Generators supporting `jump()` now implement a separate `JumpableRandomGenerator` interface (extends `RandomGenerator`). If you need generators with `jump()` method, update the type:
+
+```diff
+-import type { RandomGenerator } from 'pure-rand/types/RandomGenerator';
++import type { JumpableRandomGenerator } from 'pure-rand/types/JumpableRandomGenerator';
+```
+
 ### Breaking Changes
 
 - [1838e5e](https://github.com/dubzzz/pure-rand/commit/1838e5e) 💥 Drop `uniformArrayInt` (#868)
