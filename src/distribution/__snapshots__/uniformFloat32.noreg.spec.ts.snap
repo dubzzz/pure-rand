@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`uniformFloat32 [non regression] > Should not change its output except for major bumps 1`] = `
+[
+  0.49625658988952637,
+  0.7682217955589294,
+  0.08847743272781372,
+  0.13203048706054688,
+  0.30742281675338745,
+  0.6340786814689636,
+  0.4900934100151062,
+  0.8964447379112244,
+  0.455627977848053,
+  0.6323062777519226,
+]
+`;
