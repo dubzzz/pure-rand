@@ -3,6 +3,7 @@ import { xorshift128plus } from '../generator/xorshift128plus';
 import type { RandomGenerator } from '../../src/types/RandomGenerator';
 import { uniformInt } from './uniformInt';
 import { uniformBigInt } from './uniformBigInt';
+import { uniformFloat32 } from './uniformFloat32';
 
 describe('distribution', () => {
   const rng = xorshift128plus(0);
@@ -62,6 +63,14 @@ describe('distribution', () => {
   });
 
   describe('various ranges', () => {
+    // no specific range
+    bench(`native Math.random()`, () => {
+      nativeMathRandom();
+    });
+    bench(`uniformFloat32`, () => {
+      uniformFloat32(rng);
+    });
+
     // range < 2 ** 8
     const smallRangeLabel = `{{S range}} [0, 48]`;
     bench(`dummyFastInt @@ ${smallRangeLabel}`, () => {
@@ -115,6 +124,10 @@ describe('distribution', () => {
     });
   });
 });
+
+function nativeMathRandom() {
+  return Math.random();
+}
 
 function dummyFastInt(rng: RandomGenerator, from: number, to: number) {
   const out = rng.next() >>> 0;
