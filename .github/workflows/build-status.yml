@@ -302,8 +302,8 @@ jobs:
               const mn = mainByPath.get(f.path);
               const pub = publishedByPath.get(f.path);
               let row = `| \`${f.path}\` | ${formatBytes(f.size)} |`;
-              if (hasMain) row += ` ${mn ? formatBytes(mn.size) : "-"}<br>${mn ? formatDiff(f.size, mn.size) : "➕"} |`;
-              row += ` ${pub ? formatBytes(pub.size) : "-"}<br>${pub ? formatDiff(f.size, pub.size) : "➕"} |\n`;
+              if (hasMain) mn ? ` ${formatBytes(mn.size)}<br>${formatDiff(f.size, mn.size)} |` : `  |`;
+              row += pub ? ` ${formatBytes(pub.size)}<br>${formatDiff(f.size, pub.size)} |\n` : `  |\n`;
               details += row;
             }
             // Main-only files (not in new)
@@ -312,17 +312,17 @@ jobs:
                 seenPaths.add(f.path);
                 const pub = publishedByPath.get(f.path);
                 let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` ${formatBytes(f.size)}<br>➖ |`;
-                row += ` ${pub ? formatBytes(pub.size) : "-"}<br>${pub ? "➖" : ""} |\n`;
+                if (hasMain) row += ` 🔥 ${formatBytes(f.size)} |`;
+                row += pub ? ` 🔥 ${formatBytes(pub.size)} |\n` : `  |\n`;
                 details += row;
               }
             }
             // Published-only files (not in new or main)
             for (const f of publishedFiles) {
               if (!seenPaths.has(f.path)) {
-                let row = `| \`${f.path}\` | - |`;
-                if (hasMain) row += ` -<br>- |`;
-                row += ` ${formatBytes(f.size)}<br>➖ |\n`;
+                let row = `| \`${f.path}\` |  |`;
+                if (hasMain) row += `  |`;
+                row += ` 🔥 ${formatBytes(f.size)} |\n`;
                 details += row;
               }
             }
