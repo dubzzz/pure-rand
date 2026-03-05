@@ -129,7 +129,7 @@ Once you are able to generate random values, next step is to scale them into the
 
 At this point, simple way would be to do `min + floor(random() * (max - min + 1))` but actually it will not generate the values with equal probabilities even if you use the best PRNG in the world to back `random()`. In order to have equal probabilities you need to rely on uniform distributions<sup>(3)</sup> which comes built-in in some PNRG libraries.
 
-pure-rand provides 3 built-in functions for uniform distributions of values:
+pure-rand provides 4 built-in functions for uniform distributions of values:
 
 - `uniformInt(rng, min, max)`
 - `uniformBigInt(rng, min, max)` - with `min` and `max` being `bigint`
