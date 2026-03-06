@@ -44,8 +44,12 @@ jobs:
           custom_instructions: |
             ## Pull Request Guidelines
 
-            When opening a pull request, follow the gitmoji specification for its name, example: `✨ Add xoroshiro128plus`. Common emojis: ✨ features, 🐛 bug fix, 📝 docs, ✅ tests, 🏷️ types, ⚡️ perf, 👷 CI, ♻️ refactor, 🔧 config, 🎨 format, 🔥 remove, ⬆️ upgrade, 🗑️ deprecate.
+            ### Title
+
+            When opening a pull request, follow the gitmoji specification: <emoji> <description>. Common emojis: ✨ features, 🐛 bug fix, 📝 docs, ✅ tests, 🏷️ types, ⚡️ perf, 👷 CI, ♻️ refactor, 🔧 config, 🎨 format, 🔥 remove, ⬆️ upgrade, 🗑️ deprecate.
             Limit the description part to at most 50 characters.
+
+            Example: `✨ Add xoroshiro128plus`.
 
           # Optional: Customize the trigger phrase (default: @claude)
           # trigger_phrase: "/claude"
