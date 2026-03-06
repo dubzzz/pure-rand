@@ -1,6 +1,5 @@
 import { describe, bench } from 'vitest';
 import { xorshift128plus } from '../generator/xorshift128plus';
-import type { RandomGenerator } from '../../src/types/RandomGenerator';
 import { uniformInt } from './uniformInt';
 import { uniformBigInt } from './uniformBigInt';
 import { uniformFloat32 } from './uniformFloat32';
@@ -12,8 +11,8 @@ describe('distribution', () => {
   describe('pow2 ranges', () => {
     // range < 2 ** 8
     const smallRangeLabel = `{{S range}} [0, 2**4 -1]`;
-    bench(`dummyFastInt @@ ${smallRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 15);
+    bench(`native @@ ${smallRangeLabel}`, () => {
+      nativeInt(0, 15);
     });
     bench(`uniformInt @@ ${smallRangeLabel}`, () => {
       uniformInt(rng, 0, 15);
@@ -24,8 +23,8 @@ describe('distribution', () => {
 
     // 2 ** 8 <= range < 2 ** 31
     const mediumRangeLabel = `{{M range}} [0, 2**21 -1]`;
-    bench(`dummyFastInt @@ ${mediumRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 2097151);
+    bench(`native @@ ${mediumRangeLabel}`, () => {
+      nativeInt(0, 2097151);
     });
     bench(`uniformInt @@ ${mediumRangeLabel}`, () => {
       uniformInt(rng, 0, 2097151);
@@ -36,8 +35,8 @@ describe('distribution', () => {
 
     // 2 ** 31 <= range < 2 ** 32
     const largeRangeLabel = `{{L range}} [0, 2**32 -1]`;
-    bench(`dummyFastInt @@ ${largeRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 4294967295);
+    bench(`native @@ ${largeRangeLabel}`, () => {
+      nativeInt(0, 4294967295);
     });
     bench(`uniformInt @@ ${largeRangeLabel}`, () => {
       uniformInt(rng, 0, 4294967295);
@@ -48,6 +47,9 @@ describe('distribution', () => {
 
     // 2 ** 32 <= range < Number.MAX_SAFE_INTEGER
     const veryLargeRangeLabel = `{{XL range}} [0, 2**40 -1]`;
+    bench(`native @@ ${largeRangeLabel}`, () => {
+      nativeInt(0, 1099511627775);
+    });
     bench(`uniformInt @@ ${veryLargeRangeLabel}`, () => {
       uniformInt(rng, 0, 1099511627775);
     });
@@ -65,20 +67,20 @@ describe('distribution', () => {
 
   describe('various ranges', () => {
     // no specific range
-    bench(`native Math.random()`, () => {
-      nativeMathRandom();
+    bench(`native @@ {{float}} [0, 1)`, () => {
+      nativeFloat();
     });
-    bench(`uniformFloat32`, () => {
+    bench(`uniformFloat32 @@ {{float}} [0, 1)`, () => {
       uniformFloat32(rng);
     });
-    bench(`uniformFloat64`, () => {
+    bench(`uniformFloat64 @@ {{float}} [0, 1)`, () => {
       uniformFloat64(rng);
     });
 
     // range < 2 ** 8
     const smallRangeLabel = `{{S range}} [0, 48]`;
-    bench(`dummyFastInt @@ ${smallRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 48);
+    bench(`native @@ ${smallRangeLabel}`, () => {
+      nativeInt(0, 48);
     });
     bench(`uniformInt @@ ${smallRangeLabel}`, () => {
       uniformInt(rng, 0, 48);
@@ -89,8 +91,8 @@ describe('distribution', () => {
 
     // 2 ** 8 <= range < 2 ** 31
     const mediumRangeLabel = `{{M range}} [0, 1_000_000_000]`;
-    bench(`dummyFastInt @@ ${mediumRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 1_000_000_000);
+    bench(`native @@ ${mediumRangeLabel}`, () => {
+      nativeInt(0, 1_000_000_000);
     });
     bench(`uniformInt @@ ${mediumRangeLabel}`, () => {
       uniformInt(rng, 0, 1_000_000_000);
@@ -101,8 +103,8 @@ describe('distribution', () => {
 
     // 2 ** 31 <= range < 2 ** 32
     const largeRangeLabel = `{{L range}} [0, 4_000_000_000]`;
-    bench(`dummyFastInt @@ ${largeRangeLabel}`, () => {
-      dummyFastInt(rng, 0, 4_000_000_000);
+    bench(`native @@ ${largeRangeLabel}`, () => {
+      nativeInt(0, 4_000_000_000);
     });
     bench(`uniformInt @@ ${largeRangeLabel}`, () => {
       uniformInt(rng, 0, 4_000_000_000);
@@ -113,6 +115,9 @@ describe('distribution', () => {
 
     // 2 ** 32 <= range < Number.MAX_SAFE_INTEGER
     const veryLargeRangeLabel = `{{XL range}} [0, 8_000_000_000]`;
+    bench(`native @@ ${veryLargeRangeLabel}`, () => {
+      nativeInt(0, 8_000_000_000);
+    });
     bench(`uniformInt @@ ${veryLargeRangeLabel}`, () => {
       uniformInt(rng, 0, 8_000_000_000);
     });
@@ -129,11 +134,10 @@ describe('distribution', () => {
   });
 });
 
-function nativeMathRandom() {
+function nativeFloat() {
   return Math.random();
 }
 
-function dummyFastInt(rng: RandomGenerator, from: number, to: number) {
-  const out = rng.next() >>> 0;
-  return from + (out % (to - from + 1));
+function nativeInt(from: number, to: number) {
+  return from + Math.floor(Math.random() * (to - from + 1));
 }
