@@ -36,11 +36,11 @@ const rng = xorshift128plus(42);
 }
 {
   const value = uniformFloat32(rng);
-  assert.ok(typeof value === 'number' && value >= 0 && value <= 1);
+  assert.ok(typeof value === 'number' && value >= 0 && value < 1);
 }
 {
   const value = uniformFloat64(rng);
-  assert.ok(typeof value === 'number' && value >= 0 && value <= 1);
+  assert.ok(typeof value === 'number' && value >= 0 && value < 1);
 }
 
 // Test utils
