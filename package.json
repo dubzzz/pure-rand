@@ -9,15 +9,7 @@
       "require": "./lib/distribution/exponential.js",
       "import": "./lib/esm/distribution/exponential.js"
     },
-    "./distribution/normal": {
-      "require": "./lib/distribution/normal.js",
-      "import": "./lib/esm/distribution/normal.js"
-    },
-    "./distribution/poissonInt": {
-      "require": "./lib/distribution/poissonInt.js",
-      "import": "./lib/esm/distribution/poissonInt.js"
-    },
-    "./distribution/uniformBigInt": {
+"./distribution/uniformBigInt": {
       "require": "./lib/distribution/uniformBigInt.js",
       "import": "./lib/esm/distribution/uniformBigInt.js"
     },
