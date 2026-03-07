@@ -11,14 +11,12 @@ const twoPi = 2 * Math.PI;
  * Uses the Box-Muller transform. Each call consumes two values from the generator.
  *
  * @param rng - Instance of RandomGenerator to extract random values from
- * @param mean - Mean of the distribution (default: 0)
- * @param stddev - Standard deviation of the distribution (default: 1)
+ * @param mean - Mean of the distribution
+ * @param stddev - Standard deviation of the distribution
  *
  * @public
  */
-export function normalFloat64(rng: RandomGenerator, mean: number = 0, stddev: number = 1): number {
-  // Box-Muller transform
-  // u1 must be in (0, 1] to avoid log(0), so we compute 1 - uniformFloat64(rng)
+export function normalFloat64(rng: RandomGenerator, mean: number, stddev: number): number {
   const u1 = 1 - uniformFloat64(rng);
   const u2 = uniformFloat64(rng);
   const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(twoPi * u2);

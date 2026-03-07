@@ -8,7 +8,7 @@ describe('normalFloat64', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), (seed) => {
         const rng = mersenne(seed);
-        const v = normalFloat64(rng);
+        const v = normalFloat64(rng, 0, 1);
         expect(Number.isFinite(v)).toBe(true);
       }),
     ));

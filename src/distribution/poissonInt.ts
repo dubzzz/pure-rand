@@ -14,14 +14,10 @@ import { uniformFloat64 } from './uniformFloat64';
  * @public
  */
 export function poissonInt(rng: RandomGenerator, lambda: number): number {
-  // Knuth's algorithm in log-space:
-  // Keep drawing uniform values and summing their logs until the sum drops below -lambda.
-  // The count of draws minus one follows Poisson(lambda).
   let k = 0;
   let logP = 0;
   do {
     k++;
-    // Use 1 - uniformFloat64(rng) to get (0, 1] and avoid log(0)
     logP += Math.log(1 - uniformFloat64(rng));
   } while (logP > -lambda);
   return k - 1;

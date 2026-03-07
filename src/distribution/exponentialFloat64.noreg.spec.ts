@@ -15,7 +15,7 @@ describe('exponentialFloat64 [non regression]', () => {
     const rng: RandomGenerator = mersenne(0);
     const values: number[] = [];
     for (let idx = 0; idx !== 10; ++idx) {
-      const v = exponentialFloat64(rng);
+      const v = exponentialFloat64(rng, 1);
       values.push(v);
     }
     expect(values).toMatchSnapshot();

@@ -15,7 +15,7 @@ describe('normalFloat64 [non regression]', () => {
     const rng: RandomGenerator = mersenne(0);
     const values: number[] = [];
     for (let idx = 0; idx !== 10; ++idx) {
-      const v = normalFloat64(rng);
+      const v = normalFloat64(rng, 0, 1);
       values.push(v);
     }
     expect(values).toMatchSnapshot();
