@@ -11,12 +11,16 @@ const twoPi = 2 * Math.PI;
  * with the given mean and standard deviation.
  *
  * @example
+ * ```typescript
  * // Simulating human heights in cm (mean=170, stddev=10)
  * normal(rng, 170, 10)
+ * ```
  *
  * @example
+ * ```typescript
  * // Simulating daily temperatures in °C for a city (mean=20, stddev=5)
  * normal(rng, 20, 5)
+ * ```
  *
  * @param rng - Instance of RandomGenerator to extract random values from
  * @param mean - Mean of the distribution
