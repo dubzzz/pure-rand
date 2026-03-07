@@ -42,7 +42,7 @@ jobs:
           assignee_trigger: 'dubzzz'
           claude_args: |
             --model opus
-            --system-prompt "## Pull Request Guidelines
+            --append-system-prompt "## Pull Request Guidelines
 
             ### Title
 
