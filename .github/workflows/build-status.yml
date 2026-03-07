@@ -471,6 +471,20 @@ jobs:
         run: mv .git node_modules/.git && pnpm exec packaged --keep-node-modules && mv node_modules/.git .git
       - name: Retrieve potentially dropped test-bundle
         run: git restore -s@ -SW -- test-bundle
+      - name: Ensure all exports are imported in test-bundle
+        run: |
+          EXPORTS=$(node -e "
+            Object.keys(require('./package.json').exports)
+              .filter(e => e !== './package.json')
+              .forEach(e => console.log('pure-rand' + e.slice(1)));
+          ")
+          for EXPORT in $EXPORTS; do
+            if ! grep -q "$EXPORT" test-bundle/run-legacy.cjs; then
+              echo "ERROR: Export '$EXPORT' is not imported in test-bundle/run-legacy.cjs"
+              exit 1
+            fi
+          done
+          echo "All exports are imported in test-bundle/run-legacy.cjs"
       - name: Check bundle
         run: pnpm test-bundle
       - name: Check legacy bundle
@@ -494,34 +508,6 @@ jobs:
             exit 3
           fi
 
-  export_import_check:
-    name: 'Check exports are tested in bundle'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Ensure all exports are imported in test-bundle
-        run: |
-          EXPORTS=$(node -e "
-            const pkg = require('./package.json');
-            const entries = Object.keys(pkg.exports)
-              .filter(e => e !== './package.json')
-              .map(e => 'pure-rand' + e.slice(1));
-            entries.forEach(e => console.log(e));
-          ")
-          MISSING=0
-          for EXPORT in $EXPORTS; do
-            if ! grep -q "$EXPORT" test-bundle/run-legacy.cjs; then
-              echo "ERROR: Export '$EXPORT' is not imported in test-bundle/run-legacy.cjs"
-              MISSING=1
-            fi
-          done
-          if [ "$MISSING" -eq 1 ]; then
-            echo ""
-            echo "All package exports must be imported in test-bundle/run-legacy.cjs"
-            exit 1
-          fi
-          echo "All exports are imported in test-bundle/run-legacy.cjs"
-
   # Job to confirm every required job passed
   pre_all_required_checks_passed:
     name: 'Pre All required checks passed'
@@ -532,7 +518,6 @@ jobs:
       - test
       - production_package
       - test_bundle
-      - export_import_check
     runs-on: ubuntu-latest
     steps:
       - name: Success
