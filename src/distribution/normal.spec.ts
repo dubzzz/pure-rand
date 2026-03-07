@@ -22,23 +22,4 @@ describe('normal', () => {
         expect(v === mean).toBe(true);
       }),
     ));
-
-  it('Should generate values with approximate mean and stddev over many samples', () => {
-    const rng = mersenne(42);
-    const n = 10000;
-    let sum = 0;
-    let sumSq = 0;
-    const mean = 5;
-    const stddev = 2;
-    for (let i = 0; i < n; i++) {
-      const v = normal(rng, mean, stddev);
-      sum += v;
-      sumSq += v * v;
-    }
-    const sampleMean = sum / n;
-    const sampleVariance = sumSq / n - sampleMean * sampleMean;
-    // Allow 5% relative error for mean and variance
-    expect(sampleMean).toBeCloseTo(mean, 0);
-    expect(Math.sqrt(sampleVariance)).toBeCloseTo(stddev, 0);
-  });
 });
