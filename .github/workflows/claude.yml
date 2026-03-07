@@ -40,16 +40,16 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: '@claude'
           assignee_trigger: 'dubzzz'
-          claude_args: '--model opus'
-          custom_instructions: |
-            ## Pull Request Guidelines
+          claude_args: |
+            --model opus
+            --system-prompt "## Pull Request Guidelines
 
             ### Title
 
             When opening a pull request, follow the gitmoji specification: <emoji> <description>. Common emojis: ✨ features, 🐛 bug fix, 📝 docs, ✅ tests, 🏷️ types, ⚡️ perf, 👷 CI, ♻️ refactor, 🔧 config, 🎨 format, 🔥 remove, ⬆️ upgrade, 🗑️ deprecate.
             Limit the description part to at most 50 characters.
 
-            Example: `✨ Add xoroshiro128plus`.
+            Example: ✨ Add xoroshiro128plus."
 
           # Optional: Customize the trigger phrase (default: @claude)
           # trigger_phrase: "/claude"
