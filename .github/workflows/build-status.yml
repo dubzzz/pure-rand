@@ -471,6 +471,20 @@ jobs:
         run: mv .git node_modules/.git && pnpm exec packaged --keep-node-modules && mv node_modules/.git .git
       - name: Retrieve potentially dropped test-bundle
         run: git restore -s@ -SW -- test-bundle
+      - name: Ensure all exports are imported in test-bundle
+        run: |
+          EXPORTS=$(node -e "
+            Object.keys(require('./package.json').exports)
+              .filter(e => e !== './package.json')
+              .forEach(e => console.log('pure-rand' + e.slice(1)));
+          ")
+          for EXPORT in $EXPORTS; do
+            if ! grep -q "$EXPORT" test-bundle/run-legacy.cjs; then
+              echo "ERROR: Export '$EXPORT' is not imported in test-bundle/run-legacy.cjs"
+              exit 1
+            fi
+          done
+          echo "All exports are imported in test-bundle/run-legacy.cjs"
       - name: Check bundle
         run: pnpm test-bundle
       - name: Check legacy bundle

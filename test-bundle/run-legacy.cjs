@@ -8,6 +8,8 @@ const { xorshift128plus } = require('pure-rand/generator/xorshift128plus');
 const { xoroshiro128plus } = require('pure-rand/generator/xoroshiro128plus');
 const { uniformInt } = require('pure-rand/distribution/uniformInt');
 const { uniformBigInt } = require('pure-rand/distribution/uniformBigInt');
+const { uniformFloat32 } = require('pure-rand/distribution/uniformFloat32');
+const { uniformFloat64 } = require('pure-rand/distribution/uniformFloat64');
 const { generateN } = require('pure-rand/utils/generateN');
 const { skipN } = require('pure-rand/utils/skipN');
 const { purify } = require('pure-rand/utils/purify');
@@ -31,6 +33,14 @@ const rng = xorshift128plus(42);
 {
   const value = uniformBigInt(rng, 0n, 100n);
   assert.ok(typeof value === 'bigint' && value >= 0n && value <= 100n);
+}
+{
+  const value = uniformFloat32(rng);
+  assert.ok(typeof value === 'number' && value >= 0 && value < 1);
+}
+{
+  const value = uniformFloat64(rng);
+  assert.ok(typeof value === 'number' && value >= 0 && value < 1);
 }
 
 // Test utils
