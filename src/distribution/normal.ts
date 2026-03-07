@@ -1,6 +1,9 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
 import { uniformFloat64 } from './uniformFloat64';
 
+const safeMathSqrt = Math.sqrt;
+const safeMathLog = Math.log;
+const safeMathCos = Math.cos;
 const twoPi = 2 * Math.PI;
 
 /**
@@ -30,6 +33,6 @@ export function normal(rng: RandomGenerator, mean: number, stddev: number): numb
   // Box-Muller transform: each call consumes two values from the generator
   const u1 = 1 - uniformFloat64(rng);
   const u2 = uniformFloat64(rng);
-  const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(twoPi * u2);
+  const z = safeMathSqrt(-2 * safeMathLog(u1)) * safeMathCos(twoPi * u2);
   return mean + stddev * z;
 }
