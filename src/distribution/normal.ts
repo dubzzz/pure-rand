@@ -20,9 +20,6 @@ const twoPi = 2 * Math.PI;
  * // Generating standardized test scores (mean=100, stddev=15)
  * normal(rng, 100, 15)
  *
- * @remarks
- * Uses the Box-Muller transform. Each call consumes two values from the generator.
- *
  * @param rng - Instance of RandomGenerator to extract random values from
  * @param mean - Mean of the distribution
  * @param stddev - Standard deviation of the distribution
@@ -30,6 +27,7 @@ const twoPi = 2 * Math.PI;
  * @public
  */
 export function normal(rng: RandomGenerator, mean: number, stddev: number): number {
+  // Box-Muller transform: each call consumes two values from the generator
   const u1 = 1 - uniformFloat64(rng);
   const u2 = uniformFloat64(rng);
   const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(twoPi * u2);
