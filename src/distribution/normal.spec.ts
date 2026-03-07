@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import { normalFloat64 } from './normalFloat64';
+import { normal } from './normal';
 import { mersenne } from '../generator/mersenne';
 
-describe('normalFloat64', () => {
+describe('normal', () => {
   it('Should always generate finite values', () =>
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), (seed) => {
         const rng = mersenne(seed);
-        const v = normalFloat64(rng, 0, 1);
+        const v = normal(rng, 0, 1);
         expect(Number.isFinite(v)).toBe(true);
       }),
     ));
@@ -17,7 +17,7 @@ describe('normalFloat64', () => {
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), fc.double({ noNaN: true, noDefaultInfinity: true }), (seed, mean) => {
         const rng = mersenne(seed);
-        const v = normalFloat64(rng, mean, 0);
+        const v = normal(rng, mean, 0);
         // Use === so that -0 and +0 are considered equal
         expect(v === mean).toBe(true);
       }),
@@ -31,7 +31,7 @@ describe('normalFloat64', () => {
     const mean = 5;
     const stddev = 2;
     for (let i = 0; i < n; i++) {
-      const v = normalFloat64(rng, mean, stddev);
+      const v = normal(rng, mean, stddev);
       sum += v;
       sumSq += v * v;
     }

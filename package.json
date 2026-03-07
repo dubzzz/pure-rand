@@ -5,13 +5,13 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
-    "./distribution/exponentialFloat64": {
-      "require": "./lib/distribution/exponentialFloat64.js",
-      "import": "./lib/esm/distribution/exponentialFloat64.js"
+    "./distribution/exponential": {
+      "require": "./lib/distribution/exponential.js",
+      "import": "./lib/esm/distribution/exponential.js"
     },
-    "./distribution/normalFloat64": {
-      "require": "./lib/distribution/normalFloat64.js",
-      "import": "./lib/esm/distribution/normalFloat64.js"
+    "./distribution/normal": {
+      "require": "./lib/distribution/normal.js",
+      "import": "./lib/esm/distribution/normal.js"
     },
     "./distribution/poissonInt": {
       "require": "./lib/distribution/poissonInt.js",

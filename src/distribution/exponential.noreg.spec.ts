@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { normalFloat64 } from './normalFloat64';
+import { exponential } from './exponential';
 import { mersenne } from '../generator/mersenne';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
-describe('normalFloat64 [non regression]', () => {
+describe('exponential [non regression]', () => {
   it('Should not change its output except for major bumps', () => {
     // Remark:
     // ========================
@@ -15,7 +15,7 @@ describe('normalFloat64 [non regression]', () => {
     const rng: RandomGenerator = mersenne(0);
     const values: number[] = [];
     for (let idx = 0; idx !== 10; ++idx) {
-      const v = normalFloat64(rng, 0, 1);
+      const v = exponential(rng, 1);
       values.push(v);
     }
     expect(values).toMatchSnapshot();

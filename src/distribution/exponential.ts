@@ -12,7 +12,7 @@ import { uniformFloat64 } from './uniformFloat64';
  *
  * @public
  */
-export function exponentialFloat64(rng: RandomGenerator, lambda: number): number {
+export function exponential(rng: RandomGenerator, lambda: number): number {
   const u = 1 - uniformFloat64(rng);
   return -Math.log(u) / lambda;
 }

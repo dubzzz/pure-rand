@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`normalFloat64 [non regression] > Should not change its output except for major bumps 1`] = `
+exports[`normal [non regression] > Should not change its output except for major bumps 1`] = `
 [
   0.0713041421486971,
   0.9128415826379771,

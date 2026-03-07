@@ -16,7 +16,7 @@ const twoPi = 2 * Math.PI;
  *
  * @public
  */
-export function normalFloat64(rng: RandomGenerator, mean: number, stddev: number): number {
+export function normal(rng: RandomGenerator, mean: number, stddev: number): number {
   const u1 = 1 - uniformFloat64(rng);
   const u2 = uniformFloat64(rng);
   const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(twoPi * u2);
