@@ -84,7 +84,7 @@
   },
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
-    "@fast-check/packaged": "^0.5.0",
+    "@fast-check/packaged": "^0.6.0",
     "@vitest/coverage-v8": "4.0.18",
     "fast-check": "^4.6.0",
     "oxfmt": "^0.36.0",
