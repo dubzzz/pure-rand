@@ -16,9 +16,10 @@ jobs:
       )
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Required to checkout the repository code
-      pull-requests: write # Required to write comments on pull requests
-      id-token: write # Required for Claude, otherwise fails with "Could not fetch an OIDC token"
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
