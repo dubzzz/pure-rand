@@ -1,0 +1,35 @@
+name: Claude Review
+
+on:
+  issue_comment:
+    types: [created] # Runs your workflow when an issue or pull request comment is created
+  pull_request_review: # Runs your workflow when a pull request review is submitted
+    types: [submitted]
+
+jobs:
+  claude_review:
+    if: |
+      (github.actor == 'dubzzz') &&
+      (
+        (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/claude-review')) ||
+        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '/claude-review'))
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read # Required for Claude to read CI results on PRs
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+      - name: Run Claude Code for Reviews
+        id: claude
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: '/claude-review'
+          prompt: 'Review this pull request. Analyze the diff for bugs, security issues, performance problems and code quality. Provide constructive feedback as PR review comments.'
