@@ -16,10 +16,9 @@ jobs:
       )
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      id-token: write
+      contents: read # Required to checkout the repository code
+      pull-requests: write # Required to write comments on pull requests
+      id-token: write # Required for Claude, otherwise fails with "Could not fetch an OIDC token"
       actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
@@ -32,3 +31,4 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: '/claude-review'
+          prompt: '/claude-review Review this pull request. Analyze the diff for bugs, security issues, performance problems and code quality. Provide constructive feedback as PR review comments.'
