@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { mersenne, mersenneFromState } from './mersenne';
+import { mersenne, mersenneByArray, mersenneFromState } from './mersenne';
 import * as p from './RandomGenerator.properties';
 
 describe('mersenne', () => {
@@ -140,4 +140,71 @@ describe('mersenne', () => {
   it('Should generate values between -2**31 and 2**31 -1', () => fc.assert(p.valuesInRange(mersenne)));
   it('Should impact itself with next', () => fc.assert(p.changeSelfWithNext(mersenne)));
   it('Should not impact clones when impacting itself on next', () => fc.assert(p.noChangeOnClonedWithNext(mersenne)));
+});
+
+describe('mersenneByArray', () => {
+  it('Should produce the canonical sequence for seeds=[0x123, 0x234, 0x345, 0x456]', () => {
+    // Reference values from the original MT reference implementation (mt19937ar.c):
+    //   http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/MT2002/CODES/mt19937ar.c
+    // The C program seeds with init_by_array({0x123, 0x234, 0x345, 0x456}, 4)
+    // and then calls genrand_int32() 1000 times. The first 10 expected values (unsigned):
+    //   1067595299 955945823 477289528 4107218783 4228976476
+    //   3344332714 3355579695  227628506  810200273 2591290167
+    const g = mersenneByArray([0x123, 0x234, 0x345, 0x456]);
+    const data: number[] = [];
+    for (let i = 0; i < 10; i++) data.push(g.next());
+    expect(data).toEqual(
+      [1067595299, 955945823, 477289528, 4107218783, 4228976476, 3344332714, 3355579695, 227628506, 810200273, 2591290167].map(
+        (v) => v | 0,
+      ),
+    );
+  });
+
+  it('Should produce a different sequence than single-seed mersenne', () => {
+    // A single-element array seed should differ from mersenne(seed) because
+    // initByArray uses a different initialisation algorithm.
+    const g1 = mersenneByArray([42]);
+    const g2 = mersenne(42);
+    const seq1 = Array.from({ length: 10 }, () => g1.next());
+    const seq2 = Array.from({ length: 10 }, () => g2.next());
+    expect(seq1).not.toEqual(seq2);
+  });
+
+  it('Should return the same sequence given the same seed array', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), fc.nat(20), (seeds, offset, num) => {
+        const g1 = mersenneByArray(seeds);
+        const g2 = mersenneByArray(seeds);
+        for (let i = 0; i < offset; i++) { g1.next(); g2.next(); }
+        const seq1 = Array.from({ length: num }, () => g1.next());
+        const seq2 = Array.from({ length: num }, () => g2.next());
+        expect(seq1).toEqual(seq2);
+      }),
+    );
+  });
+
+  it('Should generate values between -2**31 and 2**31 -1', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), (seeds, offset) => {
+        const g = mersenneByArray(seeds);
+        for (let i = 0; i < offset; i++) g.next();
+        const value = g.next();
+        expect(value).toBeGreaterThanOrEqual(-0x80000000);
+        expect(value).toBeLessThanOrEqual(0x7fffffff);
+      }),
+    );
+  });
+
+  it('Should not impact clones when impacting itself on next', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(50), (seeds, offset) => {
+        const g = mersenneByArray(seeds);
+        for (let i = 0; i < offset; i++) g.next();
+        const clone = g.clone();
+        const stateBefore = JSON.stringify(g);
+        g.next();
+        expect(JSON.stringify(clone)).toBe(stateBefore);
+      }),
+    );
+  });
 });

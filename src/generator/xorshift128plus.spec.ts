@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { xorshift128plus, xorshift128plusFromState } from './xorshift128plus';
+import { xorshift128plus, xorshift128plusByArray, xorshift128plusFromState } from './xorshift128plus';
 import * as p from './RandomGenerator.properties';
 
 describe('xorshift128plus', () => {
@@ -100,4 +100,52 @@ describe('xorshift128plus', () => {
     fc.assert(p.noChangeOnClonedWithNext(xorshift128plus)));
   it('Should not impact clones when impacting itself on jump', () =>
     fc.assert(p.noChangeOnClonedWithJump(xorshift128plus)));
+});
+
+describe('xorshift128plusByArray', () => {
+  it('Should produce a different sequence than single-seed xorshift128plus', () => {
+    const g1 = xorshift128plusByArray([42]);
+    const g2 = xorshift128plus(42);
+    const seq1 = Array.from({ length: 10 }, () => g1.next());
+    const seq2 = Array.from({ length: 10 }, () => g2.next());
+    expect(seq1).not.toEqual(seq2);
+  });
+
+  it('Should return the same sequence given the same seed array', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), fc.nat(20), (seeds, offset, num) => {
+        const g1 = xorshift128plusByArray(seeds);
+        const g2 = xorshift128plusByArray(seeds);
+        for (let i = 0; i < offset; i++) { g1.next(); g2.next(); }
+        const seq1 = Array.from({ length: num }, () => g1.next());
+        const seq2 = Array.from({ length: num }, () => g2.next());
+        expect(seq1).toEqual(seq2);
+      }),
+    );
+  });
+
+  it('Should generate values between -2**31 and 2**31 -1', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), (seeds, offset) => {
+        const g = xorshift128plusByArray(seeds);
+        for (let i = 0; i < offset; i++) g.next();
+        const value = g.next();
+        expect(value).toBeGreaterThanOrEqual(-0x80000000);
+        expect(value).toBeLessThanOrEqual(0x7fffffff);
+      }),
+    );
+  });
+
+  it('Should not impact clones when impacting itself on next', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(50), (seeds, offset) => {
+        const g = xorshift128plusByArray(seeds);
+        for (let i = 0; i < offset; i++) g.next();
+        const clone = g.clone();
+        const stateBefore = JSON.stringify(g);
+        g.next();
+        expect(JSON.stringify(clone)).toBe(stateBefore);
+      }),
+    );
+  });
 });
