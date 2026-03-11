@@ -41,4 +41,22 @@ jobs:
             - Security implications
             - Performance considerations
 
+            Always refer to relevant skills when doing reviews.
             Provide detailed feedback using inline comments for specific issues.
+
+            **Tools Available:**
+            Use the GitHub MCP tools to:
+            1. Fetch PR diff
+            2. Add inline comments to pending review
+            3. Submit the review with appropriate status
+
+            Begin your review now.
+          allowed_tools: >-
+            mcp__github__get_pull_request_diff,
+            mcp__github__create_pending_pull_request_review,
+            mcp__github__add_comment_to_pending_review,
+            mcp__github__submit_pending_pull_request_review,
+            mcp__github__get_pull_request,
+            mcp__github__list_commits,
+            Read,
+            Glob
