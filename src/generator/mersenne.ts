@@ -133,19 +133,16 @@ class MersenneTwister implements JumpableRandomGenerator {
   }
 }
 
-function addState(mt: number[], idx: number, originalMt: number[], originalIndex: number): void {
-  const endLoop1 = originalIndex >= idx ? N - originalIndex : N - idx;
-  for (let i = 0; i !== endLoop1; ++i) {
-    mt[i + idx] ^= originalMt[i + originalIndex];
-  }
-  const endLoop2 = originalIndex >= idx ? N - idx : N - originalIndex;
-  const offsetStates = originalIndex >= idx ? 0 : N;
-  const offsetOtherStates = originalIndex >= idx ? N : 0;
-  for (let i = endLoop1; i !== endLoop2; ++i) {
-    mt[i + idx - offsetStates] ^= originalMt[i + originalIndex - offsetOtherStates];
-  }
-  for (let i = endLoop2; i !== N; ++i) {
-    mt[i + idx - N] ^= originalMt[i + originalIndex - N];
+function addState(mt: number[], idx: number, originalMt: number[], originalIdx: number): void {
+  let i = 0;
+  if (originalIdx >= idx) {
+    for (; i < N - originalIdx; i++) mt[i + idx] ^= originalMt[i + originalIdx];
+    for (; i < N - idx; i++) mt[i + idx] ^= originalMt[i + originalIdx - N];
+    for (; i < N; i++) mt[i + idx - N] ^= originalMt[i + originalIdx - N];
+  } else {
+    for (; i < N - idx; i++) mt[i + idx] ^= originalMt[i + originalIdx];
+    for (; i < N - originalIdx; i++) mt[i + idx - N] ^= originalMt[i + originalIdx];
+    for (; i < N; i++) mt[i + idx - N] ^= originalMt[i + originalIdx - N];
   }
 }
 
