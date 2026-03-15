@@ -150,16 +150,14 @@ function addState(mt: number[], idx: number, originalMt: number[], originalIndex
 }
 
 function nextForJump(mt: number[], idx: number) {
-  // WARNING: Same as `twist` but with `|` instead of `+`.
-  // I suspect it to be the reason of all the problems given Claude changed the `|` into a `+` for its fixed version.
   if (idx < N - M) {
-    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
   } else if (idx < N - 1) {
-    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
   } else {
-    const y = (mt[idx] & MASK_UPPER) | (mt[0] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) + (mt[0] & MASK_LOWER);
     mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
   }
   return idx < N - 1 ? idx + 1 : 0;
