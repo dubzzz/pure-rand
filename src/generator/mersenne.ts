@@ -85,12 +85,12 @@ class MersenneTwister implements JumpableRandomGenerator {
       0xddbf609, 0x85e3b39b, 0xb80275ee, 0xb81c4237, 0x357f0d55, 0xa6f7961e, 0x2165983a, 0x5d5efeb3, 0xcf7cca8e, 0xfa77c514, 0xcc837b01, 0x7bc17aff, 0x827cb922, 0xbc650307, 0xd4425599, 0x2e9eaf20,
       0x97190dea, 0xe7396d2f, 0x83a292f8, 0xab2425a1, 0x3b6a1a4e, 0x569029fb, 0xd5cf5a25, 0xddd095a2, 0x51bb7fcf, 0x3489f041, 0x34f836c9, 0x4e3f882b, 0xdbb3c823, 0x46f21d5a, 0x8d38f69c, 0x1,
     ];
-    this.nextForJump();
+    this.index = nextForJump(this.states, this.index);
     for (let i = 19935; i > 0; --i) {
       if (jump[i >>> 5] & (1 << (i & 0x1f))) {
         this.addState(this);
       }
-      this.nextForJump();
+      this.index = nextForJump(this.states, this.index);
     }
   }
   private addState(other: MersenneTwister): void {
@@ -113,22 +113,22 @@ class MersenneTwister implements JumpableRandomGenerator {
     this.states = states;
     this.index = idx;
   }
-  private nextForJump() {
-    const states = this.states.slice(0);
-    const idx = this.index;
-    if (idx < N - M) {
-      const y = (states[idx] & MASK_UPPER) | (states[idx + 1] & MASK_LOWER);
-      states[idx] = states[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
-    } else if (idx < N - 1) {
-      const y = (states[idx] & MASK_UPPER) | (states[idx + 1] & MASK_LOWER);
-      states[idx] = states[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
-    } else {
-      const y = (states[idx] & MASK_UPPER) | (states[0] & MASK_LOWER);
-      states[idx] = states[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
-    }
-    this.states = states;
-    this.index = idx < N - 1 ? idx + 1 : 0;
+}
+
+function nextForJump(mt: number[], idx: number) {
+  // WARNING: Same as `twist` but with `|` instead of `+`.
+  // I suspect it to be the reason of all the problems given Claude changed the `|` into a `+` for its fixed version.
+  if (idx < N - M) {
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
+    mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
+  } else if (idx < N - 1) {
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
+    mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
+  } else {
+    const y = (mt[idx] & MASK_UPPER) | (mt[0] & MASK_LOWER);
+    mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
   }
+  return idx < N - 1 ? idx + 1 : 0;
 }
 
 function twist(prev: number[]): number[] {
