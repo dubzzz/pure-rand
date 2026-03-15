@@ -141,9 +141,8 @@ describe('mersenne', () => {
     //     the jump of numpy changes pos = 624 to pos = 0 without calling twist internally
     const data = [];
     for (let idx = 0; idx !== 100; ++idx) {
-      const [v, nextG] = g.next();
+      const v = g.next();
       data.push(v);
-      g = nextG;
     }
     // should be equivalent to the following Python code:
     // from numpy.random import MT19937
