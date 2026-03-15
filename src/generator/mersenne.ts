@@ -85,34 +85,32 @@ class MersenneTwister implements JumpableRandomGenerator {
       0xddbf609, 0x85e3b39b, 0xb80275ee, 0xb81c4237, 0x357f0d55, 0xa6f7961e, 0x2165983a, 0x5d5efeb3, 0xcf7cca8e, 0xfa77c514, 0xcc837b01, 0x7bc17aff, 0x827cb922, 0xbc650307, 0xd4425599, 0x2e9eaf20,
       0x97190dea, 0xe7396d2f, 0x83a292f8, 0xab2425a1, 0x3b6a1a4e, 0x569029fb, 0xd5cf5a25, 0xddd095a2, 0x51bb7fcf, 0x3489f041, 0x34f836c9, 0x4e3f882b, 0xdbb3c823, 0x46f21d5a, 0x8d38f69c, 0x1,
     ];
+    const originalStates = this.states;
+    const originalIndex = this.index;
     this.states = this.states.slice(); // Cloning states so that we don't impact clones
-    this.index = nextForJump(this.states, this.index);
+    this.index = nextForJump(this.states, this.index); // states and index of this
     for (let i = 19935; i > 0; --i) {
       if (jump[i >>> 5] & (1 << (i & 0x1f))) {
-        this.addState(this);
+        addState(this.states, this.index, originalStates, originalIndex);
       }
-      this.index = nextForJump(this.states, this.index);
+      this.index = nextForJump(this.states, this.index); // states and index of "copy"
     }
   }
-  private addState(other: MersenneTwister): void {
-    const idx = this.index;
-    const otherIdx = other.index;
-    const states = this.states.slice(0);
-    const endLoop1 = otherIdx >= idx ? N - otherIdx : N - idx;
-    for (let i = 0; i !== endLoop1; ++i) {
-      states[i + idx] ^= other.states[i + otherIdx];
-    }
-    const endLoop2 = otherIdx >= idx ? N - idx : N - otherIdx;
-    const offsetStates = otherIdx >= idx ? 0 : N;
-    const offsetOtherStates = otherIdx >= idx ? N : 0;
-    for (let i = endLoop1; i !== endLoop2; ++i) {
-      states[i + idx - offsetStates] ^= other.states[i + otherIdx - offsetOtherStates];
-    }
-    for (let i = endLoop2; i !== N; ++i) {
-      states[i + idx - N] ^= other.states[i + otherIdx - N];
-    }
-    this.states = states;
-    this.index = idx;
+}
+
+function addState(mt: number[], idx: number, originalMt: number[], originalIndex: number): void {
+  const endLoop1 = originalIndex >= idx ? N - originalIndex : N - idx;
+  for (let i = 0; i !== endLoop1; ++i) {
+    mt[i + idx] ^= originalMt[i + originalIndex];
+  }
+  const endLoop2 = originalIndex >= idx ? N - idx : N - originalIndex;
+  const offsetStates = originalIndex >= idx ? 0 : N;
+  const offsetOtherStates = originalIndex >= idx ? N : 0;
+  for (let i = endLoop1; i !== endLoop2; ++i) {
+    mt[i + idx - offsetStates] ^= originalMt[i + originalIndex - offsetOtherStates];
+  }
+  for (let i = endLoop2; i !== N; ++i) {
+    mt[i + idx - N] ^= originalMt[i + originalIndex - N];
   }
 }
 
