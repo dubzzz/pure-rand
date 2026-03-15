@@ -168,14 +168,14 @@ function nextForJump(mt: number[], idx: number) {
 function twist(prev: number[]): number[] {
   const mt = prev.slice();
   for (let idx = 0; idx !== N - M; ++idx) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
   }
   for (let idx = N - M; idx !== N - 1; ++idx) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
   }
-  const y = (mt[N - 1] & MASK_UPPER) + (mt[0] & MASK_LOWER);
+  const y = (mt[N - 1] & MASK_UPPER) | (mt[0] & MASK_LOWER);
   mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
   return mt;
 }
