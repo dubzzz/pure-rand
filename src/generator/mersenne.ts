@@ -85,6 +85,7 @@ class MersenneTwister implements JumpableRandomGenerator {
       0xddbf609, 0x85e3b39b, 0xb80275ee, 0xb81c4237, 0x357f0d55, 0xa6f7961e, 0x2165983a, 0x5d5efeb3, 0xcf7cca8e, 0xfa77c514, 0xcc837b01, 0x7bc17aff, 0x827cb922, 0xbc650307, 0xd4425599, 0x2e9eaf20,
       0x97190dea, 0xe7396d2f, 0x83a292f8, 0xab2425a1, 0x3b6a1a4e, 0x569029fb, 0xd5cf5a25, 0xddd095a2, 0x51bb7fcf, 0x3489f041, 0x34f836c9, 0x4e3f882b, 0xdbb3c823, 0x46f21d5a, 0x8d38f69c, 0x1,
     ];
+    this.states = this.states.slice(); // Cloning states so that we don't impact clones
     this.index = nextForJump(this.states, this.index);
     for (let i = 19935; i > 0; --i) {
       if (jump[i >>> 5] & (1 << (i & 0x1f))) {
