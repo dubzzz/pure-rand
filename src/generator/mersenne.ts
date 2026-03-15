@@ -153,14 +153,16 @@ function nextForJump(mt: number[], idx: number) {
   if (idx < N - M) {
     const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
+    return idx + 1;
   } else if (idx < N - 1) {
     const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
+    return idx + 1;
   } else {
     const y = (mt[idx] & MASK_UPPER) + (mt[0] & MASK_LOWER);
     mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
+    return 0;
   }
-  return idx < N - 1 ? idx + 1 : 0;
 }
 
 function twist(prev: number[]): number[] {
