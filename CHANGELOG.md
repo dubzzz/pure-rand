@@ -1,5 +1,35 @@
 # CHANGELOG 8.X
 
+## 8.1.0
+
+### Features
+
+- [99b7b16](https://github.com/dubzzz/pure-rand/commit/99b7b16) ✨ Add `uniformFloat64` distribution (#907)
+- [ea5bca4](https://github.com/dubzzz/pure-rand/commit/ea5bca4) ✨ Add `uniformFloat32` distribution (#906)
+
+### Fixes
+
+- [eccea24](https://github.com/dubzzz/pure-rand/commit/eccea24) 🔨 Add utility script to list commits for changelog (#949)
+- [118db91](https://github.com/dubzzz/pure-rand/commit/118db91) 👷 Reconfigure review agent (#939)
+- [5bc32e2](https://github.com/dubzzz/pure-rand/commit/5bc32e2) 👷 Delete claude-review.yml (#938)
+- [eb7a2e3](https://github.com/dubzzz/pure-rand/commit/eb7a2e3) 👷 Add review prompt to Claude review action (#937)
+- [ba9a380](https://github.com/dubzzz/pure-rand/commit/ba9a380) 👷 Refactor claude-review conditions and parameters (#936)
+- [be8917e](https://github.com/dubzzz/pure-rand/commit/be8917e) 👷 Fix plugins configuration in claude-review.yml (#935)
+- [c751e31](https://github.com/dubzzz/pure-rand/commit/c751e31) 👷 Configure review agent (#934)
+- [0c85094](https://github.com/dubzzz/pure-rand/commit/0c85094) 👷 Reduce permissions and drop prompt (#933)
+- [1301a0f](https://github.com/dubzzz/pure-rand/commit/1301a0f) 👷 Add back hardcoded prompt (#932)
+- [7a138a3](https://github.com/dubzzz/pure-rand/commit/7a138a3) 👷 Drop hardcoded prompt (#931)
+- [afae304](https://github.com/dubzzz/pure-rand/commit/afae304) 👷 Unlock permissions for reviews from Claude (#930)
+- [1758d7d](https://github.com/dubzzz/pure-rand/commit/1758d7d) 👷 Add Claude Review workflow for PR comments (#929)
+- [b07989f](https://github.com/dubzzz/pure-rand/commit/b07989f) 🔧 Change Claude flow to append (not replace) system prompt (#921)
+- [3f48c14](https://github.com/dubzzz/pure-rand/commit/3f48c14) ✅ Check for missing imports in test-bundle (#920)
+- [d623bb1](https://github.com/dubzzz/pure-rand/commit/d623bb1) 🔧 Refactor Claude workflow configuration format (#919)
+- [9b8e092](https://github.com/dubzzz/pure-rand/commit/9b8e092) 🔧 Change the model for Claude action (#916)
+- [d37ebe3](https://github.com/dubzzz/pure-rand/commit/d37ebe3) 🔧 Refine the GH Action triggering Claude (#915)
+- [73ca19b](https://github.com/dubzzz/pure-rand/commit/73ca19b) ✅ Run distributions against native (#914)
+- [043ac19](https://github.com/dubzzz/pure-rand/commit/043ac19) 👷 Restrict Claude workflow to dubzzz actor only (#913)
+- [3c49194](https://github.com/dubzzz/pure-rand/commit/3c49194) 👷 Switch to OAuth for GH Action on Claude (#908)
+
 ## 8.0.0
 
 ### Migration from 7.x to 8.0
