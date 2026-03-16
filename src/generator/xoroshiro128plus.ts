@@ -67,7 +67,7 @@ export function xoroshiro128plusFromState(state: readonly number[]): JumpableRan
 }
 
 export function xoroshiro128plus(seed: number): JumpableRandomGenerator {
-  return new XoroShiro128Plus(-1, ~seed, seed | 0, 0);
+  return xoroshiro128plusByArray([seed]);
 }
 
 /**

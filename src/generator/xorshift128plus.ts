@@ -68,7 +68,7 @@ export function xorshift128plusFromState(state: readonly number[]): JumpableRand
 }
 
 export function xorshift128plus(seed: number): JumpableRandomGenerator {
-  return new XorShift128Plus(-1, ~seed, seed | 0, 0);
+  return xorshift128plusByArray([seed]);
 }
 
 /**
