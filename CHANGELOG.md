@@ -1,5 +1,17 @@
 # CHANGELOG 8.X
 
+## 8.2.0
+
+### Features
+
+- [d9aa940](https://github.com/dubzzz/pure-rand/commit/d9aa940) ⚡ Faster init for `mersenne` (#952)
+- [48b0393](https://github.com/dubzzz/pure-rand/commit/48b0393) ⚡️ Faster twist in `mersenne` (#951)
+- [95ff082](https://github.com/dubzzz/pure-rand/commit/95ff082) ⚡️ Less memory allocations for `mersenne` (#948)
+
+### Fixes
+
+- [40b4894](https://github.com/dubzzz/pure-rand/commit/40b4894) ✅ Compare `native` generator against others (#953)
+
 ## 8.1.0
 
 ### Features
