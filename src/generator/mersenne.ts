@@ -105,10 +105,9 @@ class MersenneTwister implements JumpableRandomGenerator {
     // equivalent to 2^128 calls to next()
     // Implementation is derived from the one in numpy
     // https://github.com/numpy/numpy/blob/c53b2eb729bae1f248a2654dfcfa4a3dd3e2902b/numpy/random/src/mt19937/mt19937-jump.c
-    const originalStates = this.states;
+    const originalStates = this.states.slice();
     const originalIndex = this.index;
-    this.states = this.states.slice(); // Cloning states so that we don't impact clones
-    this.index = nextForJump(this.states, this.index); // states and index of this
+    this.index = twistedNext(this.states, this.index); // states and index of this
     // https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.c#L71-L72
     // We burn: 19935 and 19934 as they result into get_coef(pf, i) == 0
     // So we start the loop with "19933 - 1"
@@ -116,7 +115,7 @@ class MersenneTwister implements JumpableRandomGenerator {
       if (JUMP_COEFS[i >>> 5] & (1 << (i & 0x1f))) {
         addState(this.states, this.index, originalStates, originalIndex);
       }
-      this.index = nextForJump(this.states, this.index); // states and index of "copy"
+      this.index = twistedNext(this.states, this.index); // states and index of "copy"
     }
     // https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.c#L85-L88
     // We fall in the case: get_coef(pf, 0) != 0
@@ -134,22 +133,6 @@ function addState(mt: number[], idx: number, originalMt: number[], originalIdx: 
     for (; i < N - idx; i++) mt[i + idx] ^= originalMt[i + originalIdx];
     for (; i < N - originalIdx; i++) mt[i + idx - N] ^= originalMt[i + originalIdx];
     for (; i < N; i++) mt[i + idx - N] ^= originalMt[i + originalIdx - N];
-  }
-}
-
-function nextForJump(mt: number[], idx: number) {
-  if (idx < N - M) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
-    mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
-    return idx + 1;
-  } else if (idx < N - 1) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
-    mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
-    return idx + 1;
-  } else {
-    const y = (mt[idx] & MASK_UPPER) + (mt[0] & MASK_LOWER);
-    mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
-    return 0;
   }
 }
 
