@@ -4,9 +4,10 @@ import { congruential32 } from './congruential32';
 import { mersenne } from './mersenne';
 import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
+import type { RandomGenerator } from '../types/RandomGenerator';
 
 const numInts = 5_000;
-const algorithms = [congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+const algorithms = [native, congruential32, mersenne, xoroshiro128plus, xorshift128plus];
 const algorithmsWithJump = algorithms.filter(
   (algorithm): algorithm is (seed: number) => JumpableRandomGenerator => 'jump' in algorithm(0),
 );
@@ -44,3 +45,11 @@ describe('generator', () => {
     }
   });
 });
+
+function native(): RandomGenerator {
+  return {
+    clone: () => native(),
+    getState: () => [],
+    next: () => Math.random(),
+  };
+}
