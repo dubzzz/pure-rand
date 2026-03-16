@@ -20,7 +20,7 @@ class MersenneTwister implements RandomGenerator {
     private index: number,
   ) {}
   clone(): MersenneTwister {
-    return new MersenneTwister(this.states, this.index);
+    return new MersenneTwister(this.states.slice(), this.index);
   }
   next(): number {
     let y = this.states[this.index];
@@ -28,10 +28,7 @@ class MersenneTwister implements RandomGenerator {
     y ^= (y << S) & B;
     y ^= (y << T) & C;
     y ^= y >>> L;
-    if (++this.index >= N) {
-      this.states = twist(this.states);
-      this.index = 0;
-    }
+    this.index = twistedNext(this.states, this.index);
     return y;
   }
   getState(): readonly number[] {
@@ -39,19 +36,26 @@ class MersenneTwister implements RandomGenerator {
   }
 }
 
-function twist(prev: number[]): number[] {
-  const mt = prev.slice();
-  for (let idx = 0; idx !== N - M; ++idx) {
+function twistedNext(mt: number[], idx: number) {
+  if (idx < N - M) {
     const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
-  }
-  for (let idx = N - M; idx !== N - 1; ++idx) {
+    return idx + 1;
+  } else if (idx < N - 1) {
     const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
+    return idx + 1;
+  } else {
+    const y = (mt[idx] & MASK_UPPER) + (mt[0] & MASK_LOWER);
+    mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
+    return 0;
   }
-  const y = (mt[N - 1] & MASK_UPPER) + (mt[0] & MASK_LOWER);
-  mt[N - 1] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
-  return mt;
+}
+
+function twist(mt: number[]) {
+  for (let idx = 0; idx !== N; ++idx) {
+    twistedNext(mt, idx);
+  }
 }
 
 export function mersenneFromState(state: readonly number[]): RandomGenerator {
@@ -69,5 +73,6 @@ export function mersenne(seed: number): RandomGenerator {
     const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
     out[idx] = (Math.imul(F, xored) + idx) | 0;
   }
-  return new MersenneTwister(twist(out), 0);
+  twist(out);
+  return new MersenneTwister(out, 0);
 }
