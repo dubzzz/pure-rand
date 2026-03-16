@@ -67,11 +67,10 @@ export function mersenneFromState(state: readonly number[]): RandomGenerator {
 }
 
 export function mersenne(seed: number): RandomGenerator {
-  const out = Array(N);
-  out[0] = seed;
+  const out: number[] = [seed | 0];
   for (let idx = 1; idx !== N; ++idx) {
     const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-    out[idx] = (Math.imul(F, xored) + idx) | 0;
+    out.push((Math.imul(F, xored) + idx) | 0);
   }
   twist(out);
   return new MersenneTwister(out, 0);
