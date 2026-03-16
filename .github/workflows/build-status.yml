@@ -98,6 +98,8 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Install last published version for comparison
+        run: pnpm add pure-rand-published@npm:pure-rand
       - name: Bench tests
         id: bench
         run: pnpm bench | tee bench-output.txt
