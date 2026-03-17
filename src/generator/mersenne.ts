@@ -138,15 +138,15 @@ function addState(mt: number[], idx: number, originalMt: number[], originalIdx: 
 
 function twistedNext(mt: number[], idx: number) {
   if (idx < N - M) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M] ^ (y >>> 1) ^ (-(y & 1) & A);
     return idx + 1;
   } else if (idx < N - 1) {
-    const y = (mt[idx] & MASK_UPPER) + (mt[idx + 1] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) | (mt[idx + 1] & MASK_LOWER);
     mt[idx] = mt[idx + M - N] ^ (y >>> 1) ^ (-(y & 1) & A);
     return idx + 1;
   } else {
-    const y = (mt[idx] & MASK_UPPER) + (mt[0] & MASK_LOWER);
+    const y = (mt[idx] & MASK_UPPER) | (mt[0] & MASK_LOWER);
     mt[idx] = mt[M - 1] ^ (y >>> 1) ^ (-(y & 1) & A);
     return 0;
   }
@@ -167,11 +167,10 @@ export function mersenneFromState(state: readonly number[]): JumpableRandomGener
 }
 
 export function mersenne(seed: number): JumpableRandomGenerator {
-  const out = Array(N);
-  out[0] = seed;
+  const out: number[] = [seed | 0];
   for (let idx = 1; idx !== N; ++idx) {
     const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-    out[idx] = (Math.imul(F, xored) + idx) | 0;
+    out.push((Math.imul(F, xored) + idx) | 0);
   }
   twist(out);
   return new MersenneTwister(out, 0);
