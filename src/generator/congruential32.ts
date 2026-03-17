@@ -51,7 +51,7 @@ class LinearCongruential32 implements JumpableRandomGenerator {
 }
 
 function computeNextSeed(seed: number) {
-  return (seed * MULTIPLIER + INCREMENT) & MASK;
+  return (Math.imul(seed, MULTIPLIER) + INCREMENT) & MASK;
 }
 function computeValueFromNextSeed(nextseed: number) {
   return (nextseed & MASK_2) >> 16;
