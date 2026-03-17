@@ -1,8 +1,7 @@
 import type { RandomGenerator } from '../types/RandomGenerator';
 
-const divisor = 1 << 24;
-const scale = 1 / divisor;
-const mask = divisor - 1;
+const scale = 5.960464477539063e-8; // = 1 / divisor (with divisor = 1 << 24)
+const mask = 16777215; // = divisor - 1
 
 /**
  * Uniformly generate random 32-bit floating point values between 0 (included) and 1 (excluded)
