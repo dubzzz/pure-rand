@@ -2,7 +2,6 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 const N = 624;
 const M = 397;
-const R = 31;
 const A = 0x9908b0df;
 const F = 1812433253;
 const U = 11;
@@ -11,8 +10,8 @@ const B = 0x9d2c5680;
 const T = 15;
 const C = 0xefc60000;
 const L = 18;
-const MASK_LOWER = 2 ** R - 1;
-const MASK_UPPER = 2 ** R;
+const MASK_LOWER = 2147483647; // = 2 ** R - 1 (with R = 31)
+const MASK_UPPER = 2147483648; // = 2 ** R
 
 // Derived from https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.h#L26
 const JUMP_COEFS = [

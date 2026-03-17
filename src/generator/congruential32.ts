@@ -6,7 +6,7 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 const MULTIPLIER: number = 0x000343fd;
 const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
-const MASK_2: number = (1 << 31) - 1;
+const MASK_2: number = -2147483649; // = (1 << 31) - 1
 
 // Jump constants: equivalent to 2^16 calls to next() (= 3 * 2^16 LCG steps).
 // Precomputed using the LCG jump-ahead algorithm from:
