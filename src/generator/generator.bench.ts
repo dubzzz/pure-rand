@@ -34,16 +34,17 @@ describe('generator', () => {
       });
     }
   });
-  describe(`${numInts} jump`, () => {
-    for (const algorithm of algorithmsWithJump) {
+  for (const algorithm of algorithmsWithJump) {
+    describe(algorithm.name, () => {
       const rng = algorithm(0);
-      bench(algorithm.name, () => {
-        for (let i = 0; i !== numInts; ++i) {
-          rng.jump();
-        }
+      bench('next', () => {
+        rng.next();
       });
-    }
-  });
+      bench('jump', () => {
+        rng.jump();
+      });
+    });
+  }
 });
 
 function native(): RandomGenerator {
