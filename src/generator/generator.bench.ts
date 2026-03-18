@@ -32,17 +32,27 @@ describe('generator', () => {
     }
   });
   for (const algorithm of algorithms) {
+    if (algorithm === native) {
+      continue;
+    }
     describe(algorithm.name, () => {
       const rng = algorithm(0);
       let seed = 0;
-      bench('init', () => {
-        seed = (seed + 1) | 0;
-        algorithm(seed);
-      });
+      bench(
+        'init',
+        () => {
+          algorithm(seed);
+        },
+        {
+          setup: () => {
+            seed = (seed + 1) | 0;
+          },
+        },
+      );
       bench('next', () => {
         rng.next();
       });
-      if ('jump' in rng) {
+      if (isJumpableRandomGenerator(rng)) {
         bench('jump', () => {
           rng.jump();
         });
@@ -57,4 +67,8 @@ function native(): RandomGenerator {
     getState: () => [],
     next: () => Math.random(),
   };
+}
+
+function isJumpableRandomGenerator(rng: RandomGenerator): rng is JumpableRandomGenerator {
+  return 'jump' in rng;
 }
