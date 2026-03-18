@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 
-import { congruential32, congruential32FromState } from './congruential32';
+import { congruential32, congruential32ByArray, congruential32FromState } from './congruential32';
 import * as p from './RandomGenerator.properties';
 
 describe('congruential32', () => {
@@ -167,4 +167,39 @@ describe('congruential32', () => {
     fc.assert(p.noChangeOnClonedWithNext(congruential32)));
   it('Should not impact clones when impacting itself on jump', () =>
     fc.assert(p.noChangeOnClonedWithJump(congruential32)));
+});
+
+describe('congruential32ByArray', () => {
+  it('Should produce a different sequence than single-seed congruential32', () => {
+    const g1 = congruential32ByArray([42]);
+    const g2 = congruential32(42);
+    const seq1 = Array.from({ length: 10 }, () => g1.next());
+    const seq2 = Array.from({ length: 10 }, () => g2.next());
+    expect(seq1).not.toEqual(seq2);
+  });
+
+  it('Should return the same sequence given the same seed array', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), fc.nat(20), (seeds, offset, num) => {
+        const g1 = congruential32ByArray(seeds);
+        const g2 = congruential32ByArray(seeds);
+        for (let i = 0; i < offset; i++) { g1.next(); g2.next(); }
+        const seq1 = Array.from({ length: num }, () => g1.next());
+        const seq2 = Array.from({ length: num }, () => g2.next());
+        expect(seq1).toEqual(seq2);
+      }),
+    );
+  });
+
+  it('Should generate values between -2**31 and 2**31 -1', () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 20 }), fc.nat(100), (seeds, offset) => {
+        const g = congruential32ByArray(seeds);
+        for (let i = 0; i < offset; i++) g.next();
+        const value = g.next();
+        expect(value).toBeGreaterThanOrEqual(-0x80000000);
+        expect(value).toBeLessThanOrEqual(0x7fffffff);
+      }),
+    );
+  });
 });
