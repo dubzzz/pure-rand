@@ -8,9 +8,6 @@ import type { RandomGenerator } from '../types/RandomGenerator';
 
 const numInts = 5_000;
 const algorithms = [native, congruential32, mersenne, xoroshiro128plus, xorshift128plus];
-const algorithmsWithJump = algorithms.filter(
-  (algorithm): algorithm is (seed: number) => JumpableRandomGenerator => 'jump' in algorithm(0),
-);
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
@@ -34,15 +31,22 @@ describe('generator', () => {
       });
     }
   });
-  for (const algorithm of algorithmsWithJump) {
+  for (const algorithm of algorithms) {
     describe(algorithm.name, () => {
       const rng = algorithm(0);
+      let seed = 0;
+      bench('init', () => {
+        seed = (seed + 1) | 0;
+        algorithm(seed);
+      });
       bench('next', () => {
         rng.next();
       });
-      bench('jump', () => {
-        rng.jump();
-      });
+      if ('jump' in rng) {
+        bench('jump', () => {
+          rng.jump();
+        });
+      }
     });
   }
 });
