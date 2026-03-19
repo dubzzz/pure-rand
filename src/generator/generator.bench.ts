@@ -16,10 +16,10 @@ const algorithms = [
   { name: 'mersenne', factory: mersenne },
   { name: 'xoroshiro128plus', factory: xoroshiro128plus },
   { name: 'xorshift128plus', factory: xorshift128plus },
-  { name: 'congruential32', factory: await tryImportFromPublished('congruential32') },
-  { name: 'mersenne', factory: await tryImportFromPublished('mersenne') },
-  { name: 'xoroshiro128plus', factory: await tryImportFromPublished('xoroshiro128plus') },
-  { name: 'xorshift128plus', factory: await tryImportFromPublished('xorshift128plus') },
+  { name: 'congruential32 (published)', factory: await tryImportFromPublished('congruential32') },
+  { name: 'mersenne (published)', factory: await tryImportFromPublished('mersenne') },
+  { name: 'xoroshiro128plus (published)', factory: await tryImportFromPublished('xoroshiro128plus') },
+  { name: 'xorshift128plus (published)', factory: await tryImportFromPublished('xorshift128plus') },
 ].filter((algorithm): algorithm is Algorithm => algorithm.factory !== undefined);
 
 describe('generator', () => {
@@ -89,7 +89,7 @@ function isJumpableRandomGenerator(rng: RandomGenerator): rng is JumpableRandomG
 async function tryImportFromPublished<TPath extends string>(path: TPath): Promise<Factory | undefined> {
   try {
     // @ts-ignore, no such import in general case
-    const out = await import(`pure-rand-published/${path}`);
+    const out = await import(`pure-rand-published/generator/${path}`);
     return out[path];
   } catch {
     return undefined;
