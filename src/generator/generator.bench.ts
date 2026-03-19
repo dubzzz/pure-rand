@@ -6,15 +6,28 @@ import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
+type Factory = (seed: number) => RandomGenerator;
+type Algorithm = { name: string; factory: Factory };
+
 const numInts = 5_000;
-const algorithms = [native, congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+const algorithms = [
+  { name: 'native', factory: native },
+  { name: 'congruential32', factory: congruential32 },
+  { name: 'mersenne', factory: mersenne },
+  { name: 'xoroshiro128plus', factory: xoroshiro128plus },
+  { name: 'xorshift128plus', factory: xorshift128plus },
+  { name: 'congruential32', factory: await tryImportFromPublished('congruential32') },
+  { name: 'mersenne', factory: await tryImportFromPublished('mersenne') },
+  { name: 'xoroshiro128plus', factory: await tryImportFromPublished('xoroshiro128plus') },
+  { name: 'xorshift128plus', factory: await tryImportFromPublished('xorshift128plus') },
+].filter((algorithm): algorithm is Algorithm => algorithm.factory !== undefined);
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
     for (const algorithm of algorithms) {
       let seed = 0;
       bench(algorithm.name, () => {
-        const rng = algorithm(seed++);
+        const rng = algorithm.factory(seed++);
         for (let i = 0; i !== numInts; ++i) {
           rng.next();
         }
@@ -23,7 +36,7 @@ describe('generator', () => {
   });
   describe(`${numInts} next`, () => {
     for (const algorithm of algorithms) {
-      const rng = algorithm(0);
+      const rng = algorithm.factory(0);
       bench(algorithm.name, () => {
         for (let i = 0; i !== numInts; ++i) {
           rng.next();
@@ -32,16 +45,16 @@ describe('generator', () => {
     }
   });
   for (const algorithm of algorithms) {
-    if (algorithm === native) {
+    if (algorithm.name === 'native') {
       continue;
     }
     describe(algorithm.name, () => {
-      const rng = algorithm(0);
+      const rng = algorithm.factory(0);
       let seed = 0;
       bench(
         'init',
         () => {
-          algorithm(seed);
+          algorithm.factory(seed);
         },
         {
           setup: () => {
@@ -71,4 +84,14 @@ function native(): RandomGenerator {
 
 function isJumpableRandomGenerator(rng: RandomGenerator): rng is JumpableRandomGenerator {
   return 'jump' in rng;
+}
+
+async function tryImportFromPublished<TPath extends string>(path: TPath): Promise<Factory | undefined> {
+  try {
+    // @ts-ignore, no such import in general case
+    const out = await import(`pure-rand-published/${path}`);
+    return out[path];
+  } catch {
+    return undefined;
+  }
 }
