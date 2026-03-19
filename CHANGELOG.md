@@ -1,5 +1,19 @@
 # CHANGELOG 8.X
 
+## 8.3.0
+
+### Features
+
+- [cca8ab6](https://github.com/dubzzz/pure-rand/commit/cca8ab6) ⚡️ No compute at import time (pre-computed) (#959)
+- [faf00dc](https://github.com/dubzzz/pure-rand/commit/faf00dc) ⚡️ Faster congruential32 with imul (#958)
+- [9e85ec7](https://github.com/dubzzz/pure-rand/commit/9e85ec7) ✨ Implement jump for `mersenne` (#947)
+
+### Fixes
+
+- [5c0d815](https://github.com/dubzzz/pure-rand/commit/5c0d815) ✅ More benchmarks on generators (#961)
+- [3c578fd](https://github.com/dubzzz/pure-rand/commit/3c578fd) ✅ Default Vitest setup to interrupt fast-check (#957)
+- [7d0393a](https://github.com/dubzzz/pure-rand/commit/7d0393a) ✅ Rework benchmark on generators (#956)
+
 ## 8.2.0
 
 ### Features
