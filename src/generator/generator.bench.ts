@@ -5,6 +5,7 @@ import { mersenne } from './mersenne';
 import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
+import { tryImportFromPublished } from '../tryImportFromPublished';
 
 type Factory = (seed: number) => RandomGenerator;
 type Algorithm = { name: string; factory: Factory };
@@ -16,10 +17,10 @@ const algorithms = [
   { name: 'mersenne', factory: mersenne },
   { name: 'xoroshiro128plus', factory: xoroshiro128plus },
   { name: 'xorshift128plus', factory: xorshift128plus },
-  { name: 'congruential32 (published)', factory: await tryImportFromPublished('congruential32') },
-  { name: 'mersenne (published)', factory: await tryImportFromPublished('mersenne') },
-  { name: 'xoroshiro128plus (published)', factory: await tryImportFromPublished('xoroshiro128plus') },
-  { name: 'xorshift128plus (published)', factory: await tryImportFromPublished('xorshift128plus') },
+  { name: 'congruential32 (published)', factory: await tryImportFromPublished('generator/congruential32') },
+  { name: 'mersenne (published)', factory: await tryImportFromPublished('generator/mersenne') },
+  { name: 'xoroshiro128plus (published)', factory: await tryImportFromPublished('generator/xoroshiro128plus') },
+  { name: 'xorshift128plus (published)', factory: await tryImportFromPublished('generator/xorshift128plus') },
 ].filter((algorithm): algorithm is Algorithm => algorithm.factory !== undefined);
 
 describe('generator', () => {
@@ -84,14 +85,4 @@ function native(): RandomGenerator {
 
 function isJumpableRandomGenerator(rng: RandomGenerator): rng is JumpableRandomGenerator {
   return 'jump' in rng;
-}
-
-async function tryImportFromPublished<TPath extends string>(path: TPath): Promise<Factory | undefined> {
-  try {
-    // @ts-ignore, no such import in general case
-    const out = await import(`pure-rand-published/generator/${path}`);
-    return out[path];
-  } catch {
-    return undefined;
-  }
 }
