@@ -13,7 +13,15 @@ const L = 18;
 const MASK_LOWER = 2147483647; // = 2 ** R - 1 (with R = 31)
 const MASK_UPPER = 2147483648; // = 2 ** R
 
-// Derived from https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.h#L26
+// Jump polynomial for 2^128 steps, derived from numpy's mt19937-jump.h poly_coef[624].
+// Each entry stores 32 bits of the polynomial x^(2^128) mod char_poly(MT19937) over GF(2).
+// Bit i of the polynomial is: (JUMP_COEFS[i >>> 5] >>> (i & 0x1f)) & 1
+//
+// To recompute from numpy's C source (mt19937-jump.h):
+//   const poly_coef = [1927166307, 3044056772, ...]; // unsigned longs from numpy
+//   const JUMP_COEFS = poly_coef.map(v => v | 0);    // convert to signed 32-bit for JS bitwise ops
+//
+// Source: https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.h#L26
 const JUMP_COEFS = [
   1927166307, 3044056772, 2284297142, 2820929765, 651705945, 69149273, 3892165397, 2337412983, 1219880790, 3207074517,
   3836784057, 189286826, 1049791363, 3916249550, 2942382547, 166392552, 861176918, 3246476411, 2302311555, 4273801148,
