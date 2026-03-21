@@ -62,12 +62,18 @@ class MersenneTwister implements JumpableRandomGenerator {
     this.index = twistedNext(this.states, this.index); // states and index of this
     // https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.c#L71-L72
     // We burn: 19935 and 19934 as they result into get_coef(pf, i) == 0
-    // So we start the loop with "19933 - 1"
-    for (let i = 19932; i > 0; --i) {
-      if ((decodeCoefWord(i >>> 5) >>> (i & 31)) & 1) {
-        addState(this.states, this.index, originalStates, originalIndex);
+    // So we start the loop with "19933 - 1" ie word 622 bit 28
+    // Outer loop iterates words, inner loop iterates bits to decode each word only once
+    for (let w = 622; w >= 0; --w) {
+      const coef = decodeCoefWord(w);
+      const topBit = w === 622 ? 28 : 31;
+      const bottomBit = w === 0 ? 1 : 0;
+      for (let b = topBit; b >= bottomBit; --b) {
+        if ((coef >>> b) & 1) {
+          addState(this.states, this.index, originalStates, originalIndex);
+        }
+        this.index = twistedNext(this.states, this.index); // states and index of "copy"
       }
-      this.index = twistedNext(this.states, this.index); // states and index of "copy"
     }
     // https://github.com/numpy/numpy/blob/57fbc869cb10a65da0793ed3aebe00e7f595c0b1/numpy/random/src/mt19937/mt19937-jump.c#L85-L88
     // We fall in the case: get_coef(pf, 0) != 0
