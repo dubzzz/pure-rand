@@ -85,7 +85,7 @@
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
     "@fast-check/packaged": "^0.6.0",
-    "@vitest/coverage-v8": "4.1.0",
+    "@vitest/coverage-v8": "4.1.1",
     "fast-check": "^4.6.0",
     "oxfmt": "^0.41.0",
     "pkg-pr-new": "^0.0.66",
@@ -93,7 +93,7 @@
     "rolldown": "1.0.0-rc.10",
     "rolldown-plugin-dts": "^0.22.5",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.1"
   },
   "keywords": [
     "seed",
