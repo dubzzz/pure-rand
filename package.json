@@ -87,7 +87,7 @@
     "@fast-check/packaged": "^0.6.0",
     "@vitest/coverage-v8": "4.1.1",
     "fast-check": "^4.6.0",
-    "oxfmt": "^0.41.0",
+    "oxfmt": "^0.42.0",
     "pkg-pr-new": "^0.0.66",
     "publint": "0.3.18",
     "rolldown": "1.0.0-rc.11",
