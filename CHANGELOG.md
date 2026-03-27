@@ -1,5 +1,15 @@
 # CHANGELOG 8.X
 
+## 8.4.0
+
+### Features
+
+- [c309120](https://github.com/dubzzz/pure-rand/commit/c309120) ⚡️ Compress Mersenne jump coefficients (#970)
+
+### Fixes
+
+- [c8ce85d](https://github.com/dubzzz/pure-rand/commit/c8ce85d) 👷 Skip bench job on non-PR events (#968)
+
 ## 8.3.0
 
 ### Features
