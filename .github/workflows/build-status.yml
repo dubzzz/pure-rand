@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         id: pnpm-cache
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Update pnpm cache
         if: steps.pnpm-cache.outputs.cache-hit != 'true'
@@ -45,7 +45,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Ensure no dedupe required
         run: pnpm dedupe --check
@@ -60,7 +60,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -77,7 +77,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -95,7 +95,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: 24.14.0
+          node-version: 24.14.1
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -406,7 +406,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -455,7 +455,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -468,9 +468,7 @@ jobs:
       - name: Unpack production package
         run: tar -xzf package.tgz --strip-components=1
       - name: Alter internals to behave as if published
-        run: mv .git node_modules/.git && pnpm exec packaged --keep-node-modules && mv node_modules/.git .git
-      - name: Retrieve potentially dropped test-bundle
-        run: git restore -s@ -SW -- test-bundle
+        run: pnpm exec packaged --keep .git --keep node_modules --keep test-bundle
       - name: Ensure all exports are imported in test-bundle
         run: |
           EXPORTS=$(node -e "
@@ -548,7 +546,7 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: '24.14.0'
+          node-version: '24.14.1'
           registry-url: 'https://registry.npmjs.org'
       - name: Install latest npm version
         run: npm install -g npm
