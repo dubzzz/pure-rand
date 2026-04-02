@@ -5,7 +5,11 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
-    "./distribution/uniformBigInt": {
+    "./distribution/exponential": {
+      "require": "./lib/distribution/exponential.js",
+      "import": "./lib/esm/distribution/exponential.js"
+    },
+"./distribution/uniformBigInt": {
       "require": "./lib/distribution/uniformBigInt.js",
       "import": "./lib/esm/distribution/uniformBigInt.js"
     },
