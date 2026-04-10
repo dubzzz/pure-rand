@@ -103,7 +103,7 @@ jobs:
         id: bench
         run: pnpm bench | tee bench-output.txt
       - name: Upload bench results
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bench-output
           path: bench-output.txt
@@ -196,7 +196,7 @@ jobs:
           fi
           cat size-output.txt
       - name: Upload size results
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: size-output
           path: size-output.txt
@@ -417,7 +417,7 @@ jobs:
       - name: Create bundle
         run: pnpm pack --out package.tgz
       - name: Upload production package
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bundle
           path: package.tgz
