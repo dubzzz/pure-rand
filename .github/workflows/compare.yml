@@ -14,9 +14,9 @@ jobs:
           node-version: '24.14.1'
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Install extra libraries
-        run: pnpm add chance@1.1.10 @faker-js/faker@7.6.0 random-js@2.1.0 seedrandom@3.0.5 --save-exact
+        run: pnpm add chance@1.1.10 @faker-js/faker@7.6.0 random-js@2.1.0 seedrandom@3.0.5 --save-exact --ignore-scripts
       - name: Build package
         run: pnpm build
       - name: Env Info
