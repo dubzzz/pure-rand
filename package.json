@@ -88,7 +88,7 @@
     "@vitest/coverage-v8": "4.1.6",
     "fast-check": "^4.8.0",
     "oxfmt": "^0.49.0",
-    "pkg-pr-new": "^0.0.66",
+    "pkg-pr-new": "^0.0.71",
     "publint": "0.3.20",
     "rolldown": "1.0.0",
     "rolldown-plugin-dts": "^0.25.0",
