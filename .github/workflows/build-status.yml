@@ -216,6 +216,10 @@ jobs:
           name: size-output
       - name: Comment package size on PR
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TGZ_SIZE: ${{ needs.package_size.outputs.tgzSize }}
+          MAIN_TGZ_SIZE: ${{ needs.package_size.outputs.mainTgzSize }}
+          LAST_PUBLISHED_VERSION: ${{ needs.package_size.outputs.lastPublishedVersion }}
         with:
           script: |
             // Extract details on files
@@ -331,9 +335,9 @@ jobs:
             }
 
             // Build summary header: new size vs main vs published
-            const tgzSize = Number("${{ needs.package_size.outputs.tgzSize }}");
-            const mainTgzSize = Number("${{ needs.package_size.outputs.mainTgzSize }}") || 0;
-            const lastPublishedVersion = "${{ needs.package_size.outputs.lastPublishedVersion }}";
+            const tgzSize = Number(process.env.TGZ_SIZE);
+            const mainTgzSize = Number(process.env.MAIN_TGZ_SIZE) || 0;
+            const lastPublishedVersion = process.env.LAST_PUBLISHED_VERSION;
 
             let summary = `**New size:** ${formatBytes(totalNew)} (tgz: ${formatBytes(tgzSize)})`;
 
