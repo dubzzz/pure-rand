@@ -440,10 +440,10 @@ jobs:
           key: bundle-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
-        run: pnpm exec pkg-pr-new publish --compact --comment=off
+        run: pnpm exec pkg-pr-new publish --compact --comment=off # zizmor: ignore[use-trusted-publishing]
       - name: Preview
         if: github.event_name == 'pull_request'
-        run: pnpm exec pkg-pr-new publish --compact
+        run: pnpm exec pkg-pr-new publish --compact # zizmor: ignore[use-trusted-publishing]
 
   # Post-build jobs
   test_bundle:
