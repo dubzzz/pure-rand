@@ -14,7 +14,8 @@ on:
       - next-*
       - fix-v*
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   # Job to prepare pnpm cache (pre-requisite for any job installing dependencies)
