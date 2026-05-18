@@ -1,5 +1,8 @@
 name: Compare
 on: workflow_dispatch
+
+permissions: {}
+
 jobs:
   compare:
     name: 'Compare'

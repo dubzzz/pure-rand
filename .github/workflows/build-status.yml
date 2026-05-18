@@ -14,6 +14,8 @@ on:
       - next-*
       - fix-v*
 
+permissions: {}
+
 jobs:
   # Job to prepare pnpm cache (pre-requisite for any job installing dependencies)
   warmup_pnpm_cache:
@@ -114,6 +116,8 @@ jobs:
     needs: bench
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Download bench results
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -403,6 +407,10 @@ jobs:
     name: 'Build production package'
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install pnpm
