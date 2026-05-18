@@ -436,10 +436,10 @@ jobs:
           key: bundle-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
-        run: pnpm dlx pkg-pr-new publish --compact --comment=off
+        run: pnpm exec pkg-pr-new publish --compact --comment=off
       - name: Preview
         if: github.event_name == 'pull_request'
-        run: pnpm dlx pkg-pr-new publish --compact
+        run: pnpm exec pkg-pr-new publish --compact
 
   # Post-build jobs
   test_bundle:
