@@ -62,7 +62,6 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "pnpm@11.1.1",
   "devEngines": {
     "runtime": {
       "name": "node",
