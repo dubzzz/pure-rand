@@ -146,6 +146,9 @@ jobs:
       tgzSize: ${{ steps.compute.outputs.tgzSize }}
       mainTgzSize: ${{ steps.compute.outputs.mainTgzSize }}
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install pnpm
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
       - name: Restore main bundle from cache
         id: main-cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
@@ -187,8 +190,8 @@ jobs:
           fi
 
           mkdir -p published
-          if npm pack pure-rand --pack-destination=published 2>/dev/null; then
-            published_tgz=$(find published -name '*.tgz' -type f | head -n1)
+          published_tarball_url=$(pnpm view pure-rand dist.tarball 2>/dev/null || true)
+          if [ -n "$published_tarball_url" ] && published_tgz="published/$(basename "$published_tarball_url")" && curl -fsSL -o "$published_tgz" "$published_tarball_url"; then
             extract_sizes "$published_tgz" published >> size-output.txt
             echo "lastPublishedVersion=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')" >> "$GITHUB_OUTPUT"
           else
