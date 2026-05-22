@@ -7,4 +7,6 @@ test-bundle/*.mjs
 out.txt
 v8.log
 v8.out
+.claude/worktrees/
+isolate-*.log
 
