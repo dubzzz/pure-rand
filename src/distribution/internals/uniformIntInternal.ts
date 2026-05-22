@@ -11,10 +11,17 @@ export function uniformIntInternal(rng: RandomGenerator, rangeSize: number): num
   // Fast paths:
   //  - rangeSize <= 2: MaxAllowed = 2^32, never rejects.
   //  - rangeSize === 2^32: MaxAllowed = 2^32, never rejects, and `deltaV % 2^32 === deltaV` so skip the modulo.
+  //  - rangeSize is a power of two (and <= 2^31): MaxAllowed = 2^32, never rejects,
+  //    and `deltaV % rangeSize === deltaV & (rangeSize-1)` (cheaper than modulo).
   if (rangeSize >= 0x100000000) {
     return rng.next() + 0x80000000;
   }
-  const MaxAllowed = rangeSize > 2 ? ~~(0x100000000 / rangeSize) * rangeSize : 0x100000000;
+  // (rangeSize & (rangeSize - 1)) === 0 is true iff rangeSize is 0 or a power of two.
+  // We never receive rangeSize === 0; and rangeSize >= 1 here.
+  if ((rangeSize & (rangeSize - 1)) === 0) {
+    return (rng.next() + 0x80000000) & (rangeSize - 1);
+  }
+  const MaxAllowed = ~~(0x100000000 / rangeSize) * rangeSize;
   let deltaV = rng.next() + 0x80000000;
   while (deltaV >= MaxAllowed) {
     deltaV = rng.next() + 0x80000000;
