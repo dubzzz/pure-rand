@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^10.4.0
+        version: 10.4.0
       '@fast-check/packaged':
         specifier: ^0.7.0
         version: 0.7.0
@@ -247,6 +250,10 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@faker-js/faker@10.4.0':
+    resolution: {integrity: sha512-sDBWI3yLy8EcDzgobvJTWq1MJYzAkQdpjXuPukga9wXonhpMRvd1Izuo2Qgwey2OiEoRIBr35RMU9HJRoOHzpw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@fast-check/packaged@0.7.0':
     resolution: {integrity: sha512-oVf70XMfnxUrm55xzVphQguzMBCKU5gCMcY1rDX6gRpCh8OfNUWefeQ2HG9nG59RtcXIrsEzeWP65D+LoKYVSQ==}
@@ -1602,6 +1609,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.3':
     optional: true
+
+  '@faker-js/faker@10.4.0': {}
 
   '@fast-check/packaged@0.7.0':
     dependencies:
