@@ -12,6 +12,7 @@ import {
   generateMersenne53Randomizer,
   type Randomizer,
 } from '@faker-js/faker';
+import { uniformFloat64 } from './distribution/uniformFloat64';
 import { congruential32 } from './generator/congruential32';
 import { mersenne } from './generator/mersenne';
 import { xoroshiro128plus } from './generator/xoroshiro128plus';
@@ -21,7 +22,7 @@ import type { RandomGenerator } from './types/RandomGenerator';
 function generatePureRandRandomizer(factory: (seed: number) => RandomGenerator, initialSeed: number): Randomizer {
   const self: { generator: RandomGenerator } & Randomizer = {
     generator: factory(initialSeed),
-    next: () => (self.generator.next() >>> 0) / 0x1_0000_0000,
+    next: () => uniformFloat64(self.generator),
     seed: (value) => {
       self.generator = factory(typeof value === 'number' ? value : (value[0] ?? 0));
     },
