@@ -21,10 +21,14 @@ import { xoroshiro128plus } from './generator/xoroshiro128plus';
 import { xorshift128plus } from './generator/xorshift128plus';
 import type { RandomGenerator } from './types/RandomGenerator';
 
-function generatePureRandRandomizer(factory: (seed: number) => RandomGenerator, initialSeed: number): Randomizer {
+function generatePureRandRandomizer(
+  factory: (seed: number) => RandomGenerator,
+  initialSeed: number,
+  toFloat: (rng: RandomGenerator) => number,
+): Randomizer {
   const self: { generator: RandomGenerator } & Randomizer = {
     generator: factory(initialSeed),
-    next: () => uniformFloat64(self.generator),
+    next: () => toFloat(self.generator),
     seed: (value) => {
       self.generator = factory(typeof value === 'number' ? value : (value[0] ?? 0));
     },
@@ -32,15 +36,34 @@ function generatePureRandRandomizer(factory: (seed: number) => RandomGenerator, 
   return self;
 }
 
+// Non-uniform transform: 32-bit precision packed into a 53-bit float. Matches
+// faker's own `nextF32` path used by `generateMersenne32Randomizer`.
+function nonUniformFloat32(rng: RandomGenerator): number {
+  return (rng.next() >>> 0) / 0x1_0000_0000;
+}
+
 type Variant = { name: string; build: (seed: number) => Randomizer };
 
+const pureRandFactories: { name: string; factory: (seed: number) => RandomGenerator }[] = [
+  { name: 'xoroshiro128plus', factory: xoroshiro128plus },
+  { name: 'xorshift128plus', factory: xorshift128plus },
+  { name: 'mersenne', factory: mersenne },
+  { name: 'congruential32', factory: congruential32 },
+];
+
 const variants: Variant[] = [
-  { name: 'faker @@ mersenne32 (default <v9)', build: (seed) => generateMersenne32Randomizer(seed) },
-  { name: 'faker @@ mersenne53 (default >=v9)', build: (seed) => generateMersenne53Randomizer(seed) },
-  { name: 'pure-rand @@ xoroshiro128plus', build: (seed) => generatePureRandRandomizer(xoroshiro128plus, seed) },
-  { name: 'pure-rand @@ xorshift128plus', build: (seed) => generatePureRandRandomizer(xorshift128plus, seed) },
-  { name: 'pure-rand @@ mersenne', build: (seed) => generatePureRandRandomizer(mersenne, seed) },
-  { name: 'pure-rand @@ congruential32', build: (seed) => generatePureRandRandomizer(congruential32, seed) },
+  { name: 'faker @@ mersenne32 (default <v9) [non-uniform]', build: (seed) => generateMersenne32Randomizer(seed) },
+  { name: 'faker @@ mersenne53 (default >=v9) [uniform]', build: (seed) => generateMersenne53Randomizer(seed) },
+  ...pureRandFactories.flatMap(({ name, factory }): Variant[] => [
+    {
+      name: `pure-rand @@ ${name} [non-uniform]`,
+      build: (seed) => generatePureRandRandomizer(factory, seed, nonUniformFloat32),
+    },
+    {
+      name: `pure-rand @@ ${name} [uniform]`,
+      build: (seed) => generatePureRandRandomizer(factory, seed, uniformFloat64),
+    },
+  ]),
 ];
 
 // `[en, base]` is the minimum set needed for richer modules such as
