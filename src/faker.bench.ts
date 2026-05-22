@@ -7,9 +7,11 @@
 import { describe, bench } from 'vitest';
 import {
   Faker,
+  base,
   en,
   generateMersenne32Randomizer,
   generateMersenne53Randomizer,
+  type LocaleDefinition,
   type Randomizer,
 } from '@faker-js/faker';
 import { uniformFloat64 } from './distribution/uniformFloat64';
@@ -41,6 +43,9 @@ const variants: Variant[] = [
   { name: 'pure-rand @@ congruential32', build: (seed) => generatePureRandRandomizer(congruential32, seed) },
 ];
 
+// `[en, base]` is the minimum set needed for richer modules such as
+// `person.bio()` which falls back to `internet.emoji` from `base`.
+const locale: LocaleDefinition[] = [en, base];
 const numCalls = 5_000;
 
 describe('faker', () => {
@@ -57,7 +62,7 @@ describe('faker', () => {
 
   describe('faker.person.fullName()', () => {
     for (const { name, build } of variants) {
-      const faker = new Faker({ locale: en, randomizer: build(0) });
+      const faker = new Faker({ locale, randomizer: build(0) });
       bench(name, () => {
         faker.person.fullName();
       });
@@ -66,7 +71,7 @@ describe('faker', () => {
 
   describe('faker.internet.email()', () => {
     for (const { name, build } of variants) {
-      const faker = new Faker({ locale: en, randomizer: build(0) });
+      const faker = new Faker({ locale, randomizer: build(0) });
       bench(name, () => {
         faker.internet.email();
       });
@@ -74,11 +79,57 @@ describe('faker', () => {
   });
 
   describe('faker.helpers.shuffle (1_000 items)', () => {
-    const data = Array.from({ length: 1_000 }, (_, i) => i);
+    const data: number[] = [];
+    for (let i = 0; i !== 1_000; ++i) {
+      data.push(i);
+    }
     for (const { name, build } of variants) {
-      const faker = new Faker({ locale: en, randomizer: build(0) });
+      const faker = new Faker({ locale, randomizer: build(0) });
       bench(name, () => {
         faker.helpers.shuffle(data);
+      });
+    }
+  });
+
+  describe('faker.string.uuid()', () => {
+    for (const { name, build } of variants) {
+      const faker = new Faker({ locale, randomizer: build(0) });
+      bench(name, () => {
+        faker.string.uuid();
+      });
+    }
+  });
+
+  describe('faker.lorem.paragraphs(10)', () => {
+    for (const { name, build } of variants) {
+      const faker = new Faker({ locale, randomizer: build(0) });
+      bench(name, () => {
+        faker.lorem.paragraphs(10);
+      });
+    }
+  });
+
+  // Full user-like record — exercises many faker modules at once and emulates a
+  // realistic seeding workload (e.g. populating a database with fixtures).
+  describe('faker @@ full user record', () => {
+    for (const { name, build } of variants) {
+      const faker = new Faker({ locale, randomizer: build(0) });
+      bench(name, () => {
+        ({
+          id: faker.string.uuid(),
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          jobTitle: faker.person.jobTitle(),
+          bio: faker.person.bio(),
+          email: faker.internet.email(),
+          phone: faker.phone.number(),
+          street: faker.location.streetAddress(),
+          city: faker.location.city(),
+          country: faker.location.country(),
+          company: faker.company.name(),
+          iban: faker.finance.iban(),
+          creditCard: faker.finance.creditCardNumber(),
+        });
       });
     }
   });
