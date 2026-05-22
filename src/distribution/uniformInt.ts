@@ -9,26 +9,44 @@ const safeNumberMaxSafeInteger = Number.MAX_SAFE_INTEGER;
 const sharedA: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedB: ArrayInt64 = { sign: 1, data: [0, 0] };
 const sharedC: ArrayInt64 = { sign: 1, data: [0, 0] };
+const sharedRangeData: ArrayInt64['data'] = [0, 0];
 const sharedData: ArrayInt64['data'] = [0, 0];
 
 function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number, rangeSize: number): number {
-  const rangeSizeArrayIntValue =
-    rangeSize <= safeNumberMaxSafeInteger
-      ? fromNumberToArrayInt64(sharedC, rangeSize) // no possible overflow given rangeSize is in a safe range
-      : substractArrayInt64(sharedC, fromNumberToArrayInt64(sharedA, to), fromNumberToArrayInt64(sharedB, from)); // rangeSize might be incorrect, we compute a safer range
-
-  // Adding 1 to the range
-  if (rangeSizeArrayIntValue.data[1] === 0xffffffff) {
-    // rangeSizeArrayIntValue.length === 2 by construct
-    // rangeSize >= 0x00000001_00000000 and rangeSize <= 0x003fffff_fffffffe
-    // with Number.MAX_SAFE_INTEGER - Number.MIN_SAFE_INTEGER = 0x003fffff_fffffffe
-    rangeSizeArrayIntValue.data[0] += 1;
-    rangeSizeArrayIntValue.data[1] = 0;
+  // Build the range data: [high, low] of (rangeSize + 1).
+  let rangeData: ArrayInt64['data'];
+  if (rangeSize <= safeNumberMaxSafeInteger) {
+    // Fast path: rangeSize fits as a safe number — compute high/low directly.
+    // rangeSize > 0xffffffff here (else we'd be in the small/medium branch), so high >= 1.
+    const high = ~~(rangeSize / 0x100000000);
+    const low = (rangeSize >>> 0) + 1;
+    if (low > 0xffffffff) {
+      // low wraps: low was 0xffffffff, now becomes 0x100000000 → store 0 and carry to high.
+      sharedRangeData[0] = high + 1;
+      sharedRangeData[1] = 0;
+    } else {
+      sharedRangeData[0] = high;
+      sharedRangeData[1] = low;
+    }
+    rangeData = sharedRangeData;
   } else {
-    rangeSizeArrayIntValue.data[1] += 1;
+    // Slow path: rangeSize might be inaccurate; compute via ArrayInt64 subtraction.
+    const rangeSizeArrayIntValue = substractArrayInt64(
+      sharedC,
+      fromNumberToArrayInt64(sharedA, to),
+      fromNumberToArrayInt64(sharedB, from),
+    );
+    // Add 1.
+    if (rangeSizeArrayIntValue.data[1] === 0xffffffff) {
+      rangeSizeArrayIntValue.data[0] += 1;
+      rangeSizeArrayIntValue.data[1] = 0;
+    } else {
+      rangeSizeArrayIntValue.data[1] += 1;
+    }
+    rangeData = rangeSizeArrayIntValue.data;
   }
 
-  uniformArrayIntInternal(rng, sharedData, rangeSizeArrayIntValue.data);
+  uniformArrayIntInternal(rng, sharedData, rangeData);
   return sharedData[0] * 0x100000000 + sharedData[1] + from;
 }
 
