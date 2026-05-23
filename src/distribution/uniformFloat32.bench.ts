@@ -51,31 +51,31 @@ describe('uniformFloat32 batches (xorshift128plus)', () => {
   bench('native batch x100', () => {
     let acc = 0;
     for (let i = 0; i < 100; ++i) acc += nativeFloat();
-    return acc;
+    void acc;
   });
 
   bench('uniformFloat32 batch x100', () => {
     let acc = 0;
     for (let i = 0; i < 100; ++i) acc += uniformFloat32(rng);
-    return acc;
+    void acc;
   });
 
   bench('uniformFloat32 batch x1000', () => {
     let acc = 0;
     for (let i = 0; i < 1000; ++i) acc += uniformFloat32(rng);
-    return acc;
+    void acc;
   });
 
   bench('uniformFloat32 batch x10000', () => {
     let acc = 0;
     for (let i = 0; i < 10000; ++i) acc += uniformFloat32(rng);
-    return acc;
+    void acc;
   });
 
   bench('inline math batch x1000', () => {
     let acc = 0;
     for (let i = 0; i < 1000; ++i) acc += (rng.next() & mask) * scale;
-    return acc;
+    void acc;
   });
 });
 
@@ -85,7 +85,7 @@ describe('uniformFloat32 batches (mersenne)', () => {
   bench('uniformFloat32 batch x1000 @ mersenne', () => {
     let acc = 0;
     for (let i = 0; i < 1000; ++i) acc += uniformFloat32(rng);
-    return acc;
+    void acc;
   });
 });
 
@@ -95,6 +95,6 @@ describe('uniformFloat32 batches (congruential32)', () => {
   bench('uniformFloat32 batch x1000 @ congruential32', () => {
     let acc = 0;
     for (let i = 0; i < 1000; ++i) acc += uniformFloat32(rng);
-    return acc;
+    void acc;
   });
 });
