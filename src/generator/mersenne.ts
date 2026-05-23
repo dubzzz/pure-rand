@@ -68,7 +68,13 @@ class MersenneTwister implements JumpableRandomGenerator {
     return y;
   }
   getState(): readonly number[] {
-    return [this.index, ...this.states];
+    // Manual copy is faster than [index, ...states] which has to iterate via
+    // the spread iterator protocol; this stays in PACKED_SMI_ELEMENTS shape.
+    const states = this.states;
+    const out = new Array<number>(N + 1);
+    out[0] = this.index;
+    for (let i = 0; i < N; ++i) out[i + 1] = states[i];
+    return out;
   }
   jump(): void {
     // equivalent to 2^128 calls to next()
