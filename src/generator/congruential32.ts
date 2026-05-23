@@ -47,12 +47,13 @@ class LinearCongruential32 implements JumpableRandomGenerator {
     const v1 = (s1 & MASK_2) >> 16;
     const v2 = (s2 & MASK_2) >> 16;
     const v3 = (s3 & MASK_2) >> 16;
-    // value between: -0x80000000 and 0x7fffffff
-    // in theory it should have been: v1 & 3 instead of v1 alone
-    // but as binary operations truncate between -0x80000000 and 0x7fffffff in JavaScript
-    // we can get rid of this operation
-    const vnext = v3 + ((v2 + (v1 << 15)) << 15);
-    return vnext | 0;
+    // v1, v2, v3 each occupy bits [0..14] (15-bit non-negative values).
+    // After shifting they cover disjoint ranges [30..31] | [15..29] | [0..14],
+    // so the combine can use bitwise OR. The final expression is an int32 op
+    // so it naturally returns a signed int32 — no `| 0` needed.
+    // In theory we'd want `v1 & 3` to take only its low 2 bits, but the `<< 30`
+    // truncation drops the high bits for us.
+    return v3 | (v2 << 15) | (v1 << 30);
   }
   jump(): void {
     // equivalent to 2^16 calls to next()
