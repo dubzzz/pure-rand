@@ -7,6 +7,14 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 //
 // NOTE: Math.random() of V8 uses XorShift128+ with a=23, b=17, c=26,
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
+
+// Polynomial coefficients for jump (equivalent to 2^64 calls to next()).
+// Hoisted to module scope so jump() doesn't allocate a fresh array per call.
+const JUMP_POLY_0 = 0x635d2dff;
+const JUMP_POLY_1 = 0x8a5cd789;
+const JUMP_POLY_2 = 0x5c472f96;
+const JUMP_POLY_3 = 0x121fd215;
+
 class XorShift128Plus implements JumpableRandomGenerator {
   constructor(
     private s01: number,
@@ -36,17 +44,33 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    const jump = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
+    // Pull state into locals; we update it 128 times below before writing back.
+    // This avoids storing/reloading `this.sXX` across every inlined `next()`.
+    let s01 = this.s01;
+    let s00 = this.s00;
+    let s11 = this.s11;
+    let s10 = this.s10;
     for (let i = 0; i !== 4; ++i) {
+      // Read polynomial coefficient via a small switch instead of an array load
+      // (the four constants are hoisted to module scope to avoid a per-call allocation).
+      const poly = i === 0 ? JUMP_POLY_0 : i === 1 ? JUMP_POLY_1 : i === 2 ? JUMP_POLY_2 : JUMP_POLY_3;
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
-        if (jump[i] & mask) {
-          ns01 ^= this.s01;
-          ns00 ^= this.s00;
-          ns11 ^= this.s11;
-          ns10 ^= this.s10;
+        if (poly & mask) {
+          ns01 ^= s01;
+          ns00 ^= s00;
+          ns11 ^= s11;
+          ns10 ^= s10;
         }
-        this.next();
+        // Inlined next() (state advance only — return value discarded).
+        const a0 = s00 ^ (s00 << 23);
+        const a1 = s01 ^ ((s01 << 23) | (s00 >>> 9));
+        const b0 = a0 ^ s10 ^ ((a0 >>> 18) | (a1 << 14)) ^ ((s10 >>> 5) | (s11 << 27));
+        const b1 = a1 ^ s11 ^ (a1 >>> 18) ^ (s11 >>> 5);
+        s01 = s11;
+        s00 = s10;
+        s11 = b1;
+        s10 = b0;
       }
     }
     this.s01 = ns01;
