@@ -166,10 +166,16 @@ export function mersenneFromState(state: readonly number[]): JumpableRandomGener
 }
 
 export function mersenne(seed: number): JumpableRandomGenerator {
-  const out: number[] = [seed | 0];
+  // Preallocate a length-N array filled with 0 to keep it in PACKED_SMI_ELEMENTS
+  // shape until the recurrence overwrites it; this is faster than starting from
+  // a 1-element array and growing via push().
+  const out = new Array<number>(N).fill(0);
+  out[0] = seed | 0;
+  let prev = out[0];
   for (let idx = 1; idx !== N; ++idx) {
-    const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
-    out.push((Math.imul(F, xored) + idx) | 0);
+    const next = (Math.imul(F, prev ^ (prev >>> 30)) + idx) | 0;
+    out[idx] = next;
+    prev = next;
   }
   twist(out);
   return new MersenneTwister(out, 0);
