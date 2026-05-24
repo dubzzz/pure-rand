@@ -7,6 +7,14 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 //
 // NOTE: Math.random() of V8 uses XorShift128+ with a=23, b=17, c=26,
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
+
+// Polynomial coefficients for jump (equivalent to 2^64 calls to next()).
+// Hoisted to module scope so jump() doesn't allocate a fresh array per call.
+const JUMP_POLY_0 = 0x635d2dff;
+const JUMP_POLY_1 = 0x8a5cd789;
+const JUMP_POLY_2 = 0x5c472f96;
+const JUMP_POLY_3 = 0x121fd215;
+
 class XorShift128Plus implements JumpableRandomGenerator {
   constructor(
     private s01: number,
@@ -36,11 +44,13 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    const jump = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
     for (let i = 0; i !== 4; ++i) {
+      // Read polynomial coefficient via a small switch instead of an array load
+      // (the four constants are hoisted to module scope to avoid a per-call allocation).
+      const poly = i === 0 ? JUMP_POLY_0 : i === 1 ? JUMP_POLY_1 : i === 2 ? JUMP_POLY_2 : JUMP_POLY_3;
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
-        if (jump[i] & mask) {
+        if (poly & mask) {
           ns01 ^= this.s01;
           ns00 ^= this.s00;
           ns11 ^= this.s11;
