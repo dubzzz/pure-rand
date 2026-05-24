@@ -1,5 +1,9 @@
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
+// Jump polynomial constants for xoroshiro128+ (equivalent to 2^64 calls of next()).
+// Hoisted to a module-level constant to avoid per-call array allocation in jump().
+const JUMP_XOROSHIRO128PLUS = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
+
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
@@ -35,11 +39,10 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    const jump = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
     for (let i = 0; i !== 4; ++i) {
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
-        if (jump[i] & mask) {
+        if (JUMP_XOROSHIRO128PLUS[i] & mask) {
           ns01 ^= this.s01;
           ns00 ^= this.s00;
           ns11 ^= this.s11;
