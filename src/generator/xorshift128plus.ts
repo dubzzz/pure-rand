@@ -45,7 +45,7 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let ns11 = 0;
     let ns10 = 0;
     // Pull state into locals; we update it 128 times below before writing back.
-    // (Still calling this.next() inside the loop, so locals must be re-synced after each call.)
+    // This avoids storing/reloading `this.sXX` across every inlined `next()`.
     let s01 = this.s01;
     let s00 = this.s00;
     let s11 = this.s11;
@@ -62,12 +62,15 @@ class XorShift128Plus implements JumpableRandomGenerator {
           ns11 ^= s11;
           ns10 ^= s10;
         }
-        this.next();
-        // Re-sync locals after this.next() mutates this.sXX.
-        s01 = this.s01;
-        s00 = this.s00;
-        s11 = this.s11;
-        s10 = this.s10;
+        // Inlined next() (state advance only — return value discarded).
+        const a0 = s00 ^ (s00 << 23);
+        const a1 = s01 ^ ((s01 << 23) | (s00 >>> 9));
+        const b0 = a0 ^ s10 ^ ((a0 >>> 18) | (a1 << 14)) ^ ((s10 >>> 5) | (s11 << 27));
+        const b1 = a1 ^ s11 ^ (a1 >>> 18) ^ (s11 >>> 5);
+        s01 = s11;
+        s00 = s10;
+        s11 = b1;
+        s10 = b0;
       }
     }
     this.s01 = ns01;
