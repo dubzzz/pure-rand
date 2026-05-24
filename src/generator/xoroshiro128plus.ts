@@ -53,16 +53,15 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
           ns11 ^= s11;
           ns10 ^= s10;
         }
-        // Use this.next() but sync the locals around the call
-        this.s00 = s00;
-        this.s01 = s01;
-        this.s10 = s10;
-        this.s11 = s11;
-        this.next();
-        s00 = this.s00;
-        s01 = this.s01;
-        s10 = this.s10;
-        s11 = this.s11;
+        // inlined next()
+        const a0 = s10 ^ s00;
+        const a1 = s11 ^ s01;
+        const ns00n = (s00 << 24) ^ (s01 >>> 8) ^ a0 ^ (a0 << 16);
+        const ns01n = (s01 << 24) ^ (s00 >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
+        s10 = (a1 << 5) ^ (a0 >>> 27);
+        s11 = (a0 << 5) ^ (a1 >>> 27);
+        s00 = ns00n;
+        s01 = ns01n;
       }
     }
     this.s01 = ns01;
