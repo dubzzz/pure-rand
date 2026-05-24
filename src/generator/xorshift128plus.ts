@@ -44,6 +44,12 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
+    // Pull state into locals; we update it 128 times below before writing back.
+    // (Still calling this.next() inside the loop, so locals must be re-synced after each call.)
+    let s01 = this.s01;
+    let s00 = this.s00;
+    let s11 = this.s11;
+    let s10 = this.s10;
     for (let i = 0; i !== 4; ++i) {
       // Read polynomial coefficient via a small switch instead of an array load
       // (the four constants are hoisted to module scope to avoid a per-call allocation).
@@ -51,12 +57,17 @@ class XorShift128Plus implements JumpableRandomGenerator {
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
         if (poly & mask) {
-          ns01 ^= this.s01;
-          ns00 ^= this.s00;
-          ns11 ^= this.s11;
-          ns10 ^= this.s10;
+          ns01 ^= s01;
+          ns00 ^= s00;
+          ns11 ^= s11;
+          ns10 ^= s10;
         }
         this.next();
+        // Re-sync locals after this.next() mutates this.sXX.
+        s01 = this.s01;
+        s00 = this.s00;
+        s11 = this.s11;
+        s10 = this.s10;
       }
     }
     this.s01 = ns01;
