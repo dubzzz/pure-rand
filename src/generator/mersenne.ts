@@ -43,12 +43,28 @@ class MersenneTwister implements JumpableRandomGenerator {
     return new MersenneTwister(this.states.slice(), this.index);
   }
   next(): number {
-    let y = this.states[this.index];
+    const states = this.states;
+    const idx = this.index;
+    let y = states[idx];
     y ^= y >>> U;
     y ^= (y << S) & B;
     y ^= (y << T) & C;
     y ^= y >>> L;
-    this.index = twistedNext(this.states, this.index);
+    // Inline twistedNext: avoids a JS function call in the inner loop and lets
+    // V8 keep the state[] accesses tighter in the same compilation unit.
+    if (idx < N - M) {
+      const z = (states[idx] & MASK_UPPER) | (states[idx + 1] & MASK_LOWER);
+      states[idx] = states[idx + M] ^ (z >>> 1) ^ (-(z & 1) & A);
+      this.index = idx + 1;
+    } else if (idx < N - 1) {
+      const z = (states[idx] & MASK_UPPER) | (states[idx + 1] & MASK_LOWER);
+      states[idx] = states[idx + M - N] ^ (z >>> 1) ^ (-(z & 1) & A);
+      this.index = idx + 1;
+    } else {
+      const z = (states[idx] & MASK_UPPER) | (states[0] & MASK_LOWER);
+      states[idx] = states[M - 1] ^ (z >>> 1) ^ (-(z & 1) & A);
+      this.index = 0;
+    }
     return y;
   }
   getState(): readonly number[] {
