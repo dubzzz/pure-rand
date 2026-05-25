@@ -99,9 +99,24 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Restore main bundle from cache
+        id: main-cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: package.tgz
+          # Non-matching key so restore-keys picks the most recent main cache
+          key: bundle-main-will-not-match
+          restore-keys: bundle-main-
+      - name: Rename main bundle
+        if: steps.main-cache.outputs.cache-hit != ''
+        run: mv package.tgz main-package.tgz
       - name: Bench tests
         id: bench
-        run: pnpm bench | tee bench-output.txt
+        env:
+          # Prefer the cached main bundle; prepare-main.mjs falls back to
+          # pkg.pr.new when it is absent (e.g. no main cache yet).
+          PURE_RAND_MAIN_TARBALL: ${{ github.workspace }}/main-package.tgz
+        run: pnpm bench:main | tee bench-output.txt
       - name: Upload bench results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

@@ -5,16 +5,33 @@ import { mersenne } from './mersenne';
 import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
+import { loadMainGenerators, type MainGenerators } from '../__bench__/main';
 
 const numInts = 5_000;
-const algorithms = [native, congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+
+type GeneratorFactory = (seed: number) => RandomGenerator;
+type Competitor = { name: string; factory: GeneratorFactory };
+
+const main = await loadMainGenerators();
+
+const baseAlgorithms: GeneratorFactory[] = [congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+
+// `native` first as a baseline, then each algorithm immediately followed by its
+// `main` counterpart (when comparing) so the two compete within the same group.
+const competitors: Competitor[] = [{ name: native.name, factory: native }];
+for (const algorithm of baseAlgorithms) {
+  competitors.push({ name: algorithm.name, factory: algorithm });
+  if (main !== null) {
+    competitors.push({ name: `${algorithm.name} (main)`, factory: main[algorithm.name as keyof MainGenerators] });
+  }
+}
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
-    for (const algorithm of algorithms) {
+    for (const { name, factory } of competitors) {
       let seed = 0;
-      bench(algorithm.name, () => {
-        const rng = algorithm(seed++);
+      bench(name, () => {
+        const rng = factory(seed++);
         for (let i = 0; i !== numInts; ++i) {
           rng.next();
         }
@@ -22,44 +39,48 @@ describe('generator', () => {
     }
   });
   describe(`${numInts} next`, () => {
-    for (const algorithm of algorithms) {
-      const rng = algorithm(0);
-      bench(algorithm.name, () => {
+    for (const { name, factory } of competitors) {
+      const rng = factory(0);
+      bench(name, () => {
         for (let i = 0; i !== numInts; ++i) {
           rng.next();
         }
       });
     }
   });
-  for (const algorithm of algorithms) {
-    if (algorithm === native) {
-      continue;
-    }
+  for (const algorithm of baseAlgorithms) {
     describe(algorithm.name, () => {
-      const rng = algorithm(0);
-      let seed = 0;
-      bench(
-        'init',
-        () => {
-          algorithm(seed);
-        },
-        {
-          setup: () => {
-            seed = (seed + 1) | 0;
-          },
-        },
-      );
-      bench('next', () => {
-        rng.next();
-      });
-      if (isJumpableRandomGenerator(rng)) {
-        bench('jump', () => {
-          rng.jump();
-        });
+      registerSingleOps('', algorithm);
+      if (main !== null) {
+        registerSingleOps(' (main)', main[algorithm.name as keyof MainGenerators]);
       }
     });
   }
 });
+
+function registerSingleOps(suffix: string, factory: GeneratorFactory) {
+  const rng = factory(0);
+  let seed = 0;
+  bench(
+    `init${suffix}`,
+    () => {
+      factory(seed);
+    },
+    {
+      setup: () => {
+        seed = (seed + 1) | 0;
+      },
+    },
+  );
+  bench(`next${suffix}`, () => {
+    rng.next();
+  });
+  if (isJumpableRandomGenerator(rng)) {
+    bench(`jump${suffix}`, () => {
+      rng.jump();
+    });
+  }
+}
 
 function native(): RandomGenerator {
   return {
