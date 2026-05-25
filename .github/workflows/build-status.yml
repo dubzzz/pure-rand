@@ -86,7 +86,9 @@ jobs:
   bench:
     name: 'Bench'
     if: github.event_name == 'pull_request'
-    needs: warmup_pnpm_cache
+    needs:
+      - warmup_pnpm_cache
+      - production_package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -110,11 +112,17 @@ jobs:
       - name: Rename main bundle
         if: steps.main-cache.outputs.cache-hit != ''
         run: mv package.tgz main-package.tgz
+      - name: Download current bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: bundle
       - name: Bench tests
         id: bench
         env:
-          # Prefer the cached main bundle; prepare-main.mjs falls back to
-          # pkg.pr.new when it is absent (e.g. no main cache yet).
+          # Both sides run as packed production bundles: the current branch from
+          # the build artifact, main from the cached bundle (prepare-bundles.mjs
+          # falls back to pkg.pr.new when no main cache exists yet).
+          PURE_RAND_CURRENT_TARBALL: ${{ github.workspace }}/package.tgz
           PURE_RAND_MAIN_TARBALL: ${{ github.workspace }}/main-package.tgz
         run: pnpm bench:main | tee bench-output.txt
       - name: Upload bench results

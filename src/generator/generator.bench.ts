@@ -1,28 +1,29 @@
 import { describe, bench } from 'vitest';
-import { xoroshiro128plus } from './xoroshiro128plus';
-import { congruential32 } from './congruential32';
-import { mersenne } from './mersenne';
-import { xorshift128plus } from './xorshift128plus';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
-import { loadMainGenerators, type MainGenerators } from '../__bench__/main';
+import { loadGenerators, type Generators } from '../__bench__/competitors';
 
 const numInts = 5_000;
 
 type GeneratorFactory = (seed: number) => RandomGenerator;
 type Competitor = { name: string; factory: GeneratorFactory };
 
-const main = await loadMainGenerators();
+const { current, main } = await loadGenerators();
 
-const baseAlgorithms: GeneratorFactory[] = [congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+const algorithmNames = [
+  'congruential32',
+  'mersenne',
+  'xoroshiro128plus',
+  'xorshift128plus',
+] as const satisfies (keyof Generators)[];
 
 // `native` first as a baseline, then each algorithm immediately followed by its
 // `main` counterpart (when comparing) so the two compete within the same group.
-const competitors: Competitor[] = [{ name: native.name, factory: native }];
-for (const algorithm of baseAlgorithms) {
-  competitors.push({ name: algorithm.name, factory: algorithm });
+const competitors: Competitor[] = [{ name: 'native', factory: native }];
+for (const name of algorithmNames) {
+  competitors.push({ name, factory: current[name] });
   if (main !== null) {
-    competitors.push({ name: `${algorithm.name} (main)`, factory: main[algorithm.name as keyof MainGenerators] });
+    competitors.push({ name: `${name} (main)`, factory: main[name] });
   }
 }
 
@@ -48,11 +49,11 @@ describe('generator', () => {
       });
     }
   });
-  for (const algorithm of baseAlgorithms) {
-    describe(algorithm.name, () => {
-      registerSingleOps('', algorithm);
+  for (const name of algorithmNames) {
+    describe(name, () => {
+      registerSingleOps('', current[name]);
       if (main !== null) {
-        registerSingleOps(' (main)', main[algorithm.name as keyof MainGenerators]);
+        registerSingleOps(' (main)', main[name]);
       }
     });
   }

@@ -1,12 +1,14 @@
 import { describe, bench } from 'vitest';
 import { xorshift128plus } from '../generator/xorshift128plus';
-import { uniformInt } from './uniformInt';
-import { uniformBigInt } from './uniformBigInt';
-import { uniformFloat32 } from './uniformFloat32';
-import { uniformFloat64 } from './uniformFloat64';
-import { loadMainDistributions } from '../__bench__/main';
+import { loadDistributions } from '../__bench__/competitors';
 
-const main = await loadMainDistributions();
+// `rng` only feeds randomness to both competitors identically, so the source
+// generator is fine here; only the distributions under test are compared.
+const { current, main } = await loadDistributions();
+const uniformInt = current.uniformInt;
+const uniformBigInt = current.uniformBigInt;
+const uniformFloat32 = current.uniformFloat32;
+const uniformFloat64 = current.uniformFloat64;
 const mainUniformInt = main?.uniformInt;
 const mainUniformBigInt = main?.uniformBigInt;
 const mainUniformFloat32 = main?.uniformFloat32;
