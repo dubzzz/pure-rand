@@ -1,61 +1,83 @@
 import { describe, bench } from 'vitest';
-import { xoroshiro128plus } from './xoroshiro128plus';
-import { congruential32 } from './congruential32';
-import { mersenne } from './mersenne';
-import { xorshift128plus } from './xorshift128plus';
+import { current, main, type PureRand } from '../__bench__/Imports.js';
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 import type { RandomGenerator } from '../types/RandomGenerator';
 
 const numInts = 5_000;
-const algorithms = [native, congruential32, mersenne, xoroshiro128plus, xorshift128plus];
+
+type GeneratorName = 'congruential32' | 'mersenne' | 'xoroshiro128plus' | 'xorshift128plus';
+const generatorNames: GeneratorName[] = ['congruential32', 'mersenne', 'xoroshiro128plus', 'xorshift128plus'];
+
+type Version = { label: string; api: PureRand };
+const versions: Version[] = [
+  { label: 'current', api: current },
+  { label: 'main', api: main },
+];
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
-    for (const algorithm of algorithms) {
-      let seed = 0;
-      bench(algorithm.name, () => {
-        const rng = algorithm(seed++);
-        for (let i = 0; i !== numInts; ++i) {
-          rng.next();
-        }
-      });
-    }
-  });
-  describe(`${numInts} next`, () => {
-    for (const algorithm of algorithms) {
-      const rng = algorithm(0);
-      bench(algorithm.name, () => {
-        for (let i = 0; i !== numInts; ++i) {
-          rng.next();
-        }
-      });
-    }
-  });
-  for (const algorithm of algorithms) {
-    if (algorithm === native) {
-      continue;
-    }
-    describe(algorithm.name, () => {
-      const rng = algorithm(0);
-      let seed = 0;
-      bench(
-        'init',
-        () => {
-          algorithm(seed);
-        },
-        {
-          setup: () => {
-            seed = (seed + 1) | 0;
-          },
-        },
-      );
-      bench('next', () => {
+    bench('native', () => {
+      const rng = native();
+      for (let i = 0; i !== numInts; ++i) {
         rng.next();
-      });
-      if (isJumpableRandomGenerator(rng)) {
-        bench('jump', () => {
-          rng.jump();
+      }
+    });
+    for (const name of generatorNames) {
+      for (const { label, api } of versions) {
+        let seed = 0;
+        bench(`${name} (${label})`, () => {
+          const rng = api[name](seed++);
+          for (let i = 0; i !== numInts; ++i) {
+            rng.next();
+          }
         });
+      }
+    }
+  });
+
+  describe(`${numInts} next`, () => {
+    bench('native', () => {
+      const rng = native();
+      for (let i = 0; i !== numInts; ++i) {
+        rng.next();
+      }
+    });
+    for (const name of generatorNames) {
+      for (const { label, api } of versions) {
+        const rng = api[name](0);
+        bench(`${name} (${label})`, () => {
+          for (let i = 0; i !== numInts; ++i) {
+            rng.next();
+          }
+        });
+      }
+    }
+  });
+
+  for (const name of generatorNames) {
+    describe(name, () => {
+      for (const { label, api } of versions) {
+        const rng = api[name](0);
+        let seed = 0;
+        bench(
+          `init (${label})`,
+          () => {
+            api[name](seed);
+          },
+          {
+            setup: () => {
+              seed = (seed + 1) | 0;
+            },
+          },
+        );
+        bench(`next (${label})`, () => {
+          rng.next();
+        });
+        if (isJumpableRandomGenerator(rng)) {
+          bench(`jump (${label})`, () => {
+            rng.jump();
+          });
+        }
       }
     });
   }

@@ -1,24 +1,33 @@
 import { describe, bench } from 'vitest';
-import { xorshift128plus } from '../generator/xorshift128plus';
-import { uniformInt } from './uniformInt';
-import { uniformBigInt } from './uniformBigInt';
-import { uniformFloat32 } from './uniformFloat32';
-import { uniformFloat64 } from './uniformFloat64';
+import { current, main, type PureRand } from '../__bench__/Imports.js';
+import type { RandomGenerator } from '../types/RandomGenerator';
+
+type Version = { label: string; api: PureRand; rng: RandomGenerator };
+const versions: Version[] = [
+  { label: 'current', api: current, rng: current.xorshift128plus(0) },
+  { label: 'main', api: main, rng: main.xorshift128plus(0) },
+];
+
+function benchVersions(name: string, run: (version: Version) => void): void {
+  for (const version of versions) {
+    bench(`${name} (${version.label})`, () => {
+      run(version);
+    });
+  }
+}
 
 describe('distribution', () => {
-  const rng = xorshift128plus(0);
-
   describe('pow2 ranges', () => {
     // range < 2 ** 8
     const smallRangeLabel = `{{S range}} [0, 2**4 -1]`;
     bench(`native @@ ${smallRangeLabel}`, () => {
       nativeInt(0, 15);
     });
-    bench(`uniformInt @@ ${smallRangeLabel}`, () => {
-      uniformInt(rng, 0, 15);
+    benchVersions(`uniformInt @@ ${smallRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 15);
     });
-    bench(`uniformBigInt @@ ${smallRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 15n);
+    benchVersions(`uniformBigInt @@ ${smallRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 15n);
     });
 
     // 2 ** 8 <= range < 2 ** 31
@@ -26,11 +35,11 @@ describe('distribution', () => {
     bench(`native @@ ${mediumRangeLabel}`, () => {
       nativeInt(0, 2097151);
     });
-    bench(`uniformInt @@ ${mediumRangeLabel}`, () => {
-      uniformInt(rng, 0, 2097151);
+    benchVersions(`uniformInt @@ ${mediumRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 2097151);
     });
-    bench(`uniformBigInt @@ ${mediumRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 2097151n);
+    benchVersions(`uniformBigInt @@ ${mediumRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 2097151n);
     });
 
     // 2 ** 31 <= range < 2 ** 32
@@ -38,11 +47,11 @@ describe('distribution', () => {
     bench(`native @@ ${largeRangeLabel}`, () => {
       nativeInt(0, 4294967295);
     });
-    bench(`uniformInt @@ ${largeRangeLabel}`, () => {
-      uniformInt(rng, 0, 4294967295);
+    benchVersions(`uniformInt @@ ${largeRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 4294967295);
     });
-    bench(`uniformBigInt @@ ${largeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 4294967295n);
+    benchVersions(`uniformBigInt @@ ${largeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 4294967295n);
     });
 
     // 2 ** 32 <= range < Number.MAX_SAFE_INTEGER
@@ -50,18 +59,18 @@ describe('distribution', () => {
     bench(`native @@ ${largeRangeLabel}`, () => {
       nativeInt(0, 1099511627775);
     });
-    bench(`uniformInt @@ ${veryLargeRangeLabel}`, () => {
-      uniformInt(rng, 0, 1099511627775);
+    benchVersions(`uniformInt @@ ${veryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 1099511627775);
     });
-    bench(`uniformBigInt @@ ${veryLargeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 1099511627775n);
+    benchVersions(`uniformBigInt @@ ${veryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 1099511627775n);
     });
 
     // Number.MAX_SAFE_INTEGER << range
     // WARNING: "number" type cannot fit for such ranges
     const veryVeryLargeRangeLabel = `{{XXL range}} [0, 2**80 -1]`;
-    bench(`uniformBigInt @@ ${veryVeryLargeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 1208925819614629174706175n);
+    benchVersions(`uniformBigInt @@ ${veryVeryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 1208925819614629174706175n);
     });
   });
 
@@ -70,11 +79,11 @@ describe('distribution', () => {
     bench(`native @@ {{float}} [0, 1)`, () => {
       nativeFloat();
     });
-    bench(`uniformFloat32 @@ {{float}} [0, 1)`, () => {
-      uniformFloat32(rng);
+    benchVersions(`uniformFloat32 @@ {{float}} [0, 1)`, ({ api, rng }) => {
+      api.uniformFloat32(rng);
     });
-    bench(`uniformFloat64 @@ {{float}} [0, 1)`, () => {
-      uniformFloat64(rng);
+    benchVersions(`uniformFloat64 @@ {{float}} [0, 1)`, ({ api, rng }) => {
+      api.uniformFloat64(rng);
     });
 
     // range < 2 ** 8
@@ -82,11 +91,11 @@ describe('distribution', () => {
     bench(`native @@ ${smallRangeLabel}`, () => {
       nativeInt(0, 48);
     });
-    bench(`uniformInt @@ ${smallRangeLabel}`, () => {
-      uniformInt(rng, 0, 48);
+    benchVersions(`uniformInt @@ ${smallRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 48);
     });
-    bench(`uniformBigInt @@ ${smallRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 48n);
+    benchVersions(`uniformBigInt @@ ${smallRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 48n);
     });
 
     // 2 ** 8 <= range < 2 ** 31
@@ -94,11 +103,11 @@ describe('distribution', () => {
     bench(`native @@ ${mediumRangeLabel}`, () => {
       nativeInt(0, 1_000_000_000);
     });
-    bench(`uniformInt @@ ${mediumRangeLabel}`, () => {
-      uniformInt(rng, 0, 1_000_000_000);
+    benchVersions(`uniformInt @@ ${mediumRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 1_000_000_000);
     });
-    bench(`uniformBigInt @@ ${mediumRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 1_000_000_000n);
+    benchVersions(`uniformBigInt @@ ${mediumRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 1_000_000_000n);
     });
 
     // 2 ** 31 <= range < 2 ** 32
@@ -106,11 +115,11 @@ describe('distribution', () => {
     bench(`native @@ ${largeRangeLabel}`, () => {
       nativeInt(0, 4_000_000_000);
     });
-    bench(`uniformInt @@ ${largeRangeLabel}`, () => {
-      uniformInt(rng, 0, 4_000_000_000);
+    benchVersions(`uniformInt @@ ${largeRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 4_000_000_000);
     });
-    bench(`uniformBigInt @@ ${largeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 4_000_000_000n);
+    benchVersions(`uniformBigInt @@ ${largeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 4_000_000_000n);
     });
 
     // 2 ** 32 <= range < Number.MAX_SAFE_INTEGER
@@ -118,18 +127,18 @@ describe('distribution', () => {
     bench(`native @@ ${veryLargeRangeLabel}`, () => {
       nativeInt(0, 8_000_000_000);
     });
-    bench(`uniformInt @@ ${veryLargeRangeLabel}`, () => {
-      uniformInt(rng, 0, 8_000_000_000);
+    benchVersions(`uniformInt @@ ${veryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformInt(rng, 0, 8_000_000_000);
     });
-    bench(`uniformBigInt @@ ${veryLargeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 8_000_000_000n);
+    benchVersions(`uniformBigInt @@ ${veryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 8_000_000_000n);
     });
 
     // Number.MAX_SAFE_INTEGER << range
     // WARNING: "number" type cannot fit for such ranges
     const veryVeryLargeRangeLabel = `{{XXL range}} [0, 100_000_000_000_000_000]`;
-    bench(`uniformBigInt @@ ${veryVeryLargeRangeLabel}`, () => {
-      uniformBigInt(rng, 0n, 100_000_000_000_000_000n);
+    benchVersions(`uniformBigInt @@ ${veryVeryLargeRangeLabel}`, ({ api, rng }) => {
+      api.uniformBigInt(rng, 0n, 100_000_000_000_000_000n);
     });
   });
 });
