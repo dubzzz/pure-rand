@@ -2,3 +2,6 @@ trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 20160
 
 blockExoticSubdeps: true
+
+allowBuilds:
+  esbuild: set this to true or false
