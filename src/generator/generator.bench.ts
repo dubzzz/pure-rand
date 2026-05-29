@@ -1,96 +1,75 @@
 import { describe, bench } from 'vitest';
 import { current, main, type PureRand } from '../__bench__/Imports.js';
-import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
-import type { RandomGenerator } from '../types/RandomGenerator';
 
 const numInts = 5_000;
+
+// Run each version several times so that ordering/warmup noise gets averaged out
+// when comparing current against main.
+const numReplicas = 3;
 
 type GeneratorName = 'congruential32' | 'mersenne' | 'xoroshiro128plus' | 'xorshift128plus';
 const generatorNames: GeneratorName[] = ['congruential32', 'mersenne', 'xoroshiro128plus', 'xorshift128plus'];
 
-type Version = { label: string; api: PureRand };
-const versions: Version[] = [
-  { label: 'current', api: current },
-  { label: 'main', api: main },
-];
+// Always compare the current build against main: each comparison gets its own
+// describe block holding `numReplicas` interleaved benches per version, named
+// `current-${i}` and `main-${i}`.
+function compare(name: string, make: (api: PureRand) => () => void): void {
+  describe(name, () => {
+    for (let i = 0; i !== numReplicas; ++i) {
+      bench(`current-${i}`, make(current));
+      bench(`main-${i}`, make(main));
+    }
+  });
+}
 
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
-    bench('native', () => {
-      const rng = native();
-      for (let i = 0; i !== numInts; ++i) {
-        rng.next();
-      }
-    });
     for (const name of generatorNames) {
-      for (const { label, api } of versions) {
+      compare(name, (api) => {
         let seed = 0;
-        bench(`${name} (${label})`, () => {
+        return () => {
           const rng = api[name](seed++);
           for (let i = 0; i !== numInts; ++i) {
             rng.next();
           }
-        });
-      }
+        };
+      });
     }
   });
 
   describe(`${numInts} next`, () => {
-    bench('native', () => {
-      const rng = native();
-      for (let i = 0; i !== numInts; ++i) {
-        rng.next();
-      }
-    });
     for (const name of generatorNames) {
-      for (const { label, api } of versions) {
+      compare(name, (api) => {
         const rng = api[name](0);
-        bench(`${name} (${label})`, () => {
+        return () => {
           for (let i = 0; i !== numInts; ++i) {
             rng.next();
           }
-        });
-      }
+        };
+      });
     }
   });
 
   for (const name of generatorNames) {
     describe(name, () => {
-      for (const { label, api } of versions) {
-        const rng = api[name](0);
+      compare('init', (api) => {
         let seed = 0;
-        bench(
-          `init (${label})`,
-          () => {
-            api[name](seed);
-          },
-          {
-            setup: () => {
-              seed = (seed + 1) | 0;
-            },
-          },
-        );
-        bench(`next (${label})`, () => {
+        return () => {
+          api[name]((seed = (seed + 1) | 0));
+        };
+      });
+      compare('next', (api) => {
+        const rng = api[name](0);
+        return () => {
           rng.next();
-        });
-        if (isJumpableRandomGenerator(rng)) {
-          bench(`jump (${label})`, () => {
-            rng.jump();
-          });
-        }
-      }
+        };
+      });
+      compare('jump', (api) => {
+        const rng = api[name](0);
+        return () => {
+          rng.jump();
+        };
+      });
     });
   }
 });
-
-function native(): RandomGenerator {
-  return {
-    clone: () => native(),
-    getState: () => [],
-    next: () => Math.random(),
-  };
-}
-
-function isJumpableRandomGenerator(rng: RandomGenerator): rng is JumpableRandomGenerator {
-  return 'jump' in rng;
-}
