@@ -62,7 +62,7 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "pnpm@11.4.0",
+  "packageManager": "pnpm@11.5.1",
   "scripts": {
     "format:check": "oxfmt --list-different",
     "format": "oxfmt",
