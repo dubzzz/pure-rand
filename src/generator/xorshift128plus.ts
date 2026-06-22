@@ -8,12 +8,7 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 // NOTE: Math.random() of V8 uses XorShift128+ with a=23, b=17, c=26,
 //       See https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/base/utils/random-number-generator.h#L119-L128
 
-// Polynomial coefficients for jump (equivalent to 2^64 calls to next()).
-// Hoisted to module scope so jump() doesn't allocate a fresh array per call.
-const JUMP_POLY_0 = 0x635d2dff;
-const JUMP_POLY_1 = 0x8a5cd789;
-const JUMP_POLY_2 = 0x5c472f96;
-const JUMP_POLY_3 = 0x121fd215;
+const jumps = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
 
 class XorShift128Plus implements JumpableRandomGenerator {
   constructor(
