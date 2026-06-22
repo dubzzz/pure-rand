@@ -8,13 +8,6 @@ const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
 const MASK_2: number = -2147483649; // = (1 << 31) - 1
 
-// Precomputed 3-step LCG constants for parallel evaluation in next().
-// For LCG s_{n+1} = a*s_n + c (mod 2^32):
-//   s_{n+1} = a   * s + c
-//   s_{n+2} = a^2 * s + c*(1 + a)
-//   s_{n+3} = a^3 * s + c*(1 + a + a^2)
-// Computing all 3 from s_n removes the data dependency chain, letting the
-// CPU pipeline the 3 Math.imul operations in parallel.
 const MULTIPLIER_2: number = 0xa9fc6809 | 0; // = a^2 mod 2^32
 const INCREMENT_2: number = 0x1e278e7a | 0; // = c*(1 + a) mod 2^32
 const MULTIPLIER_3: number = 0x45c82be5 | 0; // = a^3 mod 2^32
