@@ -44,9 +44,7 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let s11 = this.s11;
     let s10 = this.s10;
     for (let i = 0; i !== 4; ++i) {
-      // Read polynomial coefficient via a small switch instead of an array load
-      // (the four constants are hoisted to module scope to avoid a per-call allocation).
-      const poly = i === 0 ? JUMP_POLY_0 : i === 1 ? JUMP_POLY_1 : i === 2 ? JUMP_POLY_2 : JUMP_POLY_3;
+      const ji = jumps[i];
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
         if (poly & mask) {
