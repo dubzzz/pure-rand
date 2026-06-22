@@ -1,0 +1,83 @@
+n rounds: ref=6 pr=6
+
+=== Median hz across rounds (ref vs pr) ===
+generator > init and 5000 next > congruential32
+  ref median hz: 25,852  | pr median hz: 25,813  | Δ -0.2%
+  ref runs: 25828, 25921, 25903, 25849, 25846, 25856
+  pr  runs: 25860, 25925, 25765, 25659, 26207, 25681
+generator > init and 5000 next > mersenne
+  ref median hz: 17,355  | pr median hz: 17,391  | Δ +0.2%
+  ref runs: 17910, 17406, 17304, 17527, 17224, 16963
+  pr  runs: 17456, 17018, 17419, 17231, 17584, 17364
+generator > init and 5000 next > xoroshiro128plus
+  ref median hz: 22,657  | pr median hz: 22,662  | Δ +0.0%
+  ref runs: 23017, 23202, 22668, 22197, 22645, 21999
+  pr  runs: 22520, 21989, 22992, 22441, 23249, 22804
+generator > init and 5000 next > xorshift128plus
+  ref median hz: 14,574  | pr median hz: 12,845  | Δ -11.9%
+  ref runs: 14562, 14767, 14607, 14410, 14211, 14587
+  pr  runs: 12872, 12818, 12930, 12610, 12923, 12791
+generator > 5000 next > congruential32
+  ref median hz: 25,702  | pr median hz: 25,547  | Δ -0.6%
+  ref runs: 25781, 25995, 25592, 25250, 25622, 25841
+  pr  runs: 25772, 25807, 25367, 25728, 24922, 25301
+generator > 5000 next > mersenne
+  ref median hz: 17,621  | pr median hz: 17,984  | Δ +2.1%
+  ref runs: 17437, 18149, 17731, 18094, 17314, 17511
+  pr  runs: 18068, 17936, 17981, 18102, 17988, 17717
+generator > 5000 next > xoroshiro128plus
+  ref median hz: 20,075  | pr median hz: 20,292  | Δ +1.1%
+  ref runs: 20092, 20380, 20059, 20355, 19731, 19088
+  pr  runs: 20492, 20147, 20270, 20364, 20315, 19970
+generator > 5000 next > xorshift128plus
+  ref median hz: 13,364  | pr median hz: 12,404  | Δ -7.2%
+  ref runs: 13367, 13616, 13310, 13361, 13357, 13399
+  pr  runs: 12603, 12310, 12098, 12541, 12498, 12248
+generator > congruential32 > init
+  ref median hz: 10,043,325  | pr median hz: 10,180,039  | Δ +1.4%
+  ref runs: 9570639, 10567780, 10345587, 9919559, 10167090, 9763537
+  pr  runs: 10135682, 10046743, 9850456, 10483451, 10224396, 10731628
+generator > congruential32 > next
+  ref median hz: 10,600,834  | pr median hz: 10,224,836  | Δ -3.5%
+  ref runs: 10695323, 10506344, 11006455, 10247876, 10721060, 10045947
+  pr  runs: 9962455, 9950133, 10487216, 10851141, 9922312, 10961708
+generator > congruential32 > jump
+  ref median hz: 9,959,434  | pr median hz: 10,136,109  | Δ +1.8%
+  ref runs: 9977086, 9912461, 10995623, 9879275, 10491343, 9941782
+  pr  runs: 10010960, 10309419, 10261258, 9902447, 9663813, 10573819
+generator > mersenne > init
+  ref median hz: 121,865  | pr median hz: 113,101  | Δ -7.2%
+  ref runs: 129820, 116511, 123404, 120326, 117110, 127371
+  pr  runs: 129378, 110229, 128716, 114929, 111273, 107001
+generator > mersenne > next
+  ref median hz: 9,701,550  | pr median hz: 9,381,931  | Δ -3.3%
+  ref runs: 9684077, 9735768, 9731596, 8923930, 9719023, 9059575
+  pr  runs: 9224243, 9142740, 9539619, 9804099, 9645604, 8738373
+generator > mersenne > jump
+  ref median hz: 40  | pr median hz: 40  | Δ -0.5%
+  ref runs: 40, 40, 40, 40, 40, 39
+  pr  runs: 40, 40, 39, 39, 40, 38
+generator > xoroshiro128plus > init
+  ref median hz: 8,131,473  | pr median hz: 7,805,584  | Δ -4.0%
+  ref runs: 8106508, 8228725, 8509481, 7930374, 8156438, 7228413
+  pr  runs: 8375072, 7620099, 8099249, 7791029, 7389419, 7820139
+generator > xoroshiro128plus > next
+  ref median hz: 9,550,263  | pr median hz: 9,587,851  | Δ +0.4%
+  ref runs: 9553216, 9547309, 9761222, 8212340, 9819497, 8639883
+  pr  runs: 9315009, 9770901, 9628304, 10174951, 9547397, 9446411
+generator > xoroshiro128plus > jump
+  ref median hz: 1,401,530  | pr median hz: 1,428,893  | Δ +2.0%
+  ref runs: 1434184, 1391425, 1392726, 1410334, 1441417, 1350030
+  pr  runs: 1444988, 1418451, 1439334, 1456247, 1414500, 1397321
+generator > xorshift128plus > init
+  ref median hz: 7,854,095  | pr median hz: 7,976,412  | Δ +1.6%
+  ref runs: 8131114, 5520201, 8606503, 7577077, 8220696, 7188974
+  pr  runs: 8011178, 7962597, 7868169, 7990227, 7126113, 8222963
+generator > xorshift128plus > next
+  ref median hz: 9,160,958  | pr median hz: 9,018,863  | Δ -1.6%
+  ref runs: 9201690, 9252702, 9444531, 8770827, 9120226, 9013043
+  pr  runs: 8545268, 8993929, 9114823, 9403047, 8873996, 9043797
+generator > xorshift128plus > jump
+  ref median hz: 870,186  | pr median hz: 1,062,561  | Δ +22.1%
+  ref runs: 849350, 869494, 878928, 875800, 869605, 870767
+  pr  runs: 1047182, 1070947, 1074430, 1053300, 1054174, 1073246
