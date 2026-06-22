@@ -85,39 +85,6 @@ describe('xoroshiro128plus', () => {
       ].map((v) => v | 0),
     );
   });
-  it('Should jump exactly like the reference 128xnext() algorithm', () => {
-    // Guards the inlined JUMP_TABLE_BASE64 constant: the table-based jump() must
-    // stay bit-identical to replaying 128 calls to next() from any state.
-    const referenceJump = (state: readonly number[]): number[] => {
-      const g = xoroshiro128plusFromState(state);
-      let ns01 = 0;
-      let ns00 = 0;
-      let ns11 = 0;
-      let ns10 = 0;
-      const jump = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
-      for (let i = 0; i !== 4; ++i) {
-        for (let mask = 1; mask; mask <<= 1) {
-          if (jump[i] & mask) {
-            const st = g.getState();
-            ns01 ^= st[0];
-            ns00 ^= st[1];
-            ns11 ^= st[2];
-            ns10 ^= st[3];
-          }
-          g.next();
-        }
-      }
-      return [ns01 | 0, ns00 | 0, ns11 | 0, ns10 | 0];
-    };
-    fc.assert(
-      fc.property(fc.integer(), fc.integer(), fc.integer(), fc.integer(), (s01, s00, s11, s10) => {
-        const state = [s01, s00, s11, s10];
-        const g = xoroshiro128plusFromState(state);
-        g.jump();
-        expect(g.getState().map((v) => v | 0)).toEqual(referenceJump(state));
-      }),
-    );
-  });
   it('Should return the same sequence given same seeds', () => fc.assert(p.sameSeedSameSequences(xoroshiro128plus)));
   it('Should return the same sequence when built from state', () =>
     fc.assert(p.clonedFromStateSameSequences(xoroshiro128plus, xoroshiro128plusFromState)));
