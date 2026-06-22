@@ -1,5 +1,7 @@
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
+const jumps = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
+
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
@@ -35,17 +37,29 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    const jump = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
+    let s01 = this.s01;
+    let s00 = this.s00;
+    let s11 = this.s11;
+    let s10 = this.s10;
     for (let i = 0; i !== 4; ++i) {
+      const ji = jumps[i];
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
-        if (jump[i] & mask) {
-          ns01 ^= this.s01;
-          ns00 ^= this.s00;
-          ns11 ^= this.s11;
-          ns10 ^= this.s10;
+        if (ji & mask) {
+          ns01 ^= s01;
+          ns00 ^= s00;
+          ns11 ^= s11;
+          ns10 ^= s10;
         }
-        this.next();
+        // inlined next()
+        const a0 = s10 ^ s00;
+        const a1 = s11 ^ s01;
+        const s00_ = s00;
+        const s01_ = s01;
+        s00 = (s00_ << 24) ^ (s01_ >>> 8) ^ a0 ^ (a0 << 16);
+        s01 = (s01_ << 24) ^ (s00_ >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
+        s10 = (a1 << 5) ^ (a0 >>> 27);
+        s11 = (a0 << 5) ^ (a1 >>> 27);
       }
     }
     this.s01 = ns01;
