@@ -1,8 +1,6 @@
-import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
+import type { JumpableRandomGenerator } from "../types/JumpableRandomGenerator";
 
-// Jump polynomial constants for xoroshiro128+ (equivalent to 2^64 calls of next()).
-// Hoisted to a module-level constant to avoid per-call array allocation in jump().
-const JUMP_XOROSHIRO128PLUS = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
+const jumps = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
 
 // XoroShiro128+ with a=24, b=16, c=37,
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
@@ -44,7 +42,7 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
     let s10 = this.s10;
     let s11 = this.s11;
     for (let i = 0; i !== 4; ++i) {
-      const ji = JUMP_XOROSHIRO128PLUS[i];
+      const ji = jumps[i];
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
         if (ji & mask) {
@@ -57,7 +55,8 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
         const a0 = s10 ^ s00;
         const a1 = s11 ^ s01;
         const ns00n = (s00 << 24) ^ (s01 >>> 8) ^ a0 ^ (a0 << 16);
-        const ns01n = (s01 << 24) ^ (s00 >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
+        const ns01n =
+          (s01 << 24) ^ (s00 >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
         s10 = (a1 << 5) ^ (a0 >>> 27);
         s11 = (a0 << 5) ^ (a1 >>> 27);
         s00 = ns00n;
@@ -74,10 +73,14 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
   }
 }
 
-export function xoroshiro128plusFromState(state: readonly number[]): JumpableRandomGenerator {
+export function xoroshiro128plusFromState(
+  state: readonly number[],
+): JumpableRandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
-    throw new Error('The state must have been produced by a xoroshiro128plus RandomGenerator');
+    throw new Error(
+      "The state must have been produced by a xoroshiro128plus RandomGenerator",
+    );
   }
   return new XoroShiro128Plus(state[0], state[1], state[2], state[3]);
 }
