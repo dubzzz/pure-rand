@@ -37,10 +37,10 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    let s00 = this.s00;
     let s01 = this.s01;
-    let s10 = this.s10;
+    let s00 = this.s00;
     let s11 = this.s11;
+    let s10 = this.s10;
     for (let i = 0; i !== 4; ++i) {
       const ji = jumps[i];
       for (let mask = 1; mask; mask <<= 1) {
@@ -54,13 +54,12 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
         // inlined next()
         const a0 = s10 ^ s00;
         const a1 = s11 ^ s01;
-        const ns00n = (s00 << 24) ^ (s01 >>> 8) ^ a0 ^ (a0 << 16);
-        const ns01n =
-          (s01 << 24) ^ (s00 >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
+        const s00_ = s00;
+        const s01_ = s01;
+        s00 = (s00_ << 24) ^ (s01_ >>> 8) ^ a0 ^ (a0 << 16);
+        s01 = (s01_ << 24) ^ (s00_ >>> 8) ^ a1 ^ ((a1 << 16) | (a0 >>> 16));
         s10 = (a1 << 5) ^ (a0 >>> 27);
         s11 = (a0 << 5) ^ (a1 >>> 27);
-        s00 = ns00n;
-        s01 = ns01n;
       }
     }
     this.s01 = ns01;
