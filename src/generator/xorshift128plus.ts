@@ -39,8 +39,6 @@ class XorShift128Plus implements JumpableRandomGenerator {
     let ns00 = 0;
     let ns11 = 0;
     let ns10 = 0;
-    // Pull state into locals; we update it 128 times below before writing back.
-    // This avoids storing/reloading `this.sXX` across every inlined `next()`.
     let s01 = this.s01;
     let s00 = this.s00;
     let s11 = this.s11;
