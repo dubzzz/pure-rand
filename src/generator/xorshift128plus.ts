@@ -58,7 +58,6 @@ class XorShift128Plus implements JumpableRandomGenerator {
         const a1 = s01 ^ ((s01 << 23) | (s00 >>> 9));
         s01 = s11;
         s00 = s10;
-        s11 = b1;
         s10 = a0 ^ s10 ^ ((a0 >>> 18) | (a1 << 14)) ^ ((s10 >>> 5) | (s11 << 27));
         s11 = a1 ^ s11 ^ (a1 >>> 18) ^ (s11 >>> 5);
       }
