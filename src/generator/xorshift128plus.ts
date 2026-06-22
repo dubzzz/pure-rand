@@ -47,7 +47,7 @@ class XorShift128Plus implements JumpableRandomGenerator {
       const ji = jumps[i];
       for (let mask = 1; mask; mask <<= 1) {
         // Because: (1 << 31) << 1 === 0
-        if (poly & mask) {
+        if (ji & mask) {
           ns01 ^= s01;
           ns00 ^= s00;
           ns11 ^= s11;
