@@ -1,4 +1,4 @@
-import type { JumpableRandomGenerator } from "../types/JumpableRandomGenerator";
+import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 
 const jumps = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
 
@@ -72,14 +72,10 @@ class XoroShiro128Plus implements JumpableRandomGenerator {
   }
 }
 
-export function xoroshiro128plusFromState(
-  state: readonly number[],
-): JumpableRandomGenerator {
+export function xoroshiro128plusFromState(state: readonly number[]): JumpableRandomGenerator {
   const valid = state.length === 4;
   if (!valid) {
-    throw new Error(
-      "The state must have been produced by a xoroshiro128plus RandomGenerator",
-    );
+    throw new Error('The state must have been produced by a xoroshiro128plus RandomGenerator');
   }
   return new XoroShiro128Plus(state[0], state[1], state[2], state[3]);
 }
