@@ -220,7 +220,7 @@ jobs:
           fi
 
           mkdir -p published
-          if npm pack pure-rand --pack-destination=published 2>/dev/null; then
+          if npm pack --force pure-rand --pack-destination=published 2>/dev/null; then
             published_tgz=$(find published -name '*.tgz' -type f | head -n1)
             extract_sizes "$published_tgz" published >> size-output.txt
             echo "lastPublishedVersion=$(basename "$published_tgz" .tgz | sed 's/^pure-rand-//')" >> "$GITHUB_OUTPUT"
@@ -477,10 +477,10 @@ jobs:
           key: bundle-main-${{ github.sha }}
       - name: Preview (no comment)
         if: github.event_name != 'pull_request'
-        run: pnpm exec pkg-pr-new publish --compact --comment=off
+        run: pnpm exec pkg-pr-new publish --pnpm --compact --comment=off
       - name: Preview
         if: github.event_name == 'pull_request'
-        run: pnpm exec pkg-pr-new publish --compact
+        run: pnpm exec pkg-pr-new publish --pnpm --compact
 
   # Post-build jobs
   test_bundle:

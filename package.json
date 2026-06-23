@@ -62,7 +62,17 @@
     "lib"
   ],
   "sideEffects": false,
-  "packageManager": "pnpm@11.8.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.8.0",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "format:check": "oxfmt --list-different",
     "format": "oxfmt",
