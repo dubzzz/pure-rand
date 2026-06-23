@@ -1,10 +1,5 @@
-// Helper exposing the freshly built pure-rand package so that benchmarks run
-// against the build (`lib/`), NOT the sources. Build it first with `pnpm build`.
-//
-// Benchmarks no longer install a second copy of pure-rand to compare the change
-// being worked on against `main`: that comparison is now handled by vitest's
-// `--compare` mode, which diffs the current run against the `benchmark.json`
-// produced on `main` (see the `bench:*` scripts in package.json).
+// Expose a freshly built version of the package so that benchmarks run build NOT sources.
+// Build it first with `pnpm build`.
 //
 // Types are always taken from the sources so that typechecking keeps working even
 // when the build is not available locally.

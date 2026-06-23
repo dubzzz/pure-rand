@@ -6,10 +6,6 @@ const numInts = 5_000;
 type GeneratorName = 'congruential32' | 'mersenne' | 'xoroshiro128plus' | 'xorshift128plus';
 const generatorNames: GeneratorName[] = ['congruential32', 'mersenne', 'xoroshiro128plus', 'xorshift128plus'];
 
-// Benchmark the current build only: the comparison against `main` is handled by
-// vitest's `--compare` mode, which diffs this run against the `benchmark.json`
-// computed on `main` (see the `bench:*` scripts). The generator function is resolved
-// outside of each `bench` so only the work under test is measured.
 describe('generator', () => {
   describe(`init and ${numInts} next`, () => {
     for (const name of generatorNames) {
@@ -42,13 +38,13 @@ describe('generator', () => {
       bench('init', () => {
         generator((seed = (seed + 1) | 0));
       });
-      const rngNext = generator(0);
+
+      const rng = generator(0);
       bench('next', () => {
-        rngNext.next();
+        rng.next();
       });
-      const rngJump = generator(0);
       bench('jump', () => {
-        rngJump.jump();
+        rng.jump();
       });
     });
   }

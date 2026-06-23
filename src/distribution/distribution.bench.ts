@@ -1,11 +1,6 @@
 import { describe, bench } from 'vitest';
 import { current } from '../__bench__/Imports.js';
 
-// Benchmark the current build only: the comparison against `main` is handled by
-// vitest's `--compare` mode, which diffs this run against the `benchmark.json`
-// computed on `main` (see the `bench:*` scripts). The distribution functions and a
-// single shared seeded generator are resolved outside the benches so only the work
-// under test is measured and the inputs stay identical across runs.
 const { uniformInt, uniformBigInt, uniformFloat32, uniformFloat64 } = current;
 const rng = current.xorshift128plus(0);
 
