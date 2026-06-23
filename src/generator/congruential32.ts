@@ -8,6 +8,11 @@ const INCREMENT: number = 0x00269ec3;
 const MASK: number = 0xffffffff;
 const MASK_2: number = -2147483649; // = (1 << 31) - 1
 
+const MULTIPLIER_2: number = 0xa9fc6809 | 0; // = a^2 mod 2^32
+const INCREMENT_2: number = 0x1e278e7a | 0; // = c*(1 + a) mod 2^32
+const MULTIPLIER_3: number = 0x45c82be5 | 0; // = a^3 mod 2^32
+const INCREMENT_3: number = 0xd2f65b55 | 0; // = c*(1 + a + a^2) mod 2^32
+
 // Jump constants: equivalent to 2^16 calls to next() (= 3 * 2^16 LCG steps).
 // Precomputed using the LCG jump-ahead algorithm from:
 // F. Brown, "Random Number Generation with Arbitrary Strides", Trans. Am. Nucl. Soc. (Nov. 1994)
@@ -26,18 +31,16 @@ class LinearCongruential32 implements JumpableRandomGenerator {
     return new LinearCongruential32(this.seed);
   }
   next(): number {
-    const s1 = computeNextSeed(this.seed);
-    const v1 = computeValueFromNextSeed(s1);
-    const s2 = computeNextSeed(s1);
-    const v2 = computeValueFromNextSeed(s2);
-    this.seed = computeNextSeed(s2);
-    const v3 = computeValueFromNextSeed(this.seed);
-    // value between: -0x80000000 and 0x7fffffff
-    // in theory it should have been: v1 & 3 instead of v1 alone
-    // but as binary operations truncate between -0x80000000 and 0x7fffffff in JavaScript
-    // we can get rid of this operation
-    const vnext = v3 + ((v2 + (v1 << 15)) << 15);
-    return vnext | 0;
+    const s0 = this.seed;
+    // Compute the three LCG steps in parallel (no data dependency between imuls)
+    const s1 = (Math.imul(s0, MULTIPLIER) + INCREMENT) | 0;
+    const s2 = (Math.imul(s0, MULTIPLIER_2) + INCREMENT_2) | 0;
+    const s3 = (Math.imul(s0, MULTIPLIER_3) + INCREMENT_3) | 0;
+    this.seed = s3;
+    const v1 = (s1 & MASK_2) >> 16;
+    const v2 = (s2 & MASK_2) >> 16;
+    const v3 = (s3 & MASK_2) >> 16;
+    return v3 | (v2 << 15) | (v1 << 30);
   }
   jump(): void {
     // equivalent to 2^16 calls to next()
@@ -48,13 +51,6 @@ class LinearCongruential32 implements JumpableRandomGenerator {
   getState(): readonly number[] {
     return [this.seed];
   }
-}
-
-function computeNextSeed(seed: number) {
-  return (Math.imul(seed, MULTIPLIER) + INCREMENT) & MASK;
-}
-function computeValueFromNextSeed(nextseed: number) {
-  return (nextseed & MASK_2) >> 16;
 }
 
 export function congruential32FromState(state: readonly number[]): JumpableRandomGenerator {

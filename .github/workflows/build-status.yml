@@ -20,14 +20,16 @@ jobs:
     name: 'Warm up pnpm cache'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         id: pnpm-cache
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: 'pnpm'
       - name: Update pnpm cache
         if: steps.pnpm-cache.outputs.cache-hit != 'true'
@@ -39,13 +41,15 @@ jobs:
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: 'pnpm'
       - name: Ensure no dedupe required
         run: pnpm dedupe --check
@@ -54,13 +58,15 @@ jobs:
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
@@ -71,13 +77,15 @@ jobs:
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
@@ -85,20 +93,45 @@ jobs:
         run: pnpm typecheck
   bench:
     name: 'Bench'
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: 24.15.0
+          node-version: 24.17.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
+      # Build the current package: benchmarks run against the build (lib/), not the sources.
+      - name: Build current package
+        run: pnpm build
+      # Restore the bundle built out of main so that we can compare current against it.
+      - name: Restore main bundle from cache
+        id: main-cache
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: package.tgz
+          # Non-matching key so restore-keys picks the most recent main cache
+          key: bundle-main-will-not-match
+          restore-keys: bundle-main-
+      # Install the main version under the `pure-rand-main` alias. When no main bundle is
+      # cached yet (e.g. very first runs) we fall back to the latest published version.
+      - name: Install pure-rand from main
+        run: |
+          if [ -f package.tgz ]; then
+            echo "Comparing against the cached main bundle"
+            pnpm add "pure-rand-main@file:./package.tgz" --ignore-scripts
+          else
+            echo "::warning::No cached main bundle found, comparing against the latest published version"
+            pnpm add "pure-rand-main@npm:pure-rand@latest" --ignore-scripts
+          fi
       - name: Bench tests
         id: bench
         run: pnpm bench | tee bench-output.txt
@@ -112,7 +145,7 @@ jobs:
   comment_bench:
     name: 'Comment bench results'
     needs: bench
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Download bench results
@@ -379,9 +412,11 @@ jobs:
       matrix:
         node-version: [24.x, latest]
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v${{matrix.node-version}}
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -392,7 +427,7 @@ jobs:
       - name: Unit tests
         run: pnpm test --coverage
       - name: Codecov
-        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5.5.4
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           name: unit-tests-${{matrix.node-version}}
           flags: unit-tests, unit-tests-${{matrix.node-version}}
@@ -404,13 +439,15 @@ jobs:
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: ${{ github.event_name != 'push' && 'pnpm' || '' }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
@@ -453,13 +490,15 @@ jobs:
       - production_package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Install pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
@@ -550,23 +589,15 @@ jobs:
       - name: Using Node v24.x
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '24.15.0'
+          node-version: '24.17.0'
           registry-url: 'https://registry.npmjs.org'
-      - name: Install latest npm version
-        run: npm install -g npm
+      - name: Install npm version supporting stage publish
+        run: cd .. && npm install -g npm@latest
       - name: Download production package
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: bundle
-      - uses: step-security/wait-for-secrets@084b3ae774c0e0003a9307ae4f487c10f1f998fe # v1.2.1
-        id: wait-for-secrets
-        with:
-          secrets: |
-            OTP:
-              name: 'OTP to publish package'
-              description: 'OTP from authenticator app'
       - name: Publish package
-        run: npm publish --provenance --access public --otp "$OTP_VALUE" package.tgz
+        run: cd .. && npm stage publish --provenance --access public "$GITHUB_WORKSPACE/package.tgz"
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          OTP_VALUE: ${{steps.wait-for-secrets.outputs.OTP}}
