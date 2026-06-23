@@ -93,7 +93,9 @@ jobs:
         run: pnpm typecheck
   bench:
     name: 'Bench'
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    # Run on PRs targeting main (to compare against the main baseline) and on pushes to
+    # main (to refresh that baseline).
+    if: (github.event_name == 'pull_request' && github.base_ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: warmup_pnpm_cache
     runs-on: ubuntu-latest
     steps:
@@ -112,29 +114,18 @@ jobs:
       # Build the current package: benchmarks run against the build (lib/), not the sources.
       - name: Build current package
         run: pnpm build
-      # Restore the bundle built out of main so that we can compare current against it.
-      - name: Restore main bundle from cache
-        id: main-cache
+      # Restore the benchmark results computed on main so that vitest can compare the
+      # current run against them. No previous bundle needs to be installed anymore.
+      - name: Restore results from last benchmark execution on main
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          path: package.tgz
+          path: benchmark.json
           # Non-matching key so restore-keys picks the most recent main cache
-          key: bundle-main-will-not-match
-          restore-keys: bundle-main-
-      # Install the main version under the `pure-rand-main` alias. When no main bundle is
-      # cached yet (e.g. very first runs) we fall back to the latest published version.
-      - name: Install pure-rand from main
-        run: |
-          if [ -f package.tgz ]; then
-            echo "Comparing against the cached main bundle"
-            pnpm add "pure-rand-main@file:./package.tgz" --ignore-scripts
-          else
-            echo "::warning::No cached main bundle found, comparing against the latest published version"
-            pnpm add "pure-rand-main@npm:pure-rand@latest" --ignore-scripts
-          fi
+          key: bench-main-will-not-match
+          restore-keys: bench-main-
       - name: Bench tests
         id: bench
-        run: pnpm bench | tee bench-output.txt
+        run: pnpm bench:ci | tee bench-output.txt
       - name: Upload bench results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -142,6 +133,18 @@ jobs:
           path: bench-output.txt
           if-no-files-found: error
           retention-days: 1
+      # On main, refresh the cached benchmark baseline that PRs compare against.
+      - name: Prune old benchmark execution from caches
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh cache list --key bench-main- --json key -q '.[].key' | xargs -rn1 gh cache delete || true
+      - name: Cache last benchmark execution for main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: benchmark.json
+          key: bench-main-${{ github.sha }}
   comment_bench:
     name: 'Comment bench results'
     needs: bench
