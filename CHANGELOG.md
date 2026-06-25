@@ -1,5 +1,31 @@
 # CHANGELOG 8.X
 
+## 8.4.1
+
+### Fixes
+
+- [0d125f1](https://github.com/dubzzz/pure-rand/commit/0d125f1) 👷 Stage publish using `pnpm` (#1066)
+- [cd906a7](https://github.com/dubzzz/pure-rand/commit/cd906a7) ✅ Switch to `--compare` mode for benchmarks (#1061)
+- [e809e37](https://github.com/dubzzz/pure-rand/commit/e809e37) 🔧 Add devEngines field to package.json (#1029)
+- [be6415d](https://github.com/dubzzz/pure-rand/commit/be6415d) ⚡️ Speed up xorshift128plus jump (#1039)
+- [b696d30](https://github.com/dubzzz/pure-rand/commit/b696d30) 👷 Set `persist-credentials: false` on checkout steps (#1059)
+- [5b5bbb0](https://github.com/dubzzz/pure-rand/commit/5b5bbb0) 🔥 Drop useless GH Action (#1060)
+- [eb3c2d4](https://github.com/dubzzz/pure-rand/commit/eb3c2d4) ⚡️ Speed up congruential32 next with parallel-LCG advance (#1040)
+- [a44867d](https://github.com/dubzzz/pure-rand/commit/a44867d) 🔧 Fix `pnpm` configuration (#1058)
+- [714eaa0](https://github.com/dubzzz/pure-rand/commit/714eaa0) ⚡️ Speed up xoroshiro128plus jump (#1038)
+- [a4a2b44](https://github.com/dubzzz/pure-rand/commit/a4a2b44) 👷 Bench against both main and current build (#1045)
+- [0ee5dbf](https://github.com/dubzzz/pure-rand/commit/0ee5dbf) ⚡️ Speed up uniformFloat64 with bit-identical formula reassociation (+7%) (#1035)
+- [77fc1b8](https://github.com/dubzzz/pure-rand/commit/77fc1b8) 👷 Switch publish flow to `npm stage publish` (#1028)
+- [e7bf2a4](https://github.com/dubzzz/pure-rand/commit/e7bf2a4) 👷 Delete claude.yml (#1026)
+- [ede5204](https://github.com/dubzzz/pure-rand/commit/ede5204) 👷 Delete claude-review.yml (#1025)
+- [0f642db](https://github.com/dubzzz/pure-rand/commit/0f642db) 👷 Add workflow security audit with zizmor (#1019)
+- [6b97815](https://github.com/dubzzz/pure-rand/commit/6b97815) 🔨 Use envs for package size outputs in PR comment (#1018)
+- [eb77d78](https://github.com/dubzzz/pure-rand/commit/eb77d78) 👷 Replace `pnpm dlx` with `pnpm exec` for `pkg-pr-new` (#1017)
+- [aee9109](https://github.com/dubzzz/pure-rand/commit/aee9109) 🔒 Add --ignore-scripts to pnpm install/add in CI (#1001)
+- [1f86fb2](https://github.com/dubzzz/pure-rand/commit/1f86fb2) 🔒️ Disable pnpm cache on push for production_package job (#1000)
+- [871ee39](https://github.com/dubzzz/pure-rand/commit/871ee39) 👷 Add missing runs-on for tangled (#999)
+- [0d9a5b3](https://github.com/dubzzz/pure-rand/commit/0d9a5b3) 👷 Mirror the repo to tangled (#998)
+
 ## 8.4.0
 
 ### Features
