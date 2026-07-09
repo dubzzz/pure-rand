@@ -26,7 +26,16 @@ const JUMP_MULTIPLIER: number = 0x76dc0001;
 const JUMP_INCREMENT: number = 0x369b0000;
 
 class LinearCongruential32 implements JumpableRandomGenerator {
-  constructor(private seed: number) {}
+  // Declared with `declare` and assigned in the constructor body rather than via a
+  // parameter property. An uninitialized class field (`seed;`) is first defined as
+  // `undefined` under ES2022 `[[Define]]` semantics, which can pin it to a generic
+  // (Tagged) representation in V8 instead of the SMI-optimized one and add per-read
+  // overhead in the hot `next()`. Emitting only the constructor assignment keeps the
+  // field as an SMI from its very first write.
+  declare private seed: number;
+  constructor(seed: number) {
+    this.seed = seed;
+  }
   clone(): LinearCongruential32 {
     return new LinearCongruential32(this.seed);
   }
