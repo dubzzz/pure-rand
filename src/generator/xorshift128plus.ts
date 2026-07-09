@@ -11,12 +11,6 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 const jumps = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
 
 class XorShift128Plus implements JumpableRandomGenerator {
-  // Fields are declared with `declare` and assigned in the constructor body instead of
-  // relying on parameter properties or initialized fields. Under ES2022 `[[Define]]`
-  // semantics, an uninitialized class field (`s01;`) is first defined as `undefined`,
-  // which can pin the field to a generic (Tagged) representation in V8 and add per-read
-  // overhead in the hot `next()`. Emitting only the constructor assignments keeps the
-  // fields as SMIs from the very first write.
   declare private s01: number;
   declare private s00: number;
   declare private s11: number;
