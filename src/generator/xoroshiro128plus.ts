@@ -6,12 +6,22 @@ const jumps = [0xd8f554a5, 0xdf900294, 0x4b3201fc, 0x170865df];
 // - https://en.wikipedia.org/wiki/Xoroshiro128%2B
 // - http://prng.di.unimi.it/xoroshiro128plus.c
 class XoroShiro128Plus implements JumpableRandomGenerator {
-  constructor(
-    private s01: number,
-    private s00: number,
-    private s11: number,
-    private s10: number,
-  ) {}
+  // Fields are declared with `declare` and assigned in the constructor body instead of
+  // relying on parameter properties or initialized fields. Under ES2022 `[[Define]]`
+  // semantics, an uninitialized class field (`s01;`) is first defined as `undefined`,
+  // which can pin the field to a generic (Tagged) representation in V8 and add per-read
+  // overhead in the hot `next()`. Emitting only the constructor assignments keeps the
+  // fields as SMIs from the very first write.
+  declare private s01: number;
+  declare private s00: number;
+  declare private s11: number;
+  declare private s10: number;
+  constructor(s01: number, s00: number, s11: number, s10: number) {
+    this.s01 = s01;
+    this.s00 = s00;
+    this.s11 = s11;
+    this.s10 = s10;
+  }
   clone(): XoroShiro128Plus {
     return new XoroShiro128Plus(this.s01, this.s00, this.s11, this.s10);
   }
