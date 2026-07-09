@@ -11,12 +11,16 @@ import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
 const jumps = [0x635d2dff, 0x8a5cd789, 0x5c472f96, 0x121fd215];
 
 class XorShift128Plus implements JumpableRandomGenerator {
-  constructor(
-    private s01: number,
-    private s00: number,
-    private s11: number,
-    private s10: number,
-  ) {}
+  declare private s01: number;
+  declare private s00: number;
+  declare private s11: number;
+  declare private s10: number;
+  constructor(s01: number, s00: number, s11: number, s10: number) {
+    this.s01 = s01;
+    this.s00 = s00;
+    this.s11 = s11;
+    this.s10 = s10;
+  }
   clone(): XorShift128Plus {
     return new XorShift128Plus(this.s01, this.s00, this.s11, this.s10);
   }
