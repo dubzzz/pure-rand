@@ -26,7 +26,10 @@ const JUMP_MULTIPLIER: number = 0x76dc0001;
 const JUMP_INCREMENT: number = 0x369b0000;
 
 class LinearCongruential32 implements JumpableRandomGenerator {
-  constructor(private seed: number) {}
+  declare private seed: number;
+  constructor(seed: number) {
+    this.seed = seed;
+  }
   clone(): LinearCongruential32 {
     return new LinearCongruential32(this.seed);
   }
