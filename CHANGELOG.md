@@ -1,5 +1,12 @@
 # CHANGELOG 8.X
 
+## 8.4.2
+
+### Fixes
+
+- [34fbea4](https://github.com/dubzzz/pure-rand/commit/34fbea4) ⚡️ Extend undefined-field-init fix to congruential32 and mersenne (#1079)
+- [bdb9c14](https://github.com/dubzzz/pure-rand/commit/bdb9c14) ⚡️ Restore next() speed by dropping undefined field init (#1078)
+
 ## 8.4.1
 
 ### Fixes
