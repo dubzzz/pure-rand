@@ -1,0 +1,103 @@
+# Intent domain map — provenance for pure-rand's Agent Skills.
+#
+# This artifact ties every generated skill back to the exact source documents
+# and library version it was authored against — the provenance a maintainer (or
+# an agent running `intent scaffold`) uses to decide what to regenerate.
+#
+# `intent stale` itself is conservative: it flags version drift (the published
+# pure-rand version moving past a skill's `metadata.library_version`) and missing
+# source SHAs in its sync-state. The `sha` values below are the git blob SHAs
+# (`git rev-parse HEAD:<path>`) captured when each skill was last regenerated;
+# they are the human/CI record of which revision of each source the skill reflects,
+# so a reviewer can `git diff` a source against its recorded SHA to see whether a
+# skill has fallen behind. Artifacts are intentionally excluded from the npm
+# tarball (see package.json `files`) — they are maintainer/CI state, not shipped
+# context.
+schema: intent/domain-map@1
+package: pure-rand
+# Library version these skills were authored against. `intent stale` compares
+# this to the version resolved from the npm registry to compute version drift.
+library_version: 8.4.2
+
+# Every source document a skill may cite. `sha` is the git blob SHA
+# (`git rev-parse HEAD:<path>`) captured when the skill was last regenerated, so a
+# changed source can be spotted by comparing `git rev-parse HEAD:<path>` to the
+# value recorded here.
+sources:
+  readme:
+    path: README.md
+    sha: e0106b470439a642c8982ac2f3e813ad1873b884
+  uniformInt:
+    path: src/distribution/uniformInt.ts
+    sha: 51a295a7746c5be3ee3688d15e08b24c24658fe2
+  uniformBigInt:
+    path: src/distribution/uniformBigInt.ts
+    sha: fcbea7eaaf389a3925178e2deff7858b972074e2
+  uniformFloat32:
+    path: src/distribution/uniformFloat32.ts
+    sha: 04762c575d7b8119044e324139bc0bf1c6bb591f
+  uniformFloat64:
+    path: src/distribution/uniformFloat64.ts
+    sha: d38f798782e6c0e0c1c2598cd1b3d05261984164
+  congruential32:
+    path: src/generator/congruential32.ts
+    sha: b4a63061eea5147fe326e9172fe4d17a671f1eba
+  mersenne:
+    path: src/generator/mersenne.ts
+    sha: 502a400511bdb1656aa6f58b39d465205ddb7f45
+  xorshift128plus:
+    path: src/generator/xorshift128plus.ts
+    sha: a63d13025b26571a7172756ba774eb56ac550be3
+  xoroshiro128plus:
+    path: src/generator/xoroshiro128plus.ts
+    sha: 014eb0e6db6ba9229d0f278cd54668ae3bd57aea
+  purify:
+    path: src/utils/purify.ts
+    sha: 38ecb6bbe31404890d2fb7c6cf90c45d0ed23e8e
+  generateN:
+    path: src/utils/generateN.ts
+    sha: 988817693929bd0e45a82b2f1fc3745c6cdc2f04
+  skipN:
+    path: src/utils/skipN.ts
+    sha: c8420440aaac98a7927ab16a6a8b8b54dd62f5f4
+  RandomGenerator:
+    path: src/types/RandomGenerator.ts
+    sha: e7d2e09c8031454aea2dea2a00d1db9a353b7e95
+  JumpableRandomGenerator:
+    path: src/types/JumpableRandomGenerator.ts
+    sha: 342a537e80176e75cdcda5adb56062289b9600c4
+
+# Each skill and the sources it was derived from. `intent stale` flags a skill
+# when any of its listed sources drifts or when a new source is added here
+# without the skill being regenerated.
+skills:
+  - name: core
+    path: skills/core/SKILL.md
+    sources:
+      - readme
+      - uniformInt
+      - uniformBigInt
+      - uniformFloat32
+      - uniformFloat64
+      - congruential32
+      - mersenne
+      - xorshift128plus
+      - xoroshiro128plus
+      - purify
+      - generateN
+      - skipN
+      - RandomGenerator
+      - JumpableRandomGenerator
+  - name: reproducible-testing
+    path: skills/reproducible-testing/SKILL.md
+    sources:
+      - readme
+      - xoroshiro128plus
+      - purify
+      - skipN
+      - JumpableRandomGenerator
+
+# Packages intentionally left uncovered, so `intent stale` does not report them
+# as missing. pure-rand is a single-package repo, so this is empty.
+coverage:
+  ignored_packages: []

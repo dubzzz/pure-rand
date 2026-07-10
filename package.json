@@ -59,7 +59,9 @@
     }
   },
   "files": [
-    "lib"
+    "lib",
+    "skills",
+    "!skills/_artifacts"
   ],
   "sideEffects": false,
   "devEngines": {
@@ -84,7 +86,9 @@
     "bench": "vitest bench",
     "bench:ci": "vitest bench --outputJson benchmark.json --compare benchmark.json",
     "bench:snap": "vitest bench --outputJson benchmark.json",
-    "bench:compare": "vitest bench --compare benchmark.json"
+    "bench:compare": "vitest bench --compare benchmark.json",
+    "skills:validate": "intent validate",
+    "skills:stale": "intent stale"
   },
   "repository": {
     "type": "git",
@@ -98,6 +102,7 @@
   "homepage": "https://github.com/dubzzz/pure-rand#readme",
   "devDependencies": {
     "@fast-check/packaged": "^0.7.0",
+    "@tanstack/intent": "^0.3.5",
     "@vitest/coverage-v8": "4.1.9",
     "fast-check": "^4.8.0",
     "oxfmt": "^0.56.0",
@@ -118,7 +123,8 @@
     "mersenne",
     "random number generator",
     "fastest",
-    "fast"
+    "fast",
+    "tanstack-intent"
   ],
   "funding": [
     {

@@ -151,6 +151,30 @@ And one last helper responsible to change any function accepting an instance of 
 
 Each of these helpers come with its own import: `pure-rand/utils/<name>`.
 
+## Agent Skills
+
+`pure-rand` ships **Agent Skills** for AI coding agents, using [TanStack Intent](https://tanstack.com/intent). The skills live in [`skills/`](./skills) and travel inside the npm tarball, so any agent working in a project that depends on `pure-rand` can discover up-to-date, version-matched guidance from `node_modules` — instead of relying on whatever the model happened to learn before its training cutoff. When `pure-rand` releases, the guidance releases with it.
+
+Two skills are bundled:
+
+- **`core`** — seeding the four generators, drawing unbiased uniform ints/bigints/floats, and the in-place vs. pure (`purify`) calling conventions.
+- **`reproducible-testing`** — deterministic tests and simulations: logging/replaying seeds, persisting a generator via `getState`/`fromState`, and independent parallel streams via `jump()`.
+
+Every skill records the exact source documents and library version it was generated from (see [`skills/_artifacts/domain_map.yaml`](./skills/_artifacts/domain_map.yaml)). The [`Check Skills`](./.github/workflows/check-skills.yml) workflow runs `intent validate` on pull requests that touch the skills or their sources, and after each release runs `intent stale` — opening a review PR whenever a skill has fallen behind the published version so it gets regenerated.
+
+**For consumers** — after installing `pure-rand`, wire the skills into your agent:
+
+```sh
+npx @tanstack/intent@latest install
+```
+
+**For maintainers** — validate and stale-check locally:
+
+```sh
+pnpm skills:validate
+pnpm skills:stale
+```
+
 ## Comparison
 
 pure-rand offers competitive performance compared to other PRNG libraries, with built-in support for uniform distributions — ensuring unbiased results out of the box.

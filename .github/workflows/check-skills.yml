@@ -1,0 +1,109 @@
+# check-skills.yml — managed by @tanstack/intent (`intent setup`).
+#
+# Validates intent skills on PRs. After a release or manual run, opens or
+# updates one review PR when existing skills, artifact coverage, or workspace
+# package coverage need review.
+#
+# Triggers: pull requests touching skills/artifacts, a new release published, or
+# manual workflow_dispatch.
+#
+# intent-workflow-version: 3
+#
+# NOTE: Hardened for this repository's security policy (see zizmor.yml): actions
+# are pinned to commit SHAs, credentials are not persisted, permissions are
+# scoped per job, and workflow inputs reach `run:` steps only through env vars.
+# Keep the intent-workflow-version stamp above so `intent stale` can detect when
+# the upstream template moves ahead of this copy.
+
+name: Check Skills
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - '**/skills/**'
+      - '_artifacts/**'
+      - '**/_artifacts/**'
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validate intent skills
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24.18.0'
+      - name: Install intent
+        run: npm install -g @tanstack/intent@0.3.5
+      - name: Validate skills
+        run: intent validate --github-summary
+
+  review:
+    name: Check intent skill coverage
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24.18.0'
+      - name: Install intent
+        run: npm install -g @tanstack/intent@0.3.5
+      - name: Check skills
+        id: stale
+        run: intent stale --github-review --package-label "pure-rand"
+      - name: Open or update review PR
+        if: steps.stale.outputs.has_review == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || 'manual' }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          VERSION="$RELEASE_TAG"
+          BRANCH="skills/review-${VERSION}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+
+          git fetch origin "$BRANCH" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+          else
+            git checkout -b "$BRANCH"
+            git commit --allow-empty -m "chore: review intent skills for ${VERSION}"
+            git push origin "$BRANCH"
+          fi
+
+          PR_URL="$(gh pr list --head "$BRANCH" --json url --jq '.[0].url')"
+          if [ -n "$PR_URL" ]; then
+            gh pr edit "$PR_URL" --body-file pr-body.md
+          else
+            gh pr create \
+              --title "Review intent skills (${VERSION})" \
+              --body-file pr-body.md \
+              --head "$BRANCH" \
+              --base "$BASE_BRANCH"
+          fi

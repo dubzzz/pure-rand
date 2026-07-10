@@ -1,0 +1,27 @@
+# Intent skill tree — the taxonomy of skills shipped by pure-rand.
+# Generated in the tree-generation phase of `intent scaffold` and kept in sync by
+# hand as skills are added. `intent validate` cross-checks that every entry has a
+# matching skills/<name>/SKILL.md whose frontmatter `name` equals the leaf.
+schema: intent/skill-tree@1
+package: pure-rand
+tree:
+  - name: core
+    type: library
+    summary: >-
+      Seeding the four generators, drawing unbiased uniform ints/bigints/floats,
+      and the in-place vs pure (`purify`) calling conventions.
+    triggers:
+      - importing from pure-rand/*
+      - needs deterministic / reproducible randomness
+      - choosing a generator or distribution
+  - name: reproducible-testing
+    type: library
+    summary: >-
+      Deterministic tests and simulations: logging/replaying seeds, persisting a
+      generator via getState/fromState, and independent parallel streams via
+      jump().
+    triggers:
+      - reproducible tests, fixtures or simulations
+      - independent parallel random streams / workers
+      - replaying a failure from a seed
+      - integrating with fast-check
