@@ -5,6 +5,10 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
+    "./distribution/poissonInt": {
+      "require": "./lib/distribution/poissonInt.js",
+      "import": "./lib/esm/distribution/poissonInt.js"
+    },
     "./distribution/uniformBigInt": {
       "require": "./lib/distribution/uniformBigInt.js",
       "import": "./lib/esm/distribution/uniformBigInt.js"
