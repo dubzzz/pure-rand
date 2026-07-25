@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`exponential [non regression] > Should not change its output except for major bumps 1`] = `
+[
+  0.13246243495405938,
+  1.478933288979309,
+  0.8600420492523735,
+  2.059822101149837,
+  0.12093337753954449,
+  0.41131725412447584,
+  0.005597080780410597,
+  0.0763111468867791,
+  1.1221375825798092,
+  0.7770884433859053,
+]
+`;
