@@ -1,38 +1,24 @@
-//! Native Rust port of pure-rand's XorShift128+ (a=23, b=18, c=5).
+//! Rust side of the Rust-vs-JS comparison of pure-rand's generators.
 //!
-//! Port of src/generator/xorshift128plus.ts: the JS version splits each 64-bit
-//! state word into two int32 halves (s01:s00 and s11:s10); here a single u64
-//! per word gives the same sequence. Like pure-rand, `next` returns only the
-//! low 32 bits of s0+s1, as a signed 32-bit integer.
+//! Usage: xorshift128plus-bench <generator> [verify | <seeds> <per_seed> <reps>]
+//! with <generator> one of: xorshift128plus, xoroshiro128plus, congruential32, mersenne.
+//!
+//! The workload mirrors ../js/bench.cjs exactly: for each seed, build a
+//! generator and produce `per_seed` numbers, folding every value into a uint32
+//! checksum both sides must agree on.
+
+mod congruential32;
+mod mersenne;
+mod xoroshiro128plus;
+mod xorshift128plus;
 
 use std::env;
 use std::hint::black_box;
 use std::time::Instant;
 
-pub struct XorShift128Plus {
-    s0: u64,
-    s1: u64,
-}
-
-impl XorShift128Plus {
-    // JS: new XorShift128Plus(-1, ~seed, seed | 0, 0)
-    pub fn new(seed: i32) -> Self {
-        let seed = seed as u32;
-        XorShift128Plus {
-            s0: 0xffff_ffff_0000_0000 | (!seed as u64),
-            s1: (seed as u64) << 32,
-        }
-    }
-
-    #[inline]
-    pub fn next(&mut self) -> i32 {
-        let a = self.s0 ^ (self.s0 << 23);
-        let s1 = self.s1;
-        let out = (self.s0 as u32).wrapping_add(s1 as u32) as i32;
-        self.s0 = s1;
-        self.s1 = a ^ s1 ^ (a >> 18) ^ (s1 >> 5);
-        out
-    }
+pub trait Generator {
+    fn new(seed: i32) -> Self;
+    fn next(&mut self) -> i32;
 }
 
 // Same seed derivation as the JS bench: spread the loop index over the whole
@@ -41,10 +27,10 @@ fn seed_at(i: u32) -> i32 {
     i.wrapping_mul(2654435761) as i32
 }
 
-fn run(num_seeds: u32, per_seed: u32) -> u32 {
+fn run<G: Generator>(num_seeds: u32, per_seed: u32) -> u32 {
     let mut checksum: u32 = 0;
     for i in 0..num_seeds {
-        let mut rng = XorShift128Plus::new(seed_at(i));
+        let mut rng = G::new(seed_at(i));
         for _ in 0..per_seed {
             checksum = checksum.wrapping_add(rng.next() as u32);
         }
@@ -52,31 +38,25 @@ fn run(num_seeds: u32, per_seed: u32) -> u32 {
     checksum
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.get(1).map(String::as_str) == Some("verify") {
-        for seed in [0i32, 42, -1, 123456789, -987654321] {
-            let mut rng = XorShift128Plus::new(seed);
-            let values: Vec<String> = (0..10).map(|_| rng.next().to_string()).collect();
-            println!("seed={} -> {}", seed, values.join(","));
-        }
-        return;
+fn verify<G: Generator>() {
+    for seed in [0i32, 42, -1, 123456789, -987654321] {
+        let mut rng = G::new(seed);
+        let values: Vec<String> = (0..10).map(|_| rng.next().to_string()).collect();
+        println!("seed={} -> {}", seed, values.join(","));
     }
+}
 
-    let num_seeds: u32 = args.get(1).and_then(|v| v.parse().ok()).unwrap_or(100_000);
-    let per_seed: u32 = args.get(2).and_then(|v| v.parse().ok()).unwrap_or(1_000);
-    let reps: u32 = args.get(3).and_then(|v| v.parse().ok()).unwrap_or(7);
-
-    let checksum = run(num_seeds, per_seed); // warmup + correctness output
+fn bench<G: Generator>(name: &str, num_seeds: u32, per_seed: u32, reps: u32) {
+    let checksum = run::<G>(num_seeds, per_seed); // warmup + correctness output
     println!(
-        "rust xorshift128plus | seeds={} per_seed={} checksum={}",
-        num_seeds, per_seed, checksum
+        "rust {} | seeds={} per_seed={} checksum={}",
+        name, num_seeds, per_seed, checksum
     );
 
     let mut timings_ms: Vec<f64> = Vec::new();
     for _ in 0..reps {
         let start = Instant::now();
-        black_box(run(black_box(num_seeds), black_box(per_seed)));
+        black_box(run::<G>(black_box(num_seeds), black_box(per_seed)));
         timings_ms.push(start.elapsed().as_secs_f64() * 1e3);
     }
     timings_ms.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -92,4 +72,34 @@ fn main() {
         best * 1e3 / (num_seeds as f64),
         per_seed
     );
+}
+
+fn dispatch<G: Generator>(name: &str, args: &[String]) {
+    if args.first().map(String::as_str) == Some("verify") {
+        verify::<G>();
+        return;
+    }
+    let num_seeds: u32 = args.first().and_then(|v| v.parse().ok()).unwrap_or(100_000);
+    let per_seed: u32 = args.get(1).and_then(|v| v.parse().ok()).unwrap_or(1_000);
+    let reps: u32 = args.get(2).and_then(|v| v.parse().ok()).unwrap_or(7);
+    bench::<G>(name, num_seeds, per_seed, reps);
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let generator = args.get(1).map(String::as_str).unwrap_or("xorshift128plus");
+    let rest = &args[2.min(args.len())..];
+    match generator {
+        "xorshift128plus" => dispatch::<xorshift128plus::XorShift128Plus>(generator, rest),
+        "xoroshiro128plus" => dispatch::<xoroshiro128plus::XoroShiro128Plus>(generator, rest),
+        "congruential32" => dispatch::<congruential32::LinearCongruential32>(generator, rest),
+        "mersenne" => dispatch::<mersenne::MersenneTwister>(generator, rest),
+        other => {
+            eprintln!(
+                "Unknown generator '{}': expected xorshift128plus, xoroshiro128plus, congruential32 or mersenne",
+                other
+            );
+            std::process::exit(1);
+        }
+    }
 }

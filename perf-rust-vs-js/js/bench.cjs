@@ -1,20 +1,29 @@
-// JS side of the Rust-vs-JS XorShift128+ comparison.
-// Uses the real built pure-rand generator (run `pnpm build` at the repo root first).
-// Same workload as ../rust/src/main.rs: for each seed, generate `perSeed`
-// numbers and fold them into a uint32 checksum so both sides can be compared
-// for correctness, not just speed.
+// JS side of the Rust-vs-JS comparison of pure-rand's generators.
+// Uses the real built pure-rand generators (run `pnpm build` at the repo root first).
+//
+// Usage: node bench.cjs <generator> [verify | <seeds> <perSeed> <reps>]
+// with <generator> one of: xorshift128plus, xoroshiro128plus, congruential32, mersenne.
+//
+// Same workload as ../rust/src/main.rs: for each seed, build a generator and
+// produce `perSeed` numbers, folding every value into a uint32 checksum so
+// both sides can be compared for correctness, not just speed.
 
-const { xorshift128plus } = require('../../lib/generator/xorshift128plus.js');
+const generators = {
+  xorshift128plus: require('../../lib/generator/xorshift128plus.js').xorshift128plus,
+  xoroshiro128plus: require('../../lib/generator/xoroshiro128plus.js').xoroshiro128plus,
+  congruential32: require('../../lib/generator/congruential32.js').congruential32,
+  mersenne: require('../../lib/generator/mersenne.js').mersenne,
+};
 
 // Same seed derivation as the Rust bench: Knuth multiplicative hash of the index.
 function seedAt(i) {
   return Math.imul(i, 2654435761) | 0;
 }
 
-function run(numSeeds, perSeed) {
+function run(makeGenerator, numSeeds, perSeed) {
   let checksum = 0;
   for (let i = 0; i < numSeeds; ++i) {
-    const rng = xorshift128plus(seedAt(i));
+    const rng = makeGenerator(seedAt(i));
     for (let j = 0; j < perSeed; ++j) {
       checksum = (checksum + rng.next()) | 0;
     }
@@ -23,9 +32,16 @@ function run(numSeeds, perSeed) {
 }
 
 function main() {
-  if (process.argv[2] === 'verify') {
+  const name = process.argv[2] || 'xorshift128plus';
+  const makeGenerator = generators[name];
+  if (makeGenerator === undefined) {
+    console.error(`Unknown generator '${name}': expected ${Object.keys(generators).join(', ')}`);
+    process.exit(1);
+  }
+
+  if (process.argv[3] === 'verify') {
     for (const seed of [0, 42, -1, 123456789, -987654321]) {
-      const rng = xorshift128plus(seed);
+      const rng = makeGenerator(seed);
       const values = [];
       for (let i = 0; i !== 10; ++i) values.push(rng.next());
       console.log(`seed=${seed} -> ${values.join(',')}`);
@@ -33,20 +49,20 @@ function main() {
     return;
   }
 
-  const numSeeds = Number(process.argv[2] || 100000);
-  const perSeed = Number(process.argv[3] || 1000);
-  const reps = Number(process.argv[4] || 7);
+  const numSeeds = Number(process.argv[3] || 100000);
+  const perSeed = Number(process.argv[4] || 1000);
+  const reps = Number(process.argv[5] || 7);
 
   // Warmup so the JIT reaches steady state before we measure.
   let sink = 0;
-  for (let i = 0; i !== 3; ++i) sink ^= run(numSeeds, perSeed);
-  const checksum = run(numSeeds, perSeed);
-  console.log(`js xorshift128plus | seeds=${numSeeds} per_seed=${perSeed} checksum=${checksum}`);
+  for (let i = 0; i !== 3; ++i) sink ^= run(makeGenerator, numSeeds, perSeed);
+  const checksum = run(makeGenerator, numSeeds, perSeed);
+  console.log(`js ${name} | seeds=${numSeeds} per_seed=${perSeed} checksum=${checksum}`);
 
   const timingsMs = [];
   for (let r = 0; r !== reps; ++r) {
     const start = process.hrtime.bigint();
-    sink ^= run(numSeeds, perSeed);
+    sink ^= run(makeGenerator, numSeeds, perSeed);
     timingsMs.push(Number(process.hrtime.bigint() - start) / 1e6);
   }
   if (sink === 0.5) console.log(''); // keep `sink` alive
