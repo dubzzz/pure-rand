@@ -104,7 +104,19 @@ pure Python.
   other), all roughly 1.5–2.5× faster than V8 on the 64-bit generators. Java matches
   Rust on xorshift and **beats it on congruential32** (1.44 vs 1.93 — HotSpot
   schedules the three independent multiplies better), and C# **beats Rust on
-  xoroshiro** (1.26 vs 1.47, RyuJIT making good use of the hardware rotate).
+  xoroshiro** (1.26 vs 1.47) — but see below: that gap is an ISA-targeting artifact,
+  not a language property.
+- **Why C# beats default-built Rust on xoroshiro:** `cargo build --release` targets
+  the generic x86-64 baseline ISA, so LLVM emits the destructive two-operand `rol`
+  for the rotates, and the extra register copies it forces land on the loop-carried
+  dependency chain (this loop is latency-bound at ~3–4 cycles/number, not
+  throughput-bound: the C# loop runs 12 instructions/number vs Rust's ~9 and still
+  wins). Rebuilding the identical Rust source with `RUSTFLAGS="-C target-cpu=native"`
+  swaps them for BMI2 `rorx` (three-operand, non-destructive, flag-free), shortening
+  the chain: **1.47 → 1.11 ns/number, faster than C#'s 1.25**. RyuJIT's own Tier1
+  loop also uses plain `rol` — its win over baseline Rust was scheduling luck on the
+  same latency-bound recurrence, and vanishes once Rust is allowed to target the
+  actual CPU.
 - **The JS penalty is the int32-pair emulation, not "JS is slow".** On
   congruential32 — genuinely 32-bit math, `Math.imul` maps to one multiply — every JS
   runtime lands within 1.2–1.4× of Rust. On the 64-bit generators, where JS carries
