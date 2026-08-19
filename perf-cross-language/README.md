@@ -102,7 +102,15 @@ Takeaways:
   pure-rand. For xorshift/xoroshiro the gap is mostly state representation: native
   code works on two 64-bit words with hardware shifts/rotates, while JS emulates
   them with four int32 halves, roughly doubling the bit-twiddling per step.
-  HotSpot's C2 even edges out rustc slightly on these tight int loops.
+- **Where Java edges out the Rust column above, it is a CPU-targeting artifact,
+  not a compiler win.** The table's Rust binary is a default `--release` build,
+  which targets baseline x86-64 (SSE2-era) for portability, while HotSpot's C2
+  JIT-compiles for the exact CPU at runtime. Rebuilding with
+  `RUSTFLAGS="-C target-cpu=native"` gives Rust the same privilege and flips
+  every cell: xorshift 1.18 → 1.13 ns (Java 1.12), xoroshiro 1.32 → 1.07 ns
+  (Java 1.20), congruential32 1.67 → 1.03 ns (Java 1.36), mersenne 3.95 → 3.88 ns
+  (Java 3.92). Mersenne barely moves because it is bound by walking the 624-word
+  state array rather than by ALU instruction selection.
 - **congruential32 is the closest race (Rust only 1.22× ahead).** Its math is
   genuinely 32-bit, so V8 compiles it to nearly the same instructions as
   rustc/HotSpot — `Math.imul` maps straight to a 32-bit multiply. This is about as
