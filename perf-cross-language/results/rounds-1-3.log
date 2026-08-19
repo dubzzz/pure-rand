@@ -1,0 +1,120 @@
+=== [r1] xorshift128plus ===
+rust xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 117.79 ms | median: 118.64 ms | 1.178 ns/number | 849003079 numbers/sec | 1.178 µs per 1000-number sequence
+js xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 268.91 ms | median: 274.02 ms | 2.689 ns/number | 371875393 numbers/sec | 2.689 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 113.01 ms | median: 113.18 ms | 1.130 ns/number | 884870053 numbers/sec | 1.130 ?s per 1000-number sequence
+python xorshift128plus | seeds=2000 per_seed=1000 checksum=3058417980
+best: 486.15 ms | median: 495.44 ms | 243.075 ns/number | 4113964 numbers/sec | 243.075 µs per 1000-number sequence
+=== [r1] xoroshiro128plus ===
+rust xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 132.81 ms | median: 133.29 ms | 1.328 ns/number | 752963865 numbers/sec | 1.328 µs per 1000-number sequence
+js xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 300.97 ms | median: 302.12 ms | 3.010 ns/number | 332255515 numbers/sec | 3.010 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 121.03 ms | median: 121.31 ms | 1.210 ns/number | 826209132 numbers/sec | 1.210 ?s per 1000-number sequence
+python xoroshiro128plus | seeds=2000 per_seed=1000 checksum=382230068
+best: 651.25 ms | median: 660.49 ms | 325.627 ns/number | 3070996 numbers/sec | 325.627 µs per 1000-number sequence
+=== [r1] congruential32 ===
+rust congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 167.34 ms | median: 168.62 ms | 1.673 ns/number | 597581533 numbers/sec | 1.673 µs per 1000-number sequence
+js congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 204.31 ms | median: 205.67 ms | 2.043 ns/number | 489458242 numbers/sec | 2.043 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 136.68 ms | median: 138.83 ms | 1.367 ns/number | 731651938 numbers/sec | 1.367 ?s per 1000-number sequence
+python congruential32 | seeds=2000 per_seed=1000 checksum=2309552076
+best: 920.08 ms | median: 929.56 ms | 460.038 ns/number | 2173732 numbers/sec | 460.038 µs per 1000-number sequence
+=== [r1] mersenne ===
+rust mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 395.62 ms | median: 399.90 ms | 3.956 ns/number | 252767612 numbers/sec | 3.956 µs per 1000-number sequence
+js mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 921.30 ms | median: 929.64 ms | 9.213 ns/number | 108541878 numbers/sec | 9.213 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 401.43 ms | median: 412.27 ms | 4.014 ns/number | 249108644 numbers/sec | 4.014 ?s per 1000-number sequence
+python mersenne | seeds=2000 per_seed=1000 checksum=3490100441
+best: 1647.01 ms | median: 1655.18 ms | 823.504 ns/number | 1214324 numbers/sec | 823.504 µs per 1000-number sequence
+=== [r2] xorshift128plus ===
+rust xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 117.62 ms | median: 117.99 ms | 1.176 ns/number | 850192061 numbers/sec | 1.176 µs per 1000-number sequence
+js xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 275.60 ms | median: 280.01 ms | 2.756 ns/number | 362846160 numbers/sec | 2.756 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 113.23 ms | median: 113.90 ms | 1.132 ns/number | 883131211 numbers/sec | 1.132 ?s per 1000-number sequence
+python xorshift128plus | seeds=2000 per_seed=1000 checksum=3058417980
+best: 478.05 ms | median: 484.59 ms | 239.023 ns/number | 4183691 numbers/sec | 239.023 µs per 1000-number sequence
+=== [r2] xoroshiro128plus ===
+rust xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 133.73 ms | median: 135.11 ms | 1.337 ns/number | 747802125 numbers/sec | 1.337 µs per 1000-number sequence
+js xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 303.25 ms | median: 305.55 ms | 3.032 ns/number | 329762036 numbers/sec | 3.032 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 123.87 ms | median: 124.26 ms | 1.239 ns/number | 807317533 numbers/sec | 1.239 ?s per 1000-number sequence
+python xoroshiro128plus | seeds=2000 per_seed=1000 checksum=382230068
+best: 650.84 ms | median: 657.87 ms | 325.421 ns/number | 3072940 numbers/sec | 325.421 µs per 1000-number sequence
+=== [r2] congruential32 ===
+rust congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 167.39 ms | median: 168.16 ms | 1.674 ns/number | 597400986 numbers/sec | 1.674 µs per 1000-number sequence
+js congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 207.23 ms | median: 208.30 ms | 2.072 ns/number | 482555459 numbers/sec | 2.072 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 136.53 ms | median: 136.74 ms | 1.365 ns/number | 732444263 numbers/sec | 1.365 ?s per 1000-number sequence
+python congruential32 | seeds=2000 per_seed=1000 checksum=2309552076
+best: 957.07 ms | median: 974.39 ms | 478.535 ns/number | 2089711 numbers/sec | 478.535 µs per 1000-number sequence
+=== [r2] mersenne ===
+rust mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 395.39 ms | median: 405.79 ms | 3.954 ns/number | 252913364 numbers/sec | 3.954 µs per 1000-number sequence
+js mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 936.72 ms | median: 949.34 ms | 9.367 ns/number | 106756010 numbers/sec | 9.367 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 392.26 ms | median: 396.92 ms | 3.923 ns/number | 254932338 numbers/sec | 3.923 ?s per 1000-number sequence
+python mersenne | seeds=2000 per_seed=1000 checksum=3490100441
+best: 1645.98 ms | median: 1684.16 ms | 822.992 ns/number | 1215079 numbers/sec | 822.992 µs per 1000-number sequence
+=== [r3] xorshift128plus ===
+rust xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 117.58 ms | median: 118.20 ms | 1.176 ns/number | 850495200 numbers/sec | 1.176 µs per 1000-number sequence
+js xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 278.97 ms | median: 286.54 ms | 2.790 ns/number | 358456729 numbers/sec | 2.790 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xorshift128plus | seeds=100000 per_seed=1000 checksum=1570936028
+best: 112.46 ms | median: 114.37 ms | 1.125 ns/number | 889200654 numbers/sec | 1.125 ?s per 1000-number sequence
+python xorshift128plus | seeds=2000 per_seed=1000 checksum=3058417980
+best: 471.76 ms | median: 480.91 ms | 235.879 ns/number | 4239464 numbers/sec | 235.879 µs per 1000-number sequence
+=== [r3] xoroshiro128plus ===
+rust xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 132.87 ms | median: 133.14 ms | 1.329 ns/number | 752603846 numbers/sec | 1.329 µs per 1000-number sequence
+js xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 301.57 ms | median: 310.22 ms | 3.016 ns/number | 331601223 numbers/sec | 3.016 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java xoroshiro128plus | seeds=100000 per_seed=1000 checksum=2200371917
+best: 121.21 ms | median: 121.57 ms | 1.212 ns/number | 824995155 numbers/sec | 1.212 ?s per 1000-number sequence
+python xoroshiro128plus | seeds=2000 per_seed=1000 checksum=382230068
+best: 636.89 ms | median: 652.89 ms | 318.444 ns/number | 3140272 numbers/sec | 318.444 µs per 1000-number sequence
+=== [r3] congruential32 ===
+rust congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 166.67 ms | median: 167.88 ms | 1.667 ns/number | 599994466 numbers/sec | 1.667 µs per 1000-number sequence
+js congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 204.14 ms | median: 204.86 ms | 2.041 ns/number | 489853469 numbers/sec | 2.041 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java congruential32 | seeds=100000 per_seed=1000 checksum=4004621174
+best: 136.93 ms | median: 138.42 ms | 1.369 ns/number | 730285338 numbers/sec | 1.369 ?s per 1000-number sequence
+python congruential32 | seeds=2000 per_seed=1000 checksum=2309552076
+best: 934.13 ms | median: 936.77 ms | 467.066 ns/number | 2141024 numbers/sec | 467.066 µs per 1000-number sequence
+=== [r3] mersenne ===
+rust mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 394.99 ms | median: 397.24 ms | 3.950 ns/number | 253168637 numbers/sec | 3.950 µs per 1000-number sequence
+js mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 949.15 ms | median: 953.28 ms | 9.491 ns/number | 105357789 numbers/sec | 9.491 µs per 1000-number sequence
+Picked up JAVA_TOOL_OPTIONS: 
+java mersenne | seeds=100000 per_seed=1000 checksum=498429036
+best: 396.00 ms | median: 399.66 ms | 3.960 ns/number | 252523093 numbers/sec | 3.960 ?s per 1000-number sequence
+python mersenne | seeds=2000 per_seed=1000 checksum=3490100441
+best: 1664.79 ms | median: 1679.34 ms | 832.397 ns/number | 1201350 numbers/sec | 832.397 µs per 1000-number sequence
