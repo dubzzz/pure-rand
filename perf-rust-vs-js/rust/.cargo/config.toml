@@ -1,0 +1,5 @@
+# Benchmark binary: always compile for the host CPU. The generic x86-64
+# baseline costs up to 30% here (legacy `rol` instead of BMI2 `rorx` on the
+# latency-bound rotate chains, see README).
+[build]
+rustflags = ["-C", "target-cpu=native"]

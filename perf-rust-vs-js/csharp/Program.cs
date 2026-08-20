@@ -12,6 +12,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 interface IGen<TSelf> where TSelf : IGen<TSelf>
 {
@@ -32,6 +33,7 @@ struct XorShift128Plus : IGen<XorShift128Plus>
         return new XorShift128Plus { s0 = 0xffffffff00000000UL | ~s, s1 = (ulong)s << 32 };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Next()
     {
         ulong a = s0 ^ (s0 << 23);
@@ -56,6 +58,7 @@ struct XoroShiro128Plus : IGen<XoroShiro128Plus>
         return new XoroShiro128Plus { s0 = 0xffffffff00000000UL | ~s, s1 = (ulong)s << 32 };
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Next()
     {
         int output = (int)(uint)(s0 + s1);
@@ -83,6 +86,7 @@ struct LinearCongruential32 : IGen<LinearCongruential32>
 
     public static LinearCongruential32 Create(int seed) => new LinearCongruential32 { seed = seed };
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Next()
     {
         int s0 = seed;
@@ -90,15 +94,22 @@ struct LinearCongruential32 : IGen<LinearCongruential32>
         int s2 = s0 * Multiplier2 + Increment2;
         int s3 = s0 * Multiplier3 + Increment3;
         seed = s3;
-        int v1 = (s1 & Mask2) >> 16;
-        int v2 = (s2 & Mask2) >> 16;
-        int v3 = (s3 & Mask2) >> 16;
+        // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
+        // bits 16..30 — but with short shift immediates instead of 4-byte
+        // masks (this loop is decode-bound, not ALU-bound).
+        int v1 = (int)((uint)(s1 << 1) >> 17);
+        int v2 = (int)((uint)(s2 << 1) >> 17);
+        int v3 = (int)((uint)(s3 << 1) >> 17);
         return v3 | (v2 << 15) | (v1 << 30);
     }
 }
 
-// Port of src/generator/mersenne.ts (MT19937 with pure-rand's incremental
-// twist: each Next tempers the current word then twists one word forward).
+// Port of src/generator/mersenne.ts (MT19937). Emits the exact same sequence,
+// but refills lazily — when the read index wraps, it twists the whole
+// 624-word block and tempers every word into an output buffer, both in
+// explicit Vector<uint> SIMD loops — instead of one twist per Next like the
+// JS version. Next is then a plain buffer read; the tempered outputs are
+// identical either way.
 struct MersenneTwister : IGen<MersenneTwister>
 {
     private const int N = 624;
@@ -111,42 +122,104 @@ struct MersenneTwister : IGen<MersenneTwister>
     private const uint MaskUpper = 0x80000000;
 
     private uint[] states;
+    private uint[] tempered;
     private int index;
 
     public static MersenneTwister Create(int seed)
     {
         var states = new uint[N];
-        states[0] = (uint)seed;
-        for (int idx = 1; idx != N; ++idx)
+        uint prev = (uint)seed;
+        states[0] = prev;
+        for (int idx = 1; idx < N; ++idx)
         {
-            uint xored = states[idx - 1] ^ (states[idx - 1] >> 30);
-            states[idx] = F * xored + (uint)idx;
+            uint xored = prev ^ (prev >> 30);
+            prev = F * xored + (uint)idx;
+            states[idx] = prev;
         }
-        for (int idx = 0; idx != N; ++idx)
-        {
-            TwistedNext(states, idx);
-        }
-        return new MersenneTwister { states = states, index = 0 };
+        TwistBlock(states);
+        var tempered = new uint[N];
+        TemperBlock(states, tempered);
+        return new MersenneTwister { states = states, tempered = tempered, index = 0 };
     }
 
-    private static int TwistedNext(uint[] mt, int idx)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static uint TwistWord(uint current, uint next, uint far)
     {
-        int nextIdx = idx == N - 1 ? 0 : idx + 1;
-        uint y = (mt[idx] & MaskUpper) | (mt[nextIdx] & MaskLower);
-        int twistedIdx = idx < N - M ? idx + M : idx + M - N;
-        mt[idx] = mt[twistedIdx] ^ (y >> 1) ^ ((uint)-(int)(y & 1) & A);
-        return nextIdx;
+        uint y = (current & MaskUpper) | (next & MaskLower);
+        return far ^ (y >> 1) ^ ((uint)-(int)(y & 1) & A);
     }
 
+    // Vectorized twist of mt[from..to) with the "far" word at idx+farOff.
+    // Safe to vectorize: within a vector step the loads (idx+1, idx+farOff)
+    // happen before the store to idx, and across steps the store range never
+    // overtakes a load range (farOff is +M ahead, or M-N = -227 behind, both
+    // beyond the vector length).
+    private static void TwistRange(uint[] mt, int from, int to, int farOff)
+    {
+        var vA = new Vector<uint>(A);
+        var vUpper = new Vector<uint>(MaskUpper);
+        var vLower = new Vector<uint>(MaskLower);
+        var vOne = new Vector<uint>(1u);
+        int w = Vector<uint>.Count;
+        int idx = from;
+        for (; idx <= to - w; idx += w)
+        {
+            var cur = new Vector<uint>(mt, idx);
+            var nxt = new Vector<uint>(mt, idx + 1);
+            var far = new Vector<uint>(mt, idx + farOff);
+            var y = (cur & vUpper) | (nxt & vLower);
+            var odd = Vector.Equals(y & vOne, vOne) & vA;
+            ((far ^ (y >>> 1)) ^ odd).CopyTo(mt, idx);
+        }
+        for (; idx < to; ++idx)
+        {
+            mt[idx] = TwistWord(mt[idx], mt[idx + 1], mt[idx + farOff]);
+        }
+    }
+
+    private static void TwistBlock(uint[] mt)
+    {
+        TwistRange(mt, 0, N - M, M);
+        TwistRange(mt, N - M, N - 1, M - N);
+        mt[N - 1] = TwistWord(mt[N - 1], mt[0], mt[M - 1]);
+    }
+
+    private static void TemperBlock(uint[] mt, uint[] outBuf)
+    {
+        var vB = new Vector<uint>(B);
+        var vC = new Vector<uint>(C);
+        int w = Vector<uint>.Count;
+        int idx = 0;
+        for (; idx <= N - w; idx += w)
+        {
+            var y = new Vector<uint>(mt, idx);
+            y ^= y >>> 11;
+            y ^= (y << 7) & vB;
+            y ^= (y << 15) & vC;
+            y ^= y >>> 18;
+            y.CopyTo(outBuf, idx);
+        }
+        for (; idx < N; ++idx)
+        {
+            uint y = mt[idx];
+            y ^= y >> 11;
+            y ^= (y << 7) & B;
+            y ^= (y << 15) & C;
+            y ^= y >> 18;
+            outBuf[idx] = y;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Next()
     {
-        uint y = states[index];
-        y ^= y >> 11;
-        y ^= (y << 7) & B;
-        y ^= (y << 15) & C;
-        y ^= y >> 18;
-        index = TwistedNext(states, index);
-        return (int)y;
+        if (index == N)
+        {
+            TwistBlock(states);
+            TemperBlock(states, tempered);
+            index = 0;
+        }
+        return (int)tempered[index++];
     }
 }
 

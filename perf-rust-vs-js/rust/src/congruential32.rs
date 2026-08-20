@@ -33,9 +33,11 @@ impl Generator for LinearCongruential32 {
         let s2 = s0.wrapping_mul(MULTIPLIER_2).wrapping_add(INCREMENT_2);
         let s3 = s0.wrapping_mul(MULTIPLIER_3).wrapping_add(INCREMENT_3);
         self.seed = s3;
-        let v1 = (s1 & MASK_2) >> 16;
-        let v2 = (s2 & MASK_2) >> 16;
-        let v3 = (s3 & MASK_2) >> 16;
+        // (s & 0x7fffffff) >> 16 == (s << 1) >> 17 unsigned: drop the sign
+        // bit, keep bits 16..30 — shorter encodings than 4-byte mask imms.
+        let v1 = (((s1 << 1) as u32) >> 17) as i32;
+        let v2 = (((s2 << 1) as u32) >> 17) as i32;
+        let v3 = (((s3 << 1) as u32) >> 17) as i32;
         v3 | (v2 << 15) | (v1 << 30)
     }
 }

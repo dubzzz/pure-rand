@@ -9,6 +9,10 @@
 // `long` per 64-bit state word (the JS versions split them into int32 halves);
 // mersenne allocates its 624-word state per seed, like the JS version.
 
+import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.VectorOperators;
+import jdk.incubator.vector.VectorSpecies;
+
 public final class Bench {
   interface Generator {
     int next();
@@ -79,15 +83,21 @@ public final class Bench {
       final int s2 = s0 * MULTIPLIER_2 + INCREMENT_2;
       final int s3 = s0 * MULTIPLIER_3 + INCREMENT_3;
       this.seed = s3;
-      final int v1 = (s1 & MASK_2) >> 16;
-      final int v2 = (s2 & MASK_2) >> 16;
-      final int v3 = (s3 & MASK_2) >> 16;
+      // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
+      // bits 16..30 — shorter encodings than 4-byte mask immediates.
+      final int v1 = (s1 << 1) >>> 17;
+      final int v2 = (s2 << 1) >>> 17;
+      final int v3 = (s3 << 1) >>> 17;
       return v3 | (v2 << 15) | (v1 << 30);
     }
   }
 
-  // Port of src/generator/mersenne.ts (MT19937 with pure-rand's incremental
-  // twist: each next tempers the current word then twists one word forward).
+  // Port of src/generator/mersenne.ts (MT19937). Emits the exact same
+  // sequence, but refills lazily — when the read index wraps, it twists the
+  // whole 624-word block in three tight loops and tempers every word into an
+  // output buffer (both vectorizable) — instead of one twist per next() like
+  // the JS version. next() is then a plain buffer read; the tempered outputs
+  // are identical either way.
   static final class MersenneTwister implements Generator {
     private static final int N = 624;
     private static final int M = 397;
@@ -99,38 +109,86 @@ public final class Bench {
     private static final int MASK_UPPER = 0x80000000;
 
     private final int[] states;
+    private final int[] tempered;
     private int index;
 
     MersenneTwister(int seed) {
       final int[] states = new int[N];
-      states[0] = seed;
-      for (int idx = 1; idx != N; ++idx) {
-        final int xored = states[idx - 1] ^ (states[idx - 1] >>> 30);
-        states[idx] = F * xored + idx;
+      int prev = seed;
+      states[0] = prev;
+      for (int idx = 1; idx < N; ++idx) {
+        final int xored = prev ^ (prev >>> 30);
+        prev = F * xored + idx;
+        states[idx] = prev;
       }
-      for (int idx = 0; idx != N; ++idx) {
-        twistedNext(states, idx);
-      }
+      twistBlock(states);
       this.states = states;
+      this.tempered = new int[N];
+      temperBlock(states, this.tempered);
       this.index = 0;
     }
 
-    private static int twistedNext(int[] mt, int idx) {
-      final int nextIdx = idx == N - 1 ? 0 : idx + 1;
-      final int y = (mt[idx] & MASK_UPPER) | (mt[nextIdx] & MASK_LOWER);
-      final int twistedIdx = idx < N - M ? idx + M : idx + M - N;
-      mt[idx] = mt[twistedIdx] ^ (y >>> 1) ^ (-(y & 1) & A);
-      return nextIdx;
+    private static final VectorSpecies<Integer> SP = IntVector.SPECIES_PREFERRED;
+
+    private static int twistWord(int current, int next, int far) {
+      final int y = (current & MASK_UPPER) | (next & MASK_LOWER);
+      return far ^ (y >>> 1) ^ (-(y & 1) & A);
+    }
+
+    // Vectorized twist of mt[from..to) with the "far" word at idx+farOff.
+    // Safe to vectorize: within a vector step the loads (idx+1, idx+farOff)
+    // happen before the store to idx, and across steps the store range never
+    // overtakes a load range (farOff is +M ahead, or M-N = -227 behind, both
+    // beyond the vector length).
+    private static void twistRange(int[] mt, int from, int to, int farOff) {
+      int idx = from;
+      for (int upper = from + SP.loopBound(to - from); idx < upper; idx += SP.length()) {
+        final IntVector cur = IntVector.fromArray(SP, mt, idx);
+        final IntVector nxt = IntVector.fromArray(SP, mt, idx + 1);
+        final IntVector far = IntVector.fromArray(SP, mt, idx + farOff);
+        final IntVector y = cur.and(MASK_UPPER).or(nxt.and(MASK_LOWER));
+        far.lanewise(VectorOperators.XOR, y.lanewise(VectorOperators.LSHR, 1))
+            .lanewise(VectorOperators.XOR, y.and(1).lanewise(VectorOperators.NEG).and(A))
+            .intoArray(mt, idx);
+      }
+      for (; idx < to; ++idx) {
+        mt[idx] = twistWord(mt[idx], mt[idx + 1], mt[idx + farOff]);
+      }
+    }
+
+    private static void twistBlock(int[] mt) {
+      twistRange(mt, 0, N - M, M);
+      twistRange(mt, N - M, N - 1, M - N);
+      mt[N - 1] = twistWord(mt[N - 1], mt[0], mt[M - 1]);
+    }
+
+    private static void temperBlock(int[] mt, int[] out) {
+      int idx = 0;
+      for (int upper = SP.loopBound(N); idx < upper; idx += SP.length()) {
+        IntVector y = IntVector.fromArray(SP, mt, idx);
+        y = y.lanewise(VectorOperators.XOR, y.lanewise(VectorOperators.LSHR, 11));
+        y = y.lanewise(VectorOperators.XOR, y.lanewise(VectorOperators.LSHL, 7).and(B));
+        y = y.lanewise(VectorOperators.XOR, y.lanewise(VectorOperators.LSHL, 15).and(C));
+        y = y.lanewise(VectorOperators.XOR, y.lanewise(VectorOperators.LSHR, 18));
+        y.intoArray(out, idx);
+      }
+      for (; idx < N; ++idx) {
+        int y = mt[idx];
+        y ^= y >>> 11;
+        y ^= (y << 7) & B;
+        y ^= (y << 15) & C;
+        y ^= y >>> 18;
+        out[idx] = y;
+      }
     }
 
     public int next() {
-      int y = states[index];
-      y ^= y >>> 11;
-      y ^= (y << 7) & B;
-      y ^= (y << 15) & C;
-      y ^= y >>> 18;
-      index = twistedNext(states, index);
-      return y;
+      if (index == N) {
+        twistBlock(states);
+        temperBlock(states, tempered);
+        index = 0;
+      }
+      return tempered[index++];
     }
   }
 

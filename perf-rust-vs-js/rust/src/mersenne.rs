@@ -1,10 +1,13 @@
 //! Native Rust port of pure-rand's MersenneTwister (MT19937).
 //!
-//! Port of src/generator/mersenne.ts, including its incremental twist:
-//! instead of regenerating the whole 624-word block ahead of time, each
-//! `next` tempers the current word then twists a single word forward
-//! (`twistedNext` in the JS source). Seeding matches too: standard MT19937
-//! initialization followed by one full twist, starting at index 0.
+//! Emits the exact sequence of src/generator/mersenne.ts, but restructured
+//! for speed: where the JS version twists one word forward on every `next`
+//! (`twistedNext`), this port refills lazily — when the read index wraps, it
+//! twists the whole 624-word block in three tight, branch-free loops and
+//! tempers every word into an output buffer, both of which auto-vectorize.
+//! `next` is then a plain buffer read. The outputs are identical either way
+//! (each output is the tempered value of the word before further twisting);
+//! the run checksums prove it.
 
 use crate::Generator;
 
@@ -23,40 +26,62 @@ const MASK_UPPER: u32 = 0x8000_0000;
 
 pub struct MersenneTwister {
     states: [u32; N],
+    tempered: [u32; N],
     index: usize,
 }
 
 #[inline]
-fn twisted_next(mt: &mut [u32; N], idx: usize) -> usize {
-    let next_idx = if idx == N - 1 { 0 } else { idx + 1 };
-    let y = (mt[idx] & MASK_UPPER) | (mt[next_idx] & MASK_LOWER);
-    let twisted_idx = if idx < N - M { idx + M } else { idx + M - N };
-    mt[idx] = mt[twisted_idx] ^ (y >> 1) ^ ((y & 1).wrapping_neg() & A);
-    next_idx
+fn twist_word(current: u32, next: u32, far: u32) -> u32 {
+    let y = (current & MASK_UPPER) | (next & MASK_LOWER);
+    far ^ (y >> 1) ^ ((y & 1).wrapping_neg() & A)
+}
+
+fn twist_block(mt: &mut [u32; N]) {
+    for idx in 0..N - M {
+        mt[idx] = twist_word(mt[idx], mt[idx + 1], mt[idx + M]);
+    }
+    for idx in N - M..N - 1 {
+        mt[idx] = twist_word(mt[idx], mt[idx + 1], mt[idx + M - N]);
+    }
+    mt[N - 1] = twist_word(mt[N - 1], mt[0], mt[M - 1]);
+}
+
+fn temper_block(mt: &[u32; N], out: &mut [u32; N]) {
+    for idx in 0..N {
+        let mut y = mt[idx];
+        y ^= y >> U;
+        y ^= (y << S) & B;
+        y ^= (y << T) & C;
+        y ^= y >> L;
+        out[idx] = y;
+    }
 }
 
 impl Generator for MersenneTwister {
     fn new(seed: i32) -> Self {
         let mut states = [0u32; N];
-        states[0] = seed as u32;
-        for idx in 1..N {
-            let xored = states[idx - 1] ^ (states[idx - 1] >> 30);
-            states[idx] = F.wrapping_mul(xored).wrapping_add(idx as u32);
+        let mut prev = seed as u32;
+        states[0] = prev;
+        for (idx, slot) in states.iter_mut().enumerate().skip(1) {
+            let xored = prev ^ (prev >> 30);
+            prev = F.wrapping_mul(xored).wrapping_add(idx as u32);
+            *slot = prev;
         }
-        for idx in 0..N {
-            twisted_next(&mut states, idx);
-        }
-        MersenneTwister { states, index: 0 }
+        twist_block(&mut states);
+        let mut tempered = [0u32; N];
+        temper_block(&states, &mut tempered);
+        MersenneTwister { states, tempered, index: 0 }
     }
 
     #[inline]
     fn next(&mut self) -> i32 {
-        let mut y = self.states[self.index];
-        y ^= y >> U;
-        y ^= (y << S) & B;
-        y ^= (y << T) & C;
-        y ^= y >> L;
-        self.index = twisted_next(&mut self.states, self.index);
-        y as i32
+        if self.index == N {
+            twist_block(&mut self.states);
+            temper_block(&self.states, &mut self.tempered);
+            self.index = 0;
+        }
+        let out = self.tempered[self.index];
+        self.index += 1;
+        out as i32
     }
 }
