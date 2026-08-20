@@ -71,36 +71,63 @@ struct XoroShiro128Plus : IGen<XoroShiro128Plus>
 
 // Port of src/generator/congruential32.ts: three LCG steps per Next,
 // 15 usable bits taken from each, recombined into one 32-bit output.
+// Computes two outputs per state advance using composed LCG constants
+// (A_n = a^n mod 2^32, C_n = c*(1+a+..+a^(n-1))): all six intermediate steps
+// are independent multiplies off one base state, and the serial chain moves
+// by a^6 in a single multiply-add. Outputs are identical to the one-step
+// form; the second output of each pair is buffered.
 struct LinearCongruential32 : IGen<LinearCongruential32>
 {
-    private const int Multiplier = 0x000343fd;
-    private const int Increment = 0x00269ec3;
-    // JS MASK_2 = -2147483649 goes through ToInt32 and becomes 0x7fffffff.
-    private const int Mask2 = 0x7fffffff;
-    private const int Multiplier2 = unchecked((int)0xa9fc6809); // = a^2 mod 2^32
-    private const int Increment2 = 0x1e278e7a; // = c*(1 + a) mod 2^32
-    private const int Multiplier3 = 0x45c82be5; // = a^3 mod 2^32
-    private const int Increment3 = unchecked((int)0xd2f65b55); // = c*(1 + a + a^2) mod 2^32
+    private const int A1 = 0x000343fd;
+    private const int C1 = 0x00269ec3;
+    private const int A2 = unchecked((int)0xa9fc6809);
+    private const int C2 = 0x1e278e7a;
+    private const int A3 = 0x45c82be5;
+    private const int C3 = unchecked((int)0xd2f65b55);
+    private const int A4 = unchecked((int)0xddff5051);
+    private const int C4 = 0x098520c4;
+    private const int A5 = 0x284a930d;
+    private const int C5 = unchecked((int)0xa2974c77);
+    private const int A6 = 0x0f56bad9;
+    private const int C6 = 0x2e15555e;
 
     private int seed;
+    private int buffered;
+    private bool hasBuffered;
 
     public static LinearCongruential32 Create(int seed) => new LinearCongruential32 { seed = seed };
 
+    // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
+    // bits 16..30 — short shift immediates instead of 4-byte masks (this
+    // loop is decode-bound, not ALU-bound).
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int Next()
+    private static int Output(int s1, int s2, int s3)
     {
-        int s0 = seed;
-        int s1 = s0 * Multiplier + Increment;
-        int s2 = s0 * Multiplier2 + Increment2;
-        int s3 = s0 * Multiplier3 + Increment3;
-        seed = s3;
-        // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
-        // bits 16..30 — but with short shift immediates instead of 4-byte
-        // masks (this loop is decode-bound, not ALU-bound).
         int v1 = (int)((uint)(s1 << 1) >> 17);
         int v2 = (int)((uint)(s2 << 1) >> 17);
         int v3 = (int)((uint)(s3 << 1) >> 17);
         return v3 | (v2 << 15) | (v1 << 30);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int Next()
+    {
+        if (hasBuffered)
+        {
+            hasBuffered = false;
+            return buffered;
+        }
+        int s0 = seed;
+        int t1 = s0 * A1 + C1;
+        int t2 = s0 * A2 + C2;
+        int t3 = s0 * A3 + C3;
+        int t4 = s0 * A4 + C4;
+        int t5 = s0 * A5 + C5;
+        int t6 = s0 * A6 + C6;
+        seed = t6;
+        buffered = Output(t4, t5, t6);
+        hasBuffered = true;
+        return Output(t1, t2, t3);
     }
 }
 

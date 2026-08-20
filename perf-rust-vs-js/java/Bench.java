@@ -59,36 +59,61 @@ public final class Bench {
     }
   }
 
-  // Port of src/generator/congruential32.ts: three LCG steps per next,
+  // Port of src/generator/congruential32.ts: three LCG steps per output,
   // 15 usable bits taken from each, recombined into one 32-bit output.
+  // Computes two outputs per state advance using composed LCG constants
+  // (A_n = a^n mod 2^32, C_n = c*(1+a+..+a^(n-1))): all six intermediate
+  // steps are independent multiplies off one base state, and the serial
+  // chain moves by a^6 in a single multiply-add — halving the latency-bound
+  // chain cost per number. Outputs are identical to the one-step form; the
+  // second output of each pair is buffered.
   static final class LinearCongruential32 implements Generator {
-    private static final int MULTIPLIER = 0x000343fd;
-    private static final int INCREMENT = 0x00269ec3;
-    // JS MASK_2 = -2147483649 goes through ToInt32 and becomes 0x7fffffff.
-    private static final int MASK_2 = 0x7fffffff;
-    private static final int MULTIPLIER_2 = 0xa9fc6809; // = a^2 mod 2^32
-    private static final int INCREMENT_2 = 0x1e278e7a; // = c*(1 + a) mod 2^32
-    private static final int MULTIPLIER_3 = 0x45c82be5; // = a^3 mod 2^32
-    private static final int INCREMENT_3 = 0xd2f65b55; // = c*(1 + a + a^2) mod 2^32
+    private static final int A1 = 0x000343fd;
+    private static final int C1 = 0x00269ec3;
+    private static final int A2 = 0xa9fc6809; // = a^2 mod 2^32
+    private static final int C2 = 0x1e278e7a; // = c*(1 + a) mod 2^32
+    private static final int A3 = 0x45c82be5; // = a^3 mod 2^32
+    private static final int C3 = 0xd2f65b55; // = c*(1 + a + a^2) mod 2^32
+    private static final int A4 = 0xddff5051; // = a^4 mod 2^32
+    private static final int C4 = 0x098520c4; // = c*(1 + .. + a^3) mod 2^32
+    private static final int A5 = 0x284a930d; // = a^5 mod 2^32
+    private static final int C5 = 0xa2974c77; // = c*(1 + .. + a^4) mod 2^32
+    private static final int A6 = 0x0f56bad9; // = a^6 mod 2^32
+    private static final int C6 = 0x2e15555e; // = c*(1 + .. + a^5) mod 2^32
 
     private int seed;
+    private int buffered;
+    private boolean hasBuffered;
 
     LinearCongruential32(int seed) {
       this.seed = seed;
     }
 
-    public int next() {
-      final int s0 = this.seed;
-      final int s1 = s0 * MULTIPLIER + INCREMENT;
-      final int s2 = s0 * MULTIPLIER_2 + INCREMENT_2;
-      final int s3 = s0 * MULTIPLIER_3 + INCREMENT_3;
-      this.seed = s3;
-      // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
-      // bits 16..30 — shorter encodings than 4-byte mask immediates.
+    // (s & 0x7fffffff) >> 16 == (s << 1) >>> 17: drop the sign bit, keep
+    // bits 16..30 — shorter encodings than 4-byte mask immediates.
+    private static int output(int s1, int s2, int s3) {
       final int v1 = (s1 << 1) >>> 17;
       final int v2 = (s2 << 1) >>> 17;
       final int v3 = (s3 << 1) >>> 17;
       return v3 | (v2 << 15) | (v1 << 30);
+    }
+
+    public int next() {
+      if (hasBuffered) {
+        hasBuffered = false;
+        return buffered;
+      }
+      final int s0 = this.seed;
+      final int t1 = s0 * A1 + C1;
+      final int t2 = s0 * A2 + C2;
+      final int t3 = s0 * A3 + C3;
+      final int t4 = s0 * A4 + C4;
+      final int t5 = s0 * A5 + C5;
+      final int t6 = s0 * A6 + C6;
+      this.seed = t6;
+      this.buffered = output(t4, t5, t6);
+      this.hasBuffered = true;
+      return output(t1, t2, t3);
     }
   }
 

@@ -134,6 +134,18 @@ sequence dumps and the run checksums).
   equivalent `(s << 1) >>> 17`. The C# loop was decode-bound, not ALU-bound (a
   97-byte body of immediate-heavy instructions on a front-end that fetches ~16
   bytes/cycle); shift immediates are 1 byte where the masks were 4 (C# 2.19 → 1.98).
+- **congruential32 — composed pairs (Java, C#)**: LLVM performs this on its own
+  under `target-cpu=native`; Java and C# get it by hand. Two outputs are computed
+  per state advance using composed LCG constants (A_n = a^n, C_n = c·(1+a+…+a^(n-1))
+  mod 2^32): six independent multiplies off one base state, the serial chain moving
+  by a^6 in a single multiply-add, the pair's second output buffered. Sequences are
+  unchanged. Same-boot interleaved A/B (the container was recycled onto a ~10%
+  slower host mid-session, so only within-boot comparisons are meaningful): Java
+  ~4% faster (1.48–1.55 vs 1.54–1.60 ns/number), C# ~16% faster (1.83–1.92 vs
+  2.21–2.23). The optimized-results table above predates the host change; scaling the
+  new-host A/B numbers by the Rust control's cross-boot ratio (1.03 → 1.16 on
+  unchanged code) puts the paired forms at roughly Java ~1.3 and C# ~1.65 in that
+  table's terms.
 - **Java — `-XX:+UseParallelGC`**: mersenne allocates its state per seed; Parallel GC
   handles the churn slightly better than G1 here. Rejected after measurement: huge
   young generations (`-Xmn2g` tripled steady-state cost — page-mapping churn), .NET
