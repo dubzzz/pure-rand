@@ -29,7 +29,10 @@ function uniformLargeIntInternal(rng: RandomGenerator, from: number, to: number,
   }
 
   uniformArrayIntInternal(rng, sharedData, rangeSizeArrayIntValue.data);
-  return sharedData[0] * 0x100000000 + sharedData[1] + from;
+  // Adding "from" before the low part keeps every intermediate value exact:
+  // sharedData[0] * 0x100000000 + sharedData[1] may exceed 2**53 when to - from > 2**53
+  const highWithOffset = sharedData[0] * 0x100000000 + from;
+  return highWithOffset + sharedData[1];
 }
 
 /**
