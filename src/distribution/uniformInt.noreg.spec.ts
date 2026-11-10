@@ -36,6 +36,16 @@ describe('uniformInt [non regression]', () => {
     expect(values).toMatchSnapshot();
   });
 
+  it('Should generate positive even values on ranges wider than 2**53', () => {
+    const rng: RandomGenerator = mersenne(0);
+    let numPositiveEven = 0;
+    for (let idx = 0; idx !== 100; ++idx) {
+      const v = uniformInt(rng, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+      if (v > 0 && v % 2 === 0) ++numPositiveEven;
+    }
+    expect(numPositiveEven).toBeGreaterThan(0);
+  });
+
   it('Should always generate values within the range [from ; to]', () =>
     fc.assert(
       fc.property(fc.noShrink(fc.integer()), fc.maxSafeInteger(), fc.maxSafeInteger(), (seed, a, b) => {
