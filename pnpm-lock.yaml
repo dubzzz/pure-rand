@@ -208,8 +208,8 @@ importers:
   .:
     devDependencies:
       '@fast-check/packaged':
-        specifier: ^0.7.0
-        version: 0.7.0
+        specifier: ^0.7.1
+        version: 0.7.1
       '@vitest/coverage-v8':
         specifier: 4.1.9
         version: 4.1.9(vitest@4.1.9)
@@ -447,8 +447,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@fast-check/packaged@0.7.0':
-    resolution: {integrity: sha512-oVf70XMfnxUrm55xzVphQguzMBCKU5gCMcY1rDX6gRpCh8OfNUWefeQ2HG9nG59RtcXIrsEzeWP65D+LoKYVSQ==}
+  '@fast-check/packaged@0.7.1':
+    resolution: {integrity: sha512-E3SD9femq6+orbiNQ2477scqZnFGTVk0s4HkMTLZhekFamEa5PS9klYDWqdxfUC/MY8d/wwkXKr9eMeU4rSIJQ==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -1806,7 +1806,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@fast-check/packaged@0.7.0':
+  '@fast-check/packaged@0.7.1':
     dependencies:
       '@npmcli/arborist': 9.4.0
       npm-packlist: 10.0.4
