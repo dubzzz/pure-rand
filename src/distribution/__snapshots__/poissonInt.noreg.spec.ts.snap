@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`poissonInt [non regression] > Should not change its output except for major bumps 1`] = `
+[
+  5,
+  6,
+  6,
+  4,
+  4,
+  5,
+  5,
+  3,
+  10,
+  6,
+]
+`;
