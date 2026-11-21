@@ -1,4 +1,6 @@
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
+import type { Seed64 } from '../types/Seed64';
+import { splitmix64 } from '../seed/internals/splitmix64';
 
 // Inspired from java.util.Random implementation
 // http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/util/Random.java#Random.next%28int%29
@@ -64,6 +66,19 @@ export function congruential32FromState(state: readonly number[]): JumpableRando
   return new LinearCongruential32(state[0]);
 }
 
-export function congruential32(seed: number): JumpableRandomGenerator {
-  return new LinearCongruential32(seed);
+/**
+ * Create a generator from a numeric seed or a Seed64 in unsigned high/low order.
+ * Numeric seeds retain their original sequences. Seed64 uses the low 32 bits of
+ * the first SplitMix64 output, so both seed words participate in initialization.
+ * The generator still has only 32 bits of state: distinct Seed64 values can collide.
+ *
+ * @public
+ */
+export function congruential32(seed: number | Seed64): JumpableRandomGenerator {
+  if (typeof seed === 'number') {
+    return new LinearCongruential32(seed);
+  }
+  const next = splitmix64(seed);
+  const [, low] = next();
+  return new LinearCongruential32(low | 0);
 }
