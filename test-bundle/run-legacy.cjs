@@ -28,6 +28,11 @@ testGenerator(congruential32);
 testGenerator(mersenne);
 testGenerator(xorshift128plus);
 testGenerator(xoroshiro128plus);
+testGenerator((seed) => xoroshiro128plus([0x01234567, seed >>> 0]));
+assert.deepStrictEqual(
+  xoroshiro128plus(seed64FromHex('0000000000000000')).getState(),
+  [0xe220a839, 0x7b1dcdaf, 0x6e789e6a, 0xa1b965f4].map((value) => value | 0),
+);
 
 // Test distributions
 
