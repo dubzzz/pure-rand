@@ -140,6 +140,11 @@ The same distinction applies to `xorshift128plus(42)` and `xorshift128plus([0, 4
 For example, `mersenne(seed64FromHex('0123456789abcdef'))` initializes with keys `[0x89abcdef, 0x01234567]`.
 Numeric seeds keep their original sequences; `mersenne(42)` and `mersenne([0, 42])` use different initialization rules.
 
+`congruential32` accepts a `Seed64` too, with the same unsigned-word validation. It uses the low 32 bits of
+the first SplitMix64 output, so both seed words affect initialization. Its state is still only 32 bits:
+different 64-bit seeds can produce the same sequence. Numeric seeds retain their original sequences;
+`congruential32(42)` and `congruential32([0, 42])` use different initialization rules.
+
 ## Documentation
 
 ### Pseudorandom number generators
