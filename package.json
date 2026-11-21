@@ -37,6 +37,10 @@
       "require": "./lib/generator/xoroshiro128plus.js",
       "import": "./lib/esm/generator/xoroshiro128plus.js"
     },
+    "./seed/seed64FromHex": {
+      "require": "./lib/seed/seed64FromHex.js",
+      "import": "./lib/esm/seed/seed64FromHex.js"
+    },
     "./types/JumpableRandomGenerator": {
       "require": "./lib/types/JumpableRandomGenerator.js",
       "import": "./lib/esm/types/JumpableRandomGenerator.js"
@@ -44,6 +48,10 @@
     "./types/RandomGenerator": {
       "require": "./lib/types/RandomGenerator.js",
       "import": "./lib/esm/types/RandomGenerator.js"
+    },
+    "./types/Seed64": {
+      "require": "./lib/types/Seed64.js",
+      "import": "./lib/esm/types/Seed64.js"
     },
     "./utils/generateN": {
       "require": "./lib/utils/generateN.js",

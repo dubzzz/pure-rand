@@ -104,6 +104,22 @@ While not perfect, here is a rather simple way to generate a seed for your PNRG.
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 ```
 
+**Represent a 64-bit seed**
+
+`Seed64` stores a seed as a readonly pair of unsigned 32-bit integers, `[high, low]`. To read a hexadecimal
+seed without losing bits above JavaScript's safe integer range, use `seed64FromHex`:
+
+```typescript
+import type { Seed64 } from 'pure-rand/types/Seed64';
+import { seed64FromHex } from 'pure-rand/seed/seed64FromHex';
+
+const seed: Seed64 = seed64FromHex('0123456789abcdef'); // [0x01234567, 0x89abcdef]
+```
+
+The parser accepts exactly 16 hexadecimal digits, in either case. It throws a `TypeError` for other inputs,
+including a `0x` prefix, whitespace, or a shorter or longer string. It parses the two words separately so
+all 64 bits are preserved.
+
 ## Documentation
 
 ### Pseudorandom number generators
