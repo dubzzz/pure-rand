@@ -13,6 +13,14 @@ const { uniformFloat64 } = require('pure-rand/distribution/uniformFloat64');
 const { generateN } = require('pure-rand/utils/generateN');
 const { skipN } = require('pure-rand/utils/skipN');
 const { purify } = require('pure-rand/utils/purify');
+const { seed64FromHex } = require('pure-rand/seed/seed64FromHex');
+
+// Test seed parsing and its public type
+/** @type {import('pure-rand/types/Seed64').Seed64} */
+const seed64 = seed64FromHex('0123456789abcdef');
+assert.deepStrictEqual(seed64, [0x01234567, 0x89abcdef]);
+assert.deepStrictEqual(seed64FromHex('FFFFFFFFFFFFFFFF'), [0xffffffff, 0xffffffff]);
+assert.throws(() => seed64FromHex('0123456789abcdef\n'), TypeError);
 
 // Test generators
 
