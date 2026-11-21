@@ -135,6 +135,11 @@ invalid tuples throw a `RangeError`. Numeric seeds keep their original sequences
 and `xoroshiro128plus([0, 42])` intentionally use different initialization rules.
 The same distinction applies to `xorshift128plus(42)` and `xorshift128plus([0, 42])`.
 
+`mersenne` also accepts a `Seed64`, with the same unsigned-word validation. It uses the standard MT19937
+`init_by_array` initialization with exactly two keys in `[low, high]` order, including a zero high word.
+For example, `mersenne(seed64FromHex('0123456789abcdef'))` initializes with keys `[0x89abcdef, 0x01234567]`.
+Numeric seeds keep their original sequences; `mersenne(42)` and `mersenne([0, 42])` use different initialization rules.
+
 ## Documentation
 
 ### Pseudorandom number generators
