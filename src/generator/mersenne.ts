@@ -1,4 +1,6 @@
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
+import type { Seed64 } from '../types/Seed64';
+import { assertSeed64 } from '../seed/internals/assertSeed64';
 
 const N = 624;
 const M = 397;
@@ -111,12 +113,54 @@ export function mersenneFromState(state: readonly number[]): JumpableRandomGener
   return new MersenneTwister(state.slice(1), state[0]);
 }
 
-export function mersenne(seed: number): JumpableRandomGenerator {
-  const out: number[] = [seed | 0];
+/**
+ * Create a generator from a numeric seed or a Seed64 in unsigned high/low order.
+ * Numeric seeds retain their original sequences. Seed64 uses the reference
+ * init_by_array algorithm with exactly two keys: [low, high], even when high is zero.
+ *
+ * @public
+ */
+export function mersenne(seed: number | Seed64): JumpableRandomGenerator {
+  if (typeof seed !== 'number') {
+    assertSeed64(seed);
+  }
+  const out: number[] = [typeof seed === 'number' ? seed | 0 : 19650218];
   for (let idx = 1; idx !== N; ++idx) {
     const xored = out[idx - 1] ^ (out[idx - 1] >>> 30);
     out.push((Math.imul(F, xored) + idx) | 0);
   }
+  if (typeof seed !== 'number') {
+    initializeWithSeed64(out, seed);
+  }
   twist(out);
   return new MersenneTwister(out, 0);
+}
+
+// Adapted from the init_by_array algorithm in mt19937ar.c (2002).
+// https://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/MT2002/CODES/mt19937ar.c
+// Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura.
+// The upstream BSD license is reproduced in LICENSE.
+function initializeWithSeed64(out: number[], seed: Seed64): void {
+  let index = 1;
+  let keyIndex = 0;
+  for (let remaining = N; remaining !== 0; --remaining) {
+    const previous = out[index - 1];
+    // The reference key order is little endian: low word, then high word.
+    out[index] = ((out[index] ^ Math.imul(previous ^ (previous >>> 30), 1664525)) + seed[1 - keyIndex] + keyIndex) | 0;
+    if (++index === N) {
+      out[0] = out[N - 1];
+      index = 1;
+    }
+    keyIndex ^= 1;
+  }
+  for (let remaining = N - 1; remaining !== 0; --remaining) {
+    const previous = out[index - 1];
+    out[index] = ((out[index] ^ Math.imul(previous ^ (previous >>> 30), 1566083941)) - index) | 0;
+    if (++index === N) {
+      out[0] = out[N - 1];
+      index = 1;
+    }
+  }
+  // The reference initialization fixes the most significant bit to avoid the zero state.
+  out[0] = MASK_UPPER | 0;
 }
