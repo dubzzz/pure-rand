@@ -120,7 +120,7 @@ The parser accepts exactly 16 hexadecimal digits, in either case. It throws a `T
 including a `0x` prefix, whitespace, or a shorter or longer string. It parses the two words separately so
 all 64 bits are preserved.
 
-`xoroshiro128plus` accepts a `Seed64` directly:
+`xoroshiro128plus` and `xorshift128plus` accept a `Seed64` directly:
 
 ```typescript
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
@@ -129,10 +129,11 @@ import { seed64FromHex } from 'pure-rand/seed/seed64FromHex';
 const rng = xoroshiro128plus(seed64FromHex('0123456789abcdef'));
 ```
 
-For a `Seed64`, the generator initializes its two 64-bit state words with the first two SplitMix64 outputs.
+For a `Seed64`, either generator initializes its two 64-bit state words with the first two SplitMix64 outputs.
 The high and low seed words both participate. Each word must be an integer from `0` to `0xffffffff`;
 invalid tuples throw a `RangeError`. Numeric seeds keep their original sequences: `xoroshiro128plus(42)`
 and `xoroshiro128plus([0, 42])` intentionally use different initialization rules.
+The same distinction applies to `xorshift128plus(42)` and `xorshift128plus([0, 42])`.
 
 ## Documentation
 

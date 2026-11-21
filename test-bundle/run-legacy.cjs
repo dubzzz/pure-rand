@@ -27,6 +27,11 @@ assert.throws(() => seed64FromHex('0123456789abcdef\n'), TypeError);
 testGenerator(congruential32);
 testGenerator(mersenne);
 testGenerator(xorshift128plus);
+testGenerator((seed) => xorshift128plus([0x01234567, seed >>> 0]));
+assert.deepStrictEqual(
+  xorshift128plus(seed64FromHex('0000000000000000')).getState(),
+  [0xe220a839, 0x7b1dcdaf, 0x6e789e6a, 0xa1b965f4].map((value) => value | 0),
+);
 testGenerator(xoroshiro128plus);
 testGenerator((seed) => xoroshiro128plus([0x01234567, seed >>> 0]));
 assert.deepStrictEqual(

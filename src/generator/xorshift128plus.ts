@@ -1,4 +1,6 @@
 import type { JumpableRandomGenerator } from '../types/JumpableRandomGenerator';
+import type { Seed64 } from '../types/Seed64';
+import { splitmix64 } from '../seed/internals/splitmix64';
 
 // XorShift128+ with a=23, b=18, c=5
 // - http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf
@@ -84,6 +86,19 @@ export function xorshift128plusFromState(state: readonly number[]): JumpableRand
   return new XorShift128Plus(state[0], state[1], state[2], state[3]);
 }
 
-export function xorshift128plus(seed: number): JumpableRandomGenerator {
-  return new XorShift128Plus(-1, ~seed, seed | 0, 0);
+/**
+ * Create a generator from a numeric seed or a Seed64 in unsigned high/low order.
+ * Numeric seeds retain their original sequences. Seed64 initializes the two 64-bit
+ * state words from consecutive SplitMix64 outputs, including when the high word is zero.
+ *
+ * @public
+ */
+export function xorshift128plus(seed: number | Seed64): JumpableRandomGenerator {
+  if (typeof seed === 'number') {
+    return new XorShift128Plus(-1, ~seed, seed | 0, 0);
+  }
+  const next = splitmix64(seed);
+  const [s01, s00] = next();
+  const [s11, s10] = next();
+  return new XorShift128Plus(s01 | 0, s00 | 0, s11 | 0, s10 | 0);
 }
